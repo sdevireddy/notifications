@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  FiPhone, FiMessageSquare, FiEye, FiEdit, FiTrash, FiFilter, FiPlus,
+  FiPhone, FiMessageSquare, FiEye, FiEdit, FiTrash, FiFilter, FiArrowUp, FiArrowDown, FiPlus,
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import FiltersPopUp from "./FiltersPopup";
@@ -12,7 +12,7 @@ const Leads = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [recordsPerPage, setRecordsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedLeads, setSelectedLeads] = useState([]);
+  const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" });
   const navigate = useNavigate();
   const toggleFilter = () => setIsFilterOpen(!isFilterOpen);
 
@@ -27,25 +27,42 @@ const Leads = () => {
     created: `2024-03-${(index % 30) + 1}`,
   }));
 
-  // Filter leads based on search query
-  const filteredLeads = leads.filter(lead =>
-    lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    lead.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    lead.phone.includes(searchQuery)
+  // Sorting function
+  const sortLeads = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedLeads = [...leads].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+    if (sortConfig.direction === "asc") {
+      return a[sortConfig.key] > b[sortConfig.key] ? 1 : -1;
+    } else {
+      return a[sortConfig.key] < b[sortConfig.key] ? 1 : -1;
+    }
+  });
+
+  // Fix: Search functionality for numeric columns
+  const filteredLeads = sortedLeads.filter((lead) =>
+    Object.values(lead).some((value) => {
+      // Convert to string for comparison
+      const stringValue = value.toString().toLowerCase();
+      return stringValue.includes(searchQuery.toLowerCase());
+    })
   );
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredLeads.length / recordsPerPage);
+  const totalPages = Math.ceil(filteredLeads.length / recordsPerPage) || 1;
   const startIndex = (currentPage - 1) * recordsPerPage;
   const displayedLeads = filteredLeads.slice(startIndex, startIndex + recordsPerPage);
 
-  const goToPage = (pageNumber) => setCurrentPage(pageNumber);
-  const goToPreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-  const goToNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
+  // Fix: Reset to first page when search reduces records
+  if (currentPage > totalPages) {
+    setCurrentPage(1);
+  }
 
   return (
     <div className="relative bg-white p-4">
@@ -57,7 +74,7 @@ const Leads = () => {
             value={recordsPerPage}
             onChange={(e) => {
               setRecordsPerPage(Number(e.target.value));
-              setCurrentPage(1); // Reset to first page when changing records per page
+              setCurrentPage(1);
             }}
             className="border p-2 rounded"
           >
@@ -72,13 +89,15 @@ const Leads = () => {
             placeholder="Search Leads..."
             className="border p-2 rounded w-1/3"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
           />
           <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={toggleFilter}>Filters</button>
           <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={() => navigate("/new-customer")}>
             Add Lead
           </button>
-          <button className="bg-red-500 text-white px-4 py-2 rounded" disabled={selectedLeads.length === 0}>Delete</button>
         </div>
       </div>
 
@@ -87,19 +106,27 @@ const Leads = () => {
         <table className="w-full border text-center">
           <thead className="bg-gray-200">
             <tr>
-              <th className="p-2">Select</th>
-              <th className="p-2">Name</th>
-              <th className="p-2">Phone</th>
-              <th className="p-2">Email</th>
-              <th className="p-2">Location</th>
-              <th className="p-2">Lead Score</th>
-              <th className="p-2">Created</th>
+              <th className="p-2"><input type="checkbox" /></th>
+              {["name", "phone", "email", "location", "leadScore", "created"].map((column) => (
+                <th key={column} className="p-2 cursor-pointer" onClick={() => sortLeads(column)}>
+                  <div className="flex items-center justify-center">
+                    {column.charAt(0).toUpperCase() + column.slice(1)}
+                    {sortConfig.key === column ? (
+                      sortConfig.direction === "asc" ? 
+                      <FiArrowUp className="text-blue-500 ml-1" /> : 
+                      <FiArrowDown className="text-blue-500 ml-1" />
+                    ) : (
+                      <FiArrowUp className="text-gray-400 ml-1" />
+                    )}
+                  </div>
+                </th>
+              ))}
               <th className="p-2">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {displayedLeads.map((lead) => (
-              <tr key={lead.id} className="hover:bg-gray-100">
+            {displayedLeads.map((lead, index) => (
+              <tr key={lead.id} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                 <td className="p-2"><input type="checkbox" /></td>
                 <td className="p-2">{lead.name}</td>
                 <td className="p-2">{lead.phone}</td>
@@ -122,35 +149,23 @@ const Leads = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex justify-center items-center space-x-2 mt-4 absolute bottom-4 left-4 right-4">
-        <div className="flex space-x-2">
+      <div className="flex justify-center items-center space-x-2 mt-4">
+        <button className="border px-3 py-1 rounded cursor-pointer" onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} disabled={currentPage === 1}>
+          Previous
+        </button>
+        {[...Array(totalPages).keys()].map((page) => (
           <button
-            className="border px-3 py-1 rounded cursor-pointer"
-            onClick={goToPreviousPage}
-            disabled={currentPage === 1}
+            key={page + 1}
+            className={`border px-3 py-1 rounded cursor-pointer ${currentPage === page + 1 ? "bg-blue-500 text-white" : ""}`}
+            onClick={() => setCurrentPage(page + 1)}
           >
-            Previous
+            {page + 1}
           </button>
-          {[...Array(totalPages).keys()].map((page) => (
-            <button
-              key={page + 1}
-              className={`border px-3 py-1 rounded cursor-pointer ${currentPage === page + 1 ? "bg-blue-500 text-white" : ""}`}
-              onClick={() => goToPage(page + 1)}
-            >
-              {page + 1}
-            </button>
-          ))}
-          <button
-            className="border px-3 py-1 rounded cursor-pointer"
-            onClick={goToNextPage}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
+        ))}
+        <button className="border px-3 py-1 rounded cursor-pointer" onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>
+          Next
+        </button>
       </div>
-      {/* Filters Popup */}
-      {isFilterOpen && <FiltersPopUp onClose={toggleFilter} />}
     </div>
   );
 };
