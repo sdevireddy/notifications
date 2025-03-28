@@ -12,12 +12,13 @@ const Leads = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [recordsPerPage, setRecordsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedLeads, setSelectedLeads] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" });
   const navigate = useNavigate();
   const toggleFilter = () => setIsFilterOpen(!isFilterOpen);
 
   // Sample Leads Data
-  const leads = Array.from({ length: 30 }, (_, index) => ({
+  const initialLeads = Array.from({ length: 30 }, (_, index) => ({
     id: index + 1,
     name: `Lead ${index + 1}`,
     phone: `(123) 456-78${index % 10}${index % 10}`,
@@ -26,6 +27,8 @@ const Leads = () => {
     leadScore: Math.floor(Math.random() * 100),
     created: `2024-03-${(index % 30) + 1}`,
   }));
+
+  const [leads, setLeads] = useState(initialLeads);
 
   // Sorting function
   const sortLeads = (key) => {
@@ -58,6 +61,21 @@ const Leads = () => {
   const totalPages = Math.ceil(filteredLeads.length / recordsPerPage) || 1;
   const startIndex = (currentPage - 1) * recordsPerPage;
   const displayedLeads = filteredLeads.slice(startIndex, startIndex + recordsPerPage);
+
+  // Handle checkbox selection
+  const handleCheckboxChange = (id) => {
+    setSelectedLeads((prevSelectedLeads) =>
+      prevSelectedLeads.includes(id)
+        ? prevSelectedLeads.filter((leadId) => leadId !== id)
+        : [...prevSelectedLeads, id]
+    );
+  };
+
+  const handleDelete = () => {
+    const remainingLeads = leads.filter((lead) => !selectedLeads.includes(lead.id));
+    setLeads(remainingLeads);
+    setSelectedLeads([]); // Clear selection after deletion
+  };
 
   // Fix: Reset to first page when search reduces records
   if (currentPage > totalPages) {
@@ -98,6 +116,13 @@ const Leads = () => {
           <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={() => navigate("/new-customer")}>
             Add Lead
           </button>
+          <button
+            className="bg-red-500 text-white px-4 py-2 rounded"
+            disabled={selectedLeads.length === 0}
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
         </div>
       </div>
 
@@ -106,7 +131,19 @@ const Leads = () => {
         <table className="w-full border text-center">
           <thead className="bg-gray-200">
             <tr>
-              <th className="p-2"><input type="checkbox" /></th>
+              <th className="p-2">
+                <input
+                  type="checkbox"
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedLeads(leads.map((lead) => lead.id));
+                    } else {
+                      setSelectedLeads([]);
+                    }
+                  }}
+                  checked={selectedLeads.length === leads.length}
+                />
+              </th>
               {["name", "phone", "email", "location", "leadScore", "created"].map((column) => (
                 <th key={column} className="p-2 cursor-pointer" onClick={() => sortLeads(column)}>
                   <div className="flex items-center justify-center">
@@ -127,7 +164,13 @@ const Leads = () => {
           <tbody>
             {displayedLeads.map((lead, index) => (
               <tr key={lead.id} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
-                <td className="p-2"><input type="checkbox" /></td>
+                <td className="p-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedLeads.includes(lead.id)}
+                    onChange={() => handleCheckboxChange(lead.id)}
+                  />
+                </td>
                 <td className="p-2">{lead.name}</td>
                 <td className="p-2">{lead.phone}</td>
                 <td className="p-2">{lead.email}</td>
@@ -166,6 +209,9 @@ const Leads = () => {
           Next
         </button>
       </div>
+
+      {/* Filters Popup */}
+      {isFilterOpen && <FiltersPopUp onClose={toggleFilter} />}
     </div>
   );
 };
