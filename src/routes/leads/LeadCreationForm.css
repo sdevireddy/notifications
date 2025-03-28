@@ -1,0 +1,75 @@
+.lead-container {
+    padding: 2rem;
+  }
+  
+  .lead-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .btn-container button {
+    margin-left: 0.5rem;
+  }
+  
+  .form-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-section {
+    margin-bottom: 1.5rem;
+    border-width: 4px;
+    border-color: #4a5568; /* Darker section border */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  input, textarea {
+    padding: 0.5rem;
+    width: 75%;
+    border-radius: 5px;
+    border: 2px solid #4a5568; /* Darker border for inputs */
+  }
+  
+  .camera-button {
+    cursor: pointer;
+    padding: 0.3rem;
+    background-color: #f0f0f0;
+  }
+  
+  .input-field {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Flexbox setup for responsive layout */
+  @media (min-width: 768px) {
+    .flex {
+      display: flex;
+    }
+  
+    .flex-col {
+      flex-direction: column;
+    }
+  
+    .w-1\/2 {
+      width: 50%;
+    }
+  
+    .gap-4 {
+      gap: 1rem;
+    }
+  
+    .flex-wrap {
+      flex-wrap: wrap;
+    }
+  
+    /* Reduced width of input fields */
+    .input-field {
+      width: 80%;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .input-field {
+      width: 90%;
+    }
+  }
+  
