@@ -33,9 +33,9 @@ export const navbarLinks = [
                 path: "/Leads",
             },
             {
-                label: "New customer",
+                label: "Create Lead",
                 icon: UserPlus,
-                path: "/new-customer",
+                path: "/LeadCreationForm",
             },
             {
                 label: "Verified customers",

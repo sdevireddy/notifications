@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/contexts/theme-context";
 import Layout from "@/routes/layout";
 import DashboardPage from "@/routes/dashboard/page";
 import Leads from "@/routes/leads/Leads";
-import NewLead from "@/routes/leads/NewLead";
+import NewLead from "@/routes/leads/LeadCreationForm";
 
 
 function App() {
@@ -31,7 +31,7 @@ function App() {
                     element: <Leads/>,
                 },
                 {
-                    path: "new-customer",
+                    path: "LeadCreationForm",
                     element: <NewLead/>,
                 },
                 {

@@ -163,7 +163,7 @@ const Leads = () => {
           </thead>
           <tbody>
             {displayedLeads.map((lead, index) => (
-              <tr key={lead.id} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+              <tr key={lead.id} className={`hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}>
                 <td className="p-2">
                   <input
                     type="checkbox"
@@ -178,12 +178,13 @@ const Leads = () => {
                 <td className="p-2">{lead.leadScore}</td>
                 <td className="p-2">{lead.created}</td>
                 <td className="p-2 flex justify-center space-x-4">
+                <FaWhatsapp className="text-green-600 cursor-pointer" />
                   <FiPhone className="text-blue-500 cursor-pointer" />
                   <FiMessageSquare className="text-green-500 cursor-pointer" />
                   <FiEye className="text-gray-600 cursor-pointer" />
                   <FiEdit className="text-yellow-500 cursor-pointer" />
                   <FiTrash className="text-red-500 cursor-pointer" />
-                  <FaWhatsapp className="text-green-600 cursor-pointer" />
+                 
                 </td>
               </tr>
             ))}
