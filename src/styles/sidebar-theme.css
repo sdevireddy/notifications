@@ -1,0 +1,13 @@
+/* sidebar-theme.css */
+.sidebar {
+   /* background: linear-gradient(to bottom, #2563eb, #4f46e5); /* from-blue-600 to-indigo-900 */
+   background: #001a40;
+    color: white;
+    font-family: Helvetica, Arial, Roboto, or Open Sans ;
+}
+
+/* Dark Mode */
+.dark .sidebar {
+    border-right: 1px solid #334155; /* dark:border-slate-700 */
+    background: linear-gradient(to bottom, #1e293b, #111827); /* from-slate-800 to-gray-900 */
+}

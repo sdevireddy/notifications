@@ -1,0 +1,38 @@
+/* sidebar-nav.css */
+.sidebar-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+}
+
+.sidebar-group-title {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    color: #d1d5db; /* text-gray-300 */
+}
+
+.sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background 0.2s;
+    color: white;
+    text-decoration: none;
+}
+
+.sidebar-nav-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Collapsed State */
+.sidebar.collapsed .sidebar-group-title {
+    width: 45px;
+}
+
+.sidebar.collapsed .sidebar-nav-link {
+    width: 45px;
+    justify-content: center;
+}

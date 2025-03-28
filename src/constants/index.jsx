@@ -28,9 +28,9 @@ export const navbarLinks = [
         title: "Customers",
         links: [
             {
-                label: "Customers",
+                label: "Leads",
                 icon: Users,
-                path: "/customers",
+                path: "/Leads",
             },
             {
                 label: "New customer",

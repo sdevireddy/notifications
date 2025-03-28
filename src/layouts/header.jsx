@@ -6,7 +6,7 @@ import profileImg from "@/assets/profile-image.jpg";
 
 import PropTypes from "prop-types";
 
-export const Header = ({ collapsed, setCollapsed }) => {
+export const Header = ({ collapsed, setCollapsed }) => { 
     const { theme, setTheme } = useTheme();
 
     return (

@@ -1,0 +1,32 @@
+/* sidebar-search.css */
+.sidebar-search-container {
+    position: relative;
+    padding: 12px;
+}
+
+.sidebar-search-icon {
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    color: #d1d5db; /* text-gray-300 */
+}
+
+.sidebar-search-input {
+    width: 100%;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px 10px 10px 40px;
+    color: white;
+    outline: none;
+    border: none;
+    transition: 0.2s;
+}
+
+.sidebar-search-input::placeholder {
+    color: #d1d5db;
+}
+
+.sidebar-search-input:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); /* focus:ring-blue-300 */
+}
