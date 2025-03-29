@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { useClickOutside } from "@/hooks/use-click-outside";
+import { useLocation } from "react-router-dom";
 
 import { Sidebar } from "@/layouts/sidebar";
 import { Header } from "@/layouts/header";
@@ -12,6 +13,8 @@ import { useEffect, useRef, useState } from "react";
 const Layout = () => {
     const isDesktopDevice = useMediaQuery("(min-width: 768px)");
     const [collapsed, setCollapsed] = useState(!isDesktopDevice);
+    /*const [isCreatingLead, setIsCreatingLead] = useState(false);*/
+    const [isCreatingLead, setIsCreatingLead] = useState(false);
 
     const sidebarRef = useRef(null);
 
@@ -33,10 +36,11 @@ const Layout = () => {
                     !collapsed && "max-md:pointer-events-auto max-md:z-50 max-md:opacity-30",
                 )}
             />
-            <Sidebar
+            {!isCreatingLead && <Sidebar
                 ref={sidebarRef}
                 collapsed={collapsed}
             />
+}
             <div className={cn("transition-[margin] duration-300", collapsed ? "md:ml-[70px]" : "md:ml-[200px]")}>
                 <Header
                     collapsed={collapsed}

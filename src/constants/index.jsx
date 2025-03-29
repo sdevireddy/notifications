@@ -38,6 +38,11 @@ export const navbarLinks = [
                 path: "/LeadCreationForm",
             },
             {
+                label: "View Lead",
+                icon: UserPlus,
+                path: "/ViewLead",
+            },
+            {
                 label: "Verified customers",
                 icon: UserCheck,
                 path: "/verified-customers",

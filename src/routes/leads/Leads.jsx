@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , Link} from "react-router-dom";
 import {
   FiPhone, FiMessageSquare, FiEye, FiEdit, FiTrash, FiFilter, FiArrowUp, FiArrowDown, FiPlus,
 } from "react-icons/fi";
@@ -181,7 +181,10 @@ const Leads = () => {
                 <FaWhatsapp className="text-green-600 cursor-pointer" />
                   <FiPhone className="text-blue-500 cursor-pointer" />
                   <FiMessageSquare className="text-green-500 cursor-pointer" />
-                  <FiEye className="text-gray-600 cursor-pointer" />
+                  <Link to={`/ViewLead/${lead.id}`} state={{ lead }}  className="text-blue-500">
+                      <FiEye className="text-gray-600 cursor-pointer" /> 
+                </Link>
+                 
                   <FiEdit className="text-yellow-500 cursor-pointer" />
                   <FiTrash className="text-red-500 cursor-pointer" />
                  

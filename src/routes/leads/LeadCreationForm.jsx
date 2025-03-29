@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { FiCamera, FiUser, FiMail, FiBriefcase, FiMapPin } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { FiCamera, FiUser, FiMail, FiBriefcase, FiMapPin, FiArrowLeft } from "react-icons/fi";
 import "./LeadCreationForm.css";
 
 const LeadCreationForm = () => {
+  const navigate = useNavigate();
   const [leadImage, setLeadImage] = useState(null);
   const [formData, setFormData] = useState({
     // Basic Information
@@ -52,9 +54,16 @@ const LeadCreationForm = () => {
   return (
     <div className="container mx-auto">
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md">
-        {/* Header with Lead Image next to "Create Lead" text and action buttons */}
+        {/* Header with Left Arrow Button, Lead Image, "Create Lead" text and action buttons */}
         <div className="flex items-center justify-between border-b p-4">
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              type="button"
+              className="p-2 rounded hover:bg-gray-200"
+            >
+              <FiArrowLeft size={20} />
+            </button>
             <div
               className="relative w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"
               onClick={() => document.getElementById("lead-image-input").click()}
@@ -72,16 +81,28 @@ const LeadCreationForm = () => {
             <h2 className="text-xl font-bold">Create Lead</h2>
           </div>
           <div className="space-x-3">
-            <button type="button" className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+            <button
+              type="button"
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            >
               Cancel
             </button>
-            <button type="button" className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+            <button
+              type="button"
+              className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+            >
               Convert
             </button>
-            <button type="button" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+            <button
+              type="button"
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            >
               Save And New
             </button>
-            <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
               Save
             </button>
           </div>
@@ -94,6 +115,7 @@ const LeadCreationForm = () => {
           onChange={handleImageChange}
         />
 
+        {/* Rest of your form sections go here */}
         <div className="p-4 space-y-2">
           {/* Basic Information Section */}
           <div className="border p-4 rounded mb-4">

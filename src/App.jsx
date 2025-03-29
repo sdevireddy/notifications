@@ -6,6 +6,7 @@ import Layout from "@/routes/layout";
 import DashboardPage from "@/routes/dashboard/page";
 import Leads from "@/routes/leads/Leads";
 import NewLead from "@/routes/leads/LeadCreationForm";
+import ViewLead from "@/routes/leads/ViewLeadPage";
 
 
 function App() {
@@ -33,6 +34,10 @@ function App() {
                 {
                     path: "LeadCreationForm",
                     element: <NewLead/>,
+                },
+                {
+                    path: "ViewLead/:id",
+                    element: <ViewLead/>,
                 },
                 {
                     path: "verified-customers",
