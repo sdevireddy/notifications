@@ -1,10 +1,9 @@
 import { ChartColumn, Home, NotepadText, Package, PackagePlus, Settings, ShoppingBag, UserCheck, UserPlus, Users } from "lucide-react";
 
-import ProfileImage from "@/assets/profile-image.jpg";
-import ProductImage from "@/assets/product-image.jpg";
+
 
 export const navbarLinks = [
-    {
+ /*   {
         title: "Dashboard",
         links: [
             {
@@ -23,16 +22,32 @@ export const navbarLinks = [
                 path: "/reports",
             },
         ],
-    },
+    },*/
     {
-        title: "Customers",
+        title: "CRM",
         links: [
             {
                 label: "Leads",
                 icon: Users,
-                path: "/Leads",
+                path: "/leads",
+                color:"Green"
             },
             {
+                label: "Contacts",
+                icon: Users,
+                path: "/contacts",
+            },
+            {
+                label: "Accounts",
+                icon: Users,
+                path: "/accounts",
+            },
+            {
+                label: "Deals",
+                icon: Users,
+                path: "/deals",
+            },
+          /*  {
                 label: "Create Lead",
                 icon: UserPlus,
                 path: "/LeadCreationForm",
@@ -46,7 +61,7 @@ export const navbarLinks = [
                 label: "Verified customers",
                 icon: UserCheck,
                 path: "/verified-customers",
-            },
+            },*/
         ],
     },
     {
@@ -137,49 +152,48 @@ export const recentSalesData = [
         id: 1,
         name: "Olivia Martin",
         email: "olivia.martin@email.com",
-        image: ProfileImage,
-        total: 1500,
+    
     },
     {
         id: 2,
         name: "James Smith",
         email: "james.smith@email.com",
-        image: ProfileImage,
+    
         total: 2000,
     },
     {
         id: 3,
         name: "Sophia Brown",
         email: "sophia.brown@email.com",
-        image: ProfileImage,
+
         total: 4000,
     },
     {
         id: 4,
         name: "Noah Wilson",
         email: "noah.wilson@email.com",
-        image: ProfileImage,
+
         total: 3000,
     },
     {
         id: 5,
         name: "Emma Jones",
         email: "emma.jones@email.com",
-        image: ProfileImage,
+
         total: 2500,
     },
     {
         id: 6,
         name: "William Taylor",
         email: "william.taylor@email.com",
-        image: ProfileImage,
+
         total: 4500,
     },
     {
         id: 7,
         name: "Isabella Johnson",
         email: "isabella.johnson@email.com",
-        image: ProfileImage,
+
         total: 5300,
     },
 ];
@@ -188,7 +202,7 @@ export const topProducts = [
     {
         number: 1,
         name: "Wireless Headphones",
-        image: ProductImage,
+        image: "ProductImage",
         description: "High-quality noise-canceling wireless headphones.",
         price: 99.99,
         status: "In Stock",
@@ -197,7 +211,7 @@ export const topProducts = [
     {
         number: 2,
         name: "Smartphone",
-        image: ProductImage,
+        image: "ProductImage",
         description: "Latest 5G smartphone with excellent camera features.",
         price: 799.99,
         status: "In Stock",
@@ -206,7 +220,7 @@ export const topProducts = [
     {
         number: 3,
         name: "Gaming Laptop",
-        image: ProductImage,
+        image: "ProductImage",
         description: "Powerful gaming laptop with high-end graphics.",
         price: 1299.99,
         status: "In Stock",
@@ -215,7 +229,7 @@ export const topProducts = [
     {
         number: 4,
         name: "Smartwatch",
-        image: ProductImage,
+        image: "ProductImage",
         description: "Stylish smartwatch with fitness tracking features.",
         price: 199.99,
         status: "Out of Stock",
@@ -224,7 +238,7 @@ export const topProducts = [
     {
         number: 5,
         name: "Bluetooth Speaker",
-        image: ProductImage,
+        image: "ProductImage",
         description: "Portable Bluetooth speaker with deep bass sound.",
         price: 59.99,
         status: "In Stock",
@@ -233,7 +247,7 @@ export const topProducts = [
     {
         number: 6,
         name: "4K Monitor",
-        image: ProductImage,
+        image: "ProductImage",
         description: "Ultra HD 4K monitor with stunning color accuracy.",
         price: 399.99,
         status: "In Stock",
@@ -242,7 +256,7 @@ export const topProducts = [
     {
         number: 7,
         name: "Mechanical Keyboard",
-        image: ProductImage,
+        image: "ProductImage",
         description: "Mechanical keyboard with customizable RGB lighting.",
         price: 89.99,
         status: "In Stock",
@@ -251,7 +265,7 @@ export const topProducts = [
     {
         number: 8,
         name: "Wireless Mouse",
-        image: ProductImage,
+        image: "ProductImage",
         description: "Ergonomic wireless mouse with precision tracking.",
         price: 49.99,
         status: "In Stock",
@@ -260,7 +274,7 @@ export const topProducts = [
     {
         number: 9,
         name: "Action Camera",
-        image: ProductImage,
+        image: "ProductImage",
         description: "Waterproof action camera with 4K video recording.",
         price: 249.99,
         status: "In Stock",
@@ -269,7 +283,7 @@ export const topProducts = [
     {
         number: 10,
         name: "External Hard Drive",
-        image: ProductImage,
+        image: "ProductImage",
         description: "Portable 2TB external hard drive for data storage.",
         price: 79.99,
         status: "Out of Stock",
