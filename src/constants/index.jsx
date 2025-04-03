@@ -1,6 +1,6 @@
-import { ChartColumn, Home, NotepadText, Package, PackagePlus, Settings, ShoppingBag, UserCheck, UserPlus, Users } from "lucide-react";
+import { ChartColumn, Home, NotepadText, Package, PackagePlus, Settings, ShoppingBag, UserCheck, UserPlus } from "lucide-react";
 
-
+import { Users, User, Building, Handshake } from "lucide-react";
 
 export const navbarLinks = [
  /*   {
@@ -28,23 +28,23 @@ export const navbarLinks = [
         links: [
             {
                 label: "Leads",
-                icon: Users,
+                icon: User,  // A single user represents a potential lead
                 path: "/leads",
-                color:"Green"
+                color: "Green"
             },
             {
                 label: "Contacts",
-                icon: Users,
+                icon: Users,  // Multiple users represent contacts
                 path: "/contacts",
             },
             {
                 label: "Accounts",
-                icon: Users,
+                icon: Building,  // A building represents business accounts
                 path: "/accounts",
             },
             {
                 label: "Deals",
-                icon: Users,
+                icon: Handshake,  // A handshake icon represents deals/agreements
                 path: "/deals",
             },
           /*  {

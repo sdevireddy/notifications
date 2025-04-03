@@ -2,9 +2,10 @@
 .layout-container {
     display: flex;
     min-height: 100vh;
-    background-color: f0f3fb; /* Light gray background */
+    background-color: #f0f3fb; /* Light gray background */
     transition: all 0.3s ease-in-out;
 }
+
 
 /* Sidebar Overlay */
 .overlay {

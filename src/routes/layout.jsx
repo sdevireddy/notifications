@@ -41,7 +41,7 @@ const Layout = () => {
                 collapsed={collapsed}
             />
 }
-            <div className={cn("transition-[margin] duration-300", collapsed ? "md:ml-[70px]" : "md:ml-[200px]")}>
+            <div className={cn("transition-[margin] duration-300", collapsed ? "md:ml-[70px]" : "md:ml-[50px]")}>
                 <Header
                     collapsed={collapsed}
                     setCollapsed={setCollapsed}

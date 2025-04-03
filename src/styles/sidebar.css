@@ -1,31 +1,128 @@
-/* sidebar.css */
+/* Sidebar Base */
 .sidebar {
     position: fixed;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
+    top: 0;
+    left: 0;
     height: 100%;
-    width: 200px;
+    width: 250px;
+    background: #ffffff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease-in-out;
     overflow-x: hidden;
-    border-right: 1px solid #cbd5e1; /* border-slate-300 */
-    transition: all 0.3s ease-in-out;
+    overflow-y: auto;
+    z-index: 1000;
 }
 
 /* Collapsed Sidebar */
 .sidebar.collapsed {
-    width: 70px;
+    width: 60px;
     align-items: center;
 }
 
-/* Mobile view */
-@media (max-width: 768px) {
-    .sidebar {
-        left: 0;
-    }
-    .sidebar.collapsed {
-        left: -100%;
-    }
+/* Auto-minimize sidebar when mouse leaves */
+.sidebar.collapsed:not(:hover) {
+    width: 60px;
 }
 
+/* Auto-expand Sidebar on Hover */
+.sidebar:hover {
+    width: 250px;
+}
 
+/* Expand Button (Top Right) */
+.expand-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #f0f0f0;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
 
+/* Sidebar Links */
+.sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+    transition: background 0.2s ease-in-out;
+}
+
+.sidebar-nav-link:hover {
+    background: #f3f3f3;
+}
+
+/* Icons Alignment in Collapsed State */
+.sidebar.collapsed .sidebar-nav-link {
+    justify-content: center;
+    padding: 10px;
+}
+
+/* Ensure icons and text are vertically aligned */
+.sidebar.collapsed .sidebar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Proper alignment for module icons */
+.sidebar.collapsed .sidebar-nav-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+/* Fix submenu alignment */
+.sidebar.collapsed .ml-5 {
+    margin-left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Sidebar group titles (Module names) */
+.sidebar-group-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ccc;
+    margin-left: 15px;
+}
+
+/* Hide module names when searching */
+.sidebar-search-results nav p.sidebar-group-title {
+    display: none;
+}
+
+/* Sidebar Search */
+.sidebar-search-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Clear search input when mouse leaves sidebar */
+.sidebar:not(:hover) .sidebar-search-input {
+    value: "";
+}
+
+/* Sidebar Search Results */
+.sidebar-search-results {
+    padding: 10px;
+}
+
+/* Sidebar fixes for proper layout */
+.sidebar + .content {
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.sidebar.collapsed + .content {
+    margin-left: 60px;
+}

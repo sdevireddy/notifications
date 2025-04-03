@@ -27,12 +27,3 @@
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* Collapsed State */
-.sidebar.collapsed .sidebar-group-title {
-    width: 45px;
-}
-
-.sidebar.collapsed .sidebar-nav-link {
-    width: 45px;
-    justify-content: center;
-}
