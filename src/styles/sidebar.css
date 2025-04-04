@@ -1,35 +1,35 @@
-/* Sidebar Base */
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
     height: 100%;
-    width: 250px;
-    background: #ffffff;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    transition: width 0.3s ease-in-out;
+    background: #fff;
+    width: 230px;
     overflow-x: hidden;
     overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease-in-out;
     z-index: 1000;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Collapsed Sidebar */
 .sidebar.collapsed {
     width: 60px;
+}
+
+.logo-section {
+    display: flex;
     align-items: center;
+    gap: 12px;
+    padding: 16px;
 }
 
-/* Auto-minimize sidebar when mouse leaves */
-.sidebar.collapsed:not(:hover) {
-    width: 60px;
+.logo-text {
+    font-size: 18px;
+    font-weight: 500;
 }
 
-/* Auto-expand Sidebar on Hover */
-.sidebar:hover {
-    width: 250px;
-}
-
-/* Expand Button (Top Right) */
 .expand-button {
     position: absolute;
     top: 10px;
@@ -42,87 +42,86 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    z-index: 1001;
 }
 
-/* Sidebar Links */
+.search-wrapper {
+    position: relative;
+    padding: 0 16px 12px 16px;
+}
+
+.sidebar-search-input {
+    width: 100%;
+    padding: 8px 8px 8px 32px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 24px;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.sidebar-group {
+    padding: 0 8px;
+}
+
 .sidebar-nav-link {
     display: flex;
     align-items: center;
-    padding: 10px 15px;
-    text-decoration: none;
+    gap: 12px;
+    padding: 10px 14px;
     color: #333;
+    text-decoration: none;
     transition: background 0.2s ease-in-out;
+    border-radius: 6px;
 }
 
 .sidebar-nav-link:hover {
-    background: #f3f3f3;
+    background-color: #f0f0f0;
 }
 
-/* Icons Alignment in Collapsed State */
-.sidebar.collapsed .sidebar-nav-link {
-    justify-content: center;
-    padding: 10px;
+.sidebar-nav-link svg {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    min-height: 22px;
 }
 
-/* Ensure icons and text are vertically aligned */
-.sidebar.collapsed .sidebar-group {
+.sidebar-nav-link .label {
+    white-space: nowrap;
+}
+
+.submenu {
+    padding-left: 20px;
+}
+
+.submenu.collapsed {
+    padding-left: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* Proper alignment for module icons */
 .sidebar.collapsed .sidebar-nav-link {
-    display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 10px;
-}
-
-/* Fix submenu alignment */
-.sidebar.collapsed .ml-5 {
-    margin-left: 0;
-    display: flex;
+    padding: 12px;
     flex-direction: column;
     align-items: center;
+    gap: 6px;
 }
 
-/* Sidebar group titles (Module names) */
-.sidebar-group-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #ccc;
-    margin-left: 15px;
-}
-
-/* Hide module names when searching */
-.sidebar-search-results nav p.sidebar-group-title {
+.sidebar.collapsed .sidebar-nav-link .label {
     display: none;
 }
 
-/* Sidebar Search */
-.sidebar-search-input {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.sidebar.collapsed .submenu {
+    padding-left: 0;
 }
 
-/* Clear search input when mouse leaves sidebar */
-.sidebar:not(:hover) .sidebar-search-input {
-    value: "";
-}
-
-/* Sidebar Search Results */
-.sidebar-search-results {
-    padding: 10px;
-}
-
-/* Sidebar fixes for proper layout */
-.sidebar + .content {
-    transition: margin-left 0.3s ease-in-out;
-}
-
-.sidebar.collapsed + .content {
-    margin-left: 60px;
+.sidebar.collapsed .sidebar-nav-link svg {
+    margin: 0;
 }

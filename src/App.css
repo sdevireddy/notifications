@@ -1,0 +1,83 @@
+body {
+    padding-bottom: 3rem;
+  }
+  
+  .dynamicModules {
+    /* padding:62px 0 60px 216px; */
+    /*padding: 60px 0 0 0;*/
+    /* margin: 2rem 0 2rem 2rem; */
+    margin: 2rem 0 0;
+  }
+  
+  .extendedTabHeight {
+    /* padding:62px 0 60px 216px; */
+    padding: 50px 0 0 0;
+  }
+  
+  /* bootstrap overrides */
+  .modal {
+    display: block;
+  }
+  
+  .datepicker-panel {
+    position: absolute;
+    top: 103%;
+    display: flex;
+  }
+  
+  .datepicker-panel .react-datepicker {
+    display: flex;
+    opacity: 0.9;
+    z-index: 2000;
+  }
+  
+  .dropdown .dropdown-menu {
+    display: block;
+  }
+  
+  .dropdownHeader .dropdown-menu {
+    display: block;
+  }
+  
+  .main-container {
+    height: 100%;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 10px !important;
+  }
+  
+  .snackBarBackground .MuiSnackbarContent-root {
+    background-color: white;
+    color: black;
+  }
+  
+  input[disabled] {
+    -webkit-text-fill-color: currentcolor;
+  }
+  
+  *:focus {
+    outline: none !important;
+  }
+  
+  .keydown *:focus {
+    outline: var(--primary-main) solid !important;
+  }
+  
+  .sideBarSpacing .requestHome .requesthome-container {
+    top: 64px;
+  }
+  .sideBarSpacing .request-home-container .requesthome-content {
+    min-width: calc(100vw - 33%);
+    width: 100%;
+  }
+  
+  .sideBarSpacing .requestHome .requesthome-content .requesthome-welcome {
+    min-width: 63%;
+    width: 65%;
+  }
+  
+  .sideBarSpacing .request-home-container .requesthome-content .requesthome-welcome .requesthome-header {
+    min-width: initial;
+  }
+  

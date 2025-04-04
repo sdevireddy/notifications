@@ -1,48 +1,67 @@
+import { useState } from "react";
+import {
+    Bell, ChevronsLeft, Moon, Sun, Grid, Briefcase, Users, BookOpen, Megaphone, Mail, HelpCircle
+} from "lucide-react";
+import profileImg from "@/assets/profile-image.jpg";
+import PropTypes from "prop-types";
 import { useTheme } from "@/hooks/use-theme";
 
-import { Bell, ChevronsLeft, Moon, Search, Sun } from "lucide-react";
-
-import profileImg from "@/assets/profile-image.jpg";
-
-import PropTypes from "prop-types";
-
-export const Header = ({ collapsed, setCollapsed }) => { 
+export const Header = ({ collapsed, setCollapsed, setActiveModule }) => {
+    const [showModules, setShowModules] = useState(false);  
     const { theme, setTheme } = useTheme();
+
+    const modules = [
+        { name: "CRM", icon: <Briefcase size={24} className="text-blue-500" /> },
+        { name: "People", icon: <Users size={24} className="text-green-500" /> },
+        { name: "Books", icon: <BookOpen size={24} className="text-purple-500" /> },
+        { name: "Marketing", icon: <Megaphone size={24} className="text-orange-500" /> },
+        { name: "Campaigns", icon: <Mail size={24} className="text-pink-500" /> },
+        { name: "TicketDesk", icon: <HelpCircle size={24} className="text-red-500" /> },
+    ];
 
     return (
         <header className="relative z-10 flex h-[60px] items-center justify-between bg-white px-4 shadow-md transition-colors dark:bg-slate-900">
             <div className="flex items-center gap-x-3">
-                <button
-                    className="btn-ghost size-10"
-                    onClick={() => setCollapsed(!collapsed)}
-                >
-                    <ChevronsLeft className={collapsed && "rotate-180"} />
+                <button className="btn-ghost size-10" onClick={() => setCollapsed(!collapsed)}>
+                    <ChevronsLeft className={collapsed ? "rotate-180" : ""} />
                 </button>
-               
             </div>
             <div className="flex items-center gap-x-3">
-                <button
-                    className="btn-ghost size-10"
-                    onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-                >
-                    <Sun
-                        size={20}
-                        className="dark:hidden"
-                    />
-                    <Moon
-                        size={20}
-                        className="hidden dark:block"
-                    />
+                <button className="btn-ghost size-10" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+                    <Sun size={20} className="dark:hidden" />
+                    <Moon size={20} className="hidden dark:block" />
                 </button>
                 <button className="btn-ghost size-10">
                     <Bell size={20} />
                 </button>
+
+                <div className="relative">
+                    <button className="btn-ghost size-10" onClick={() => setShowModules(!showModules)}>
+                        <Grid size={20} />
+                    </button>
+                    {showModules && (
+                        <div className="absolute right-0 top-14 w-64 bg-white dark:bg-slate-800 shadow-lg rounded-lg p-4 grid grid-cols-3 gap-4 z-50">
+                            {modules.map((module, index) => (
+                                <div
+                                    key={index}
+                                    onClick={() => {
+                                        setActiveModule(module.name);
+                                        setShowModules(false);
+                                    }}
+                                    className="flex flex-col items-center justify-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer transition-all duration-200"
+                                >
+                                    {module.icon}
+                                    <p className="text-xs font-medium mt-1 text-gray-700 dark:text-gray-300">
+                                        {module.name}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
                 <button className="size-10 overflow-hidden rounded-full">
-                    <img
-                        src={profileImg}
-                        alt="profile image"
-                        className="size-full object-cover"
-                    />
+                    <img src={profileImg} alt="profile" className="size-full object-cover" />
                 </button>
             </div>
         </header>
@@ -52,4 +71,5 @@ export const Header = ({ collapsed, setCollapsed }) => {
 Header.propTypes = {
     collapsed: PropTypes.bool,
     setCollapsed: PropTypes.func,
+    setActiveModule: PropTypes.func,
 };

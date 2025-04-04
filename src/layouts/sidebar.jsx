@@ -1,67 +1,53 @@
-
-
 import { useState, useRef, useEffect, forwardRef } from "react";
 import { NavLink } from "react-router-dom";
-import { navbarLinks } from "@/constants";
+import {
+    Search, Briefcase, Users, User, Building, ChevronDown, ChevronRight, ArrowLeftCircle, BookOpen, Mail, Megaphone, HelpCircle
+} from "lucide-react";
 import logoLight from "@/assets/logo-light.svg";
 import logoDark from "@/assets/logo-dark.svg";
-import { 
-    Search, Briefcase, Users, User, Building, ChevronDown, ChevronRight, ArrowLeftCircle 
-} from "lucide-react";
 import PropTypes from "prop-types";
 
-// Import CSS
 import "@/styles/sidebar.css";
 import "@/styles/sidebar-theme.css";
 import "@/styles/sidebar-search.css";
 import "@/styles/sidebar-nav.css";
 
-export const Sidebar = forwardRef(({ collapsed }, ref) => {
+export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
     const [search, setSearch] = useState("");
     const [crmExpanded, setCrmExpanded] = useState(true);
     const [isCollapsed, setIsCollapsed] = useState(collapsed);
     const sidebarRef = useRef(null);
 
-    // Handle click outside sidebar to minimize
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
                 setIsCollapsed(true);
-                setSearch(""); // Clear search input when sidebar collapses
+                setSearch("");
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // Filter links based on search
-    const filteredLinks = navbarLinks
-        .flatMap(group => 
-            group.links.filter(link => link.label.toLowerCase().includes(search.toLowerCase()))
-        );
-
     return (
-        <aside 
-            ref={sidebarRef} 
-            className={`sidebar ${isCollapsed ? "collapsed" : ""}`} 
-            onMouseEnter={() => setIsCollapsed(false)} 
+        <aside
+            ref={sidebarRef}
+            className={`sidebar ${isCollapsed ? "collapsed" : ""}`}
+            onMouseEnter={() => setIsCollapsed(false)}
             onMouseLeave={() => setIsCollapsed(true)}
         >
-            {/* Expand Button (when minimized) */}
             {isCollapsed && (
                 <button className="expand-button" onClick={() => setIsCollapsed(false)}>
                     <ArrowLeftCircle size={24} />
                 </button>
             )}
 
-            {/* Logo Section */}
             <div className="flex gap-x-3 p-3 items-center">
                 <img src={logoLight} alt="Logo" className="dark:hidden" />
                 <img src={logoDark} alt="Logo" className="hidden dark:block" />
                 {!isCollapsed && <p className="text-lg font-medium">Logoipsum</p>}
             </div>
 
-            {/* Search Input */}
             <div className="p-3">
                 <div className="relative">
                     <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
@@ -75,20 +61,10 @@ export const Sidebar = forwardRef(({ collapsed }, ref) => {
                 </div>
             </div>
 
-            {/* Sidebar Navigation */}
             <div className="sidebar-group">
-                {/* CRM Module - Collapsible */}
-                {search === "" && (
+                {search === "" && activeModule === "CRM" && (
                     <nav>
                         <p className="sidebar-group-title">CRM</p>
-                        <button 
-                            className="sidebar-nav-link flex items-center w-full text-left" 
-                            onClick={() => setCrmExpanded(!crmExpanded)}
-                        >
-                            <Briefcase size={22} />
-                            {!isCollapsed && <p className="flex-1">CRM</p>}
-                            {!isCollapsed && (crmExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />)}
-                        </button>
                         {crmExpanded && (
                             <div className="ml-5">
                                 <NavLink to="/leads" className="sidebar-nav-link">
@@ -112,19 +88,62 @@ export const Sidebar = forwardRef(({ collapsed }, ref) => {
                     </nav>
                 )}
 
-                {/* Search Results (hide module names) */}
-                {search !== "" &&
-                    filteredLinks.map((link) => (
-                        <NavLink key={link.label} to={link.path} className="sidebar-nav-link">
-                            <link.icon size={22} />
-                            {!isCollapsed && <p>{link.label}</p>}
+                {search === "" && activeModule === "Books" && (
+                    <nav>
+                        <p className="sidebar-group-title">Books</p>
+                        <NavLink to="/library" className="sidebar-nav-link">
+                            <BookOpen size={22} />
+                            {!isCollapsed && <p>Library</p>}
                         </NavLink>
-                    ))
-                }
+                    </nav>
+                )}
+
+                {search === "" && activeModule === "Marketing" && (
+                    <nav>
+                        <p className="sidebar-group-title">Marketing</p>
+                        <NavLink to="/campaigns" className="sidebar-nav-link">
+                            <Megaphone size={22} />
+                            {!isCollapsed && <p>Ad Campaigns</p>}
+                        </NavLink>
+                    </nav>
+                )}
+
+                {search === "" && activeModule === "Campaigns" && (
+                    <nav>
+                        <p className="sidebar-group-title">Campaigns</p>
+                        <NavLink to="/email-campaigns" className="sidebar-nav-link">
+                            <Mail size={22} />
+                            {!isCollapsed && <p>Email Campaigns</p>}
+                        </NavLink>
+                    </nav>
+                )}
+
+                {search === "" && activeModule === "People" && (
+                    <nav>
+                        <p className="sidebar-group-title">People</p>
+                        <NavLink to="/users" className="sidebar-nav-link">
+                            <Users size={22} />
+                            {!isCollapsed && <p>Users</p>}
+                        </NavLink>
+                    </nav>
+                )}
+
+                {search === "" && activeModule === "TicketDesk" && (
+                    <nav>
+                        <p className="sidebar-group-title">Support</p>
+                        <NavLink to="/tickets" className="sidebar-nav-link">
+                            <HelpCircle size={22} />
+                            {!isCollapsed && <p>Tickets</p>}
+                        </NavLink>
+                    </nav>
+                )}
             </div>
         </aside>
     );
 });
 
 Sidebar.displayName = "Sidebar";
-Sidebar.propTypes = { collapsed: PropTypes.bool };
+Sidebar.propTypes = {
+    collapsed: PropTypes.bool,
+    activeModule: PropTypes.string,
+};

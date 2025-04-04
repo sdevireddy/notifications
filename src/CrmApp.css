@@ -1,0 +1,44 @@
+/* App.css */
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.sidebar {
+  width: 256px;
+  background: #2c3e50;
+  color: white;
+  position: fixed;
+  height: 100vh;
+  transition: transform 0.3s ease-in-out;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.sidebar-collapsed {
+  transform: translateX(-100%);
+}
+
+.module {
+  margin-bottom: 15px;
+  cursor: pointer;
+  padding: 10px;
+  background: #34495e;
+  border-radius: 5px;
+}
+
+.module-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.module:hover {
+  background: #1abc9c;
+}
