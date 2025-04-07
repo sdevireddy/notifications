@@ -1,0 +1,27 @@
+/* src/styles/reactflow-custom.css */
+
+/* Override node style */
+.react-flow__node {
+    font-family: 'Inter', sans-serif;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Edge style */
+  .react-flow__edge-path {
+    stroke-width: 2;
+  }
+  
+  /* Controls */
+  .react-flow__controls-button {
+    background-color: #f0f9ff !important;
+    border-radius: 8px !important;
+    margin: 4px;
+  }
+  
+  /* MiniMap Node Colors */
+  .react-flow__minimap-node {
+    stroke: #3b82f6;
+    fill: #bfdbfe;
+  }
+  

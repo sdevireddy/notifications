@@ -10,6 +10,7 @@ import Deals from "@/routes/deals/Deals";
 import Accounts from "@/routes/accounts/Accounts";
 import NewLead from "@/routes/leads/LeadCreationForm";
 import ViewLead from "@/routes/leads/ViewLeadPage";
+import Workflow from "@/routes/workflow/ReactFlowComponent";
 import "./App.css"
 
 
@@ -44,6 +45,10 @@ function App() {
                     element: <Deals/>,
                 },
                 {
+                    path: "workflow",
+                    element: <Workflow/>,
+                },
+                {
                     path: "Accounts",
                     element: <Accounts/>,
                 },
@@ -75,6 +80,7 @@ function App() {
                     path: "settings",
                     element: <h1 className="title">Settings</h1>,
                 },
+               
             ],
         },
     ]);

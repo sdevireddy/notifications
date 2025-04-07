@@ -21,9 +21,11 @@
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^18.3.1",
+    "react-flow-renderer": "^10.3.17",
     "react-icons": "^5.5.0",
     "react-router-dom": "^6.30.0",
     "react-select": "^5.10.1",
+    "reactflow": "^11.11.4",
     "recharts": "^2.12.7",
     "shadcn": "^2.4.0-canary.17",
     "tailwind-merge": "^2.5.2"

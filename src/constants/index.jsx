@@ -47,6 +47,11 @@ export const navbarLinks = [
                 icon: Handshake,  // A handshake icon represents deals/agreements
                 path: "/deals",
             },
+            {
+                label: "Workflow",
+                icon: Handshake,  // A handshake icon represents deals/agreements
+                path: "/workflow",
+            },
           /*  {
                 label: "Create Lead",
                 icon: UserPlus,

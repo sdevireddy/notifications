@@ -7,10 +7,10 @@ import logoLight from "@/assets/logo-light.svg";
 import logoDark from "@/assets/logo-dark.svg";
 import PropTypes from "prop-types";
 
-import "@/styles/sidebar.css";
-import "@/styles/sidebar-theme.css";
-import "@/styles/sidebar-search.css";
-import "@/styles/sidebar-nav.css";
+import "@/sidebar/sidebar.css";
+import "@/sidebar/sidebar-theme.css";
+import "@/sidebar/sidebar-search.css";
+import "@/sidebar/sidebar-nav.css";
 
 export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
     const [search, setSearch] = useState("");
@@ -82,6 +82,14 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
                                 <NavLink to="/deals" className="sidebar-nav-link">
                                     <Briefcase size={22} />
                                     {!isCollapsed && <p>Deals</p>}
+                                </NavLink>
+                                <NavLink to="/workflow" className="sidebar-nav-link">
+                                    <Briefcase size={22} />
+                                    {!isCollapsed && <p>Workflow</p>}
+                                </NavLink>
+                                <NavLink to="/settings" className="sidebar-nav-link">
+                                    <Briefcase size={22} />
+                                    {!isCollapsed && <p>Settings</p>}
                                 </NavLink>
                             </div>
                         )}

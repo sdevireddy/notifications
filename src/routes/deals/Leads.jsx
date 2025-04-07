@@ -3,7 +3,7 @@ import { cn } from "@/utils/cn";
 
 export const Sidebar = ({ collapsed, activeModule }) => {
     const subModules = {
-        CRM: ["Leads", "Deals", "Contacts"],
+        CRM: ["Leads", "Deals", "Contacts", "Workflow1"],
         People: ["Employees", "Teams", "Departments"],
         Books: ["Invoices", "Payments", "Reports"],
         Marketing: ["Ads", "SEO", "Analytics"],

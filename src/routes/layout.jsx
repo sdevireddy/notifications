@@ -3,14 +3,14 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useEffect, useRef, useState } from "react";
 
-import { Sidebar } from "@/layouts/sidebar";
-import { Header } from "@/layouts/header";
+import { Sidebar } from "@/sidebar/Sidebar";
+import { Header } from "@/header/Header";
 import { cn } from "@/utils/cn";
 
 const Layout = () => {
     const isDesktopDevice = useMediaQuery("(min-width: 768px)");
     const [collapsed, setCollapsed] = useState(!isDesktopDevice);
-    const [activeModule, setActiveModule] = useState(""); // Stores the selected module
+    const [activeModule, setActiveModule] = useState("CRM"); // Stores the selected module
 
     const sidebarRef = useRef(null);
 
