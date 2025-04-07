@@ -35,8 +35,10 @@ const Layout = () => {
             <Sidebar ref={sidebarRef} collapsed={collapsed} activeModule={activeModule} />
             <div className={cn("transition-[margin] duration-300", collapsed ? "md:ml-[70px]" : "md:ml-[50px]")}>
                 <Header collapsed={collapsed} setCollapsed={setCollapsed} setActiveModule={setActiveModule} />
-                <div className="h-[calc(100vh-60px)]">
+                <div className="w-[calc(100%-10px)] ml-[10px]">
+             
                     <Outlet />
+  
                 </div>
             </div>
         </div>

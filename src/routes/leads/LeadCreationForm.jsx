@@ -112,7 +112,7 @@ const LeadCreationForm = () => {
   };
 
   return (
-    <div className="container mx-auto">
+    <div className="w-[calc(100%-10px)] ml-[10px]">
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md">
         {/* Header */}
         <div className="flex items-center justify-between border-b p-4">

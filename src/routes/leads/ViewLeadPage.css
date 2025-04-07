@@ -1,3 +1,12 @@
+.lead-container {
+  padding: 2rem;
+}
+
+.lead-header {
+  margin-bottom: 1.5rem;
+}
+
+
 .view-lead-page {
     background-color: #f9fafb;
     padding: 20px;
