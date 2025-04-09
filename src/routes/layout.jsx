@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { Sidebar } from "@/sidebar/Sidebar";
 import { Header } from "@/header/Header";
 import { cn } from "@/utils/cn";
+import { ToastContainer } from 'react-toastify';
+
 
 const Layout = () => {
     const isDesktopDevice = useMediaQuery("(min-width: 768px)");
@@ -38,7 +40,10 @@ const Layout = () => {
                 <div className="w-[calc(100%-10px)] ml-[10px]">
              
                     <Outlet />
-  
+                    <ToastContainer position="top-right"
+  autoClose={300}
+  theme="colored" // or "dark"
+  hideProgressBar={false} />
                 </div>
             </div>
         </div>

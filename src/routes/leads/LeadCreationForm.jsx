@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiCamera,
@@ -9,6 +9,7 @@ import {
   FiArrowLeft,
 } from "react-icons/fi";
 import "./LeadCreationForm.css";
+import { toast } from 'react-toastify';
 
 const initialFormState = {
   firstName: "",
@@ -39,6 +40,8 @@ const LeadCreationForm = () => {
   const [leadImage, setLeadImage] = useState(null);
   const [formData, setFormData] = useState(initialFormState);
 
+  const submitActionRef = useRef("save");
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -56,19 +59,35 @@ const LeadCreationForm = () => {
     }));
   };
 
-  const saveLead = async () => {
-    try {
-      const response = await fetch("/api/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, image: leadImage }),
-      });
-      const data = await response.json();
-      console.log("Lead Saved:", data);
-    } catch (error) {
-      console.error("Error saving lead:", error);
-    }
+  const resetForm = () => {
+    setFormData(initialFormState);
+    setLeadImage(null);
+    //toast.info("Form reset to default values");
   };
+
+  const saveLead = async () => {
+      try {
+        const response = await fetch("http://localhost:8081/api/leads", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...formData, image: leadImage }),
+        });
+    
+        const data = await response.json();
+    
+        if (!response.ok) {
+          throw new Error("Failed to save lead");
+        }
+    
+        toast.success("Lead saved successfully!");
+        console.log("Lead Saved:", data);
+        return true;
+      } catch (error) {
+        toast.error(error.message || "Failed to save lead. Please try again.");
+        console.error("Error saving lead:", error);
+        return false;
+      }
+    };
 
   const convertLead = async () => {
     try {
@@ -86,7 +105,7 @@ const LeadCreationForm = () => {
 
   const cancelLead = async () => {
     try {
-      await fetch("/api/leads/cancel", {
+      await fetch("http://localhost:8080/api/leads/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "cancelled", lead: formData }),
@@ -100,15 +119,25 @@ const LeadCreationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await saveLead();
-    console.log("Submitted", formData);
+    const success = await saveLead();
+  
+    if (success) {
+      if (submitActionRef.current === "saveAndNew") {
+        resetForm();
+      } else if (submitActionRef.current === "save") {
+        resetForm();
+        navigate("/leads");
+      }
+    }
   };
 
   const handleSaveAndNew = async () => {
-    await saveLead();
-    setFormData(initialFormState);
-    setLeadImage(null);
-    console.log("Saved and cleared for new lead.");
+    const success = await saveLead();
+    if (success) {
+      setFormData(initialFormState);
+      setLeadImage(null);
+      toast.success("Lead saved. You can add a new one now!");
+    }
   };
 
   return (
@@ -145,33 +174,35 @@ const LeadCreationForm = () => {
             <h2 className="text-xl font-bold">Create Lead</h2>
           </div>
           <div className="space-x-3">
-            <button
+          <button
               type="button"
               className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              onClick={cancelLead}
+              onClick={resetForm}
             >
-              Cancel
+          Reset
             </button>
             <button
-              type="button"
+              type="submit"
               className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
               onClick={convertLead}
             >
               Convert
             </button>
             <button
-              type="button"
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-              onClick={handleSaveAndNew}
-            >
-              Save And New
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Save
-            </button>
+  type="submit"
+  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+  onClick={() => (submitActionRef.current = "saveAndNew")}
+>
+  Save And New
+</button>
+
+<button
+  type="submit"
+  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+  onClick={() => (submitActionRef.current = "save")}
+>
+  Save
+</button>
           </div>
         </div>
 
@@ -195,7 +226,7 @@ const LeadCreationForm = () => {
             name="leadSource"
             value={formData.leadSource}
             onChange={handleChange}
-            options={["Website", "Referral", "Cold Call", "Social Media"]}
+            options={["OTHER", "SOCIAL_MEDIA", "WEBSITE", "REFERRAL", "ADVERTISEMENT"]}
           />
           <Select
             label="Lead Status"

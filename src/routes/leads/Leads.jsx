@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
-  FiPhone, FiMessageSquare, FiEye, FiEdit, FiTrash, FiArrowUp, FiArrowDown,
+  FiPhone,
+  FiMessageSquare,
+  FiEye,
+  FiEdit,
+  FiTrash,
+  FiArrowUp,
+  FiArrowDown,
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import FiltersPopUp from "./FiltersPopup";
 import "./Leads.css";
+import axios from "axios";
 
 const Leads = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -16,19 +23,74 @@ const Leads = () => {
   const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" });
   const navigate = useNavigate();
 
+  const [leadsList, setLeadsList] = useState([]);
+  const [leads, setLeads] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetching leads from backend
+  useEffect(() => {
+    fetchLeads();
+  }, []);
+
+  const fetchLeads = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get("http://localhost:8081/api/leads");
+      const data = response.data.map((lead) => ({
+        id: lead.id,
+        name: `${lead.firstName ?? ""} ${lead.lastName ?? ""}`,
+        email: lead.email ?? "",
+        phone: lead.mobile ?? "",
+        leadSource: (lead.leadSource ?? "").toLowerCase(),
+        leadStatus: lead.leadStatus ?? "N/A",
+        createdDate: lead.createdDate ?? "N/A",
+        updatedDate: lead.updatedDate ?? "N/A",
+      }));
+      setLeadsList(data);
+      setLeads(data);
+      
+    } catch (err) {
+      console.error("Failed to fetch leads:", err);
+      setError("Failed to fetch leads");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteSelectedLeads = async () => {
+    try {
+      await fetch("http://localhost:8081/api/leads/delete-multiple", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(selectedLeads),
+      });
+      toast.success("Selected leads deleted");
+      fetchLeads(); // reload after deletion
+      setSelectedLeads([]);
+    } catch (err) {
+      toast.error("Error deleting leads");
+    }
+  };
+
+const deleteSingleLead = async (leadId) => {
+  try {
+    const res = await fetch(`http://localhost:8081/api/leads/${leadId}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) throw new Error("Delete failed");
+
+    toast.success("Lead deleted");
+    setSelectedLeads((prev) => prev.filter((id) => id !== leadId));
+    await fetchLeads(); // wait for leads to be updated before refresh
+  } catch (err) {
+    console.error("Error deleting lead:", err);
+    toast.error("Error deleting lead");
+  }
+};
+
+
   const toggleFilter = () => setIsFilterOpen(!isFilterOpen);
-
-  const initialLeads = Array.from({ length: 30 }, (_, index) => ({
-    id: index + 1,
-    name: `Lead ${index + 1}`,
-    phone: `(123) 456-78${index % 10}${index % 10}`,
-    email: `lead${index + 1}@example.com`,
-    location: ["NY", "CA", "TX", "FL", "WA"][index % 5],
-    leadScore: Math.floor(Math.random() * 100),
-    created: `2024-03-${(index % 30) + 1}`,
-  }));
-
-  const [leads, setLeads] = useState(initialLeads);
 
   const sortLeads = (key) => {
     let direction = "asc";
@@ -41,13 +103,17 @@ const Leads = () => {
   const sortedLeads = [...leads].sort((a, b) => {
     if (!sortConfig.key) return 0;
     return sortConfig.direction === "asc"
-      ? a[sortConfig.key] > b[sortConfig.key] ? 1 : -1
-      : a[sortConfig.key] < b[sortConfig.key] ? 1 : -1;
+      ? a[sortConfig.key] > b[sortConfig.key]
+        ? 1
+        : -1
+      : a[sortConfig.key] < b[sortConfig.key]
+      ? 1
+      : -1;
   });
 
   const filteredLeads = sortedLeads.filter((lead) =>
     Object.values(lead).some((value) =>
-      value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+      value?.toString().toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
 
@@ -112,7 +178,7 @@ const Leads = () => {
           <button
             className="bg-red-500 text-white px-4 py-2 rounded"
             disabled={selectedLeads.length === 0}
-            onClick={handleDelete}
+            onClick={deleteSelectedLeads}
           >
             Delete
           </button>
@@ -120,7 +186,7 @@ const Leads = () => {
       </div>
 
       <div className="overflow-x-auto mb-10">
-        <table className="w-full border text-center">
+        <table className="w-full border text-left">
           <thead className="bg-gray-200">
             <tr>
               <th className="p-2">
@@ -132,11 +198,23 @@ const Leads = () => {
                   checked={selectedLeads.length === leads.length}
                 />
               </th>
-              {["name", "phone", "email", "location", "leadScore", "created"].map((column) => (
-                <th key={column} className="p-2 cursor-pointer" onClick={() => sortLeads(column)}>
-                  <div className="flex items-center justify-center">
-                    {column.charAt(0).toUpperCase() + column.slice(1)}
-                    {sortConfig.key === column ? (
+              {[
+                { key: "name", label: "Name" },
+                { key: "phone", label: "Phone" },
+                { key: "email", label: "Email" },
+                { key: "leadSource", label: "Lead Source" },
+                { key: "leadStatus", label: "Lead Status" },
+                { key: "createdDate", label: "Created Date" },
+                { key: "updatedDate", label: "Updated Date" },
+              ].map((col) => (
+                <th
+                  key={col.key}
+                  className="p-2 cursor-pointer"
+                  onClick={() => sortLeads(col.key)}
+                >
+                  <div className="flex items-center justify-start">
+                    {col.label}
+                    {sortConfig.key === col.key ? (
                       sortConfig.direction === "asc" ? (
                         <FiArrowUp className="text-blue-500 ml-1" />
                       ) : (
@@ -148,7 +226,7 @@ const Leads = () => {
                   </div>
                 </th>
               ))}
-              <th className="p-2">Actions</th>
+              <th className="p-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -162,13 +240,14 @@ const Leads = () => {
                       onChange={() => handleCheckboxChange(lead.id)}
                     />
                   </td>
-                  <td className="p-4">{lead.name}</td>
+                  <td className="p-2">{lead.name}</td>
                   <td className="p-2">{lead.phone}</td>
                   <td className="p-2">{lead.email}</td>
-                  <td className="p-2">{lead.location}</td>
-                  <td className="p-2">{lead.leadScore}</td>
-                  <td className="p-2">{lead.created}</td>
-                  <td className="p-2 flex justify-center space-x-4">
+                  <td className="p-2">{lead.leadSource}</td>
+                  <td className="p-2">{lead.leadStatus}</td>
+                  <td className="p-2">{lead.createdDate}</td>
+                  <td className="p-2">{lead.updatedDate}</td>
+                  <td className="p-2 flex justify-start space-x-3">
                     <FaWhatsapp className="text-green-600 cursor-pointer" />
                     <FiPhone className="text-blue-500 cursor-pointer" />
                     <FiMessageSquare className="text-green-500 cursor-pointer" />
@@ -176,11 +255,14 @@ const Leads = () => {
                       <FiEye className="text-gray-600 cursor-pointer" />
                     </Link>
                     <FiEdit className="text-yellow-500 cursor-pointer" />
-                    <FiTrash className="text-red-500 cursor-pointer" />
+                    <FiTrash
+  className="text-red-500 cursor-pointer"
+  onClick={() => deleteSingleLead(lead.id)}
+/>
                   </td>
                 </tr>
                 <tr className="divider-row">
-                  <td colSpan="8" className="bg-gray-200 h-[1px] p-0"></td>
+                  <td colSpan="9" className="bg-gray-200 h-[1px] p-0"></td>
                 </tr>
               </React.Fragment>
             ))}

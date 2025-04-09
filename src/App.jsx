@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/contexts/theme-context";
 import Layout from "@/routes/layout";
 import DashboardPage from "@/routes/dashboard/page";
 import Leads from "@/routes/leads/Leads";
+import LeadsNew from "@/routes/leads/LeadsNew";
 import Contacts from "@/routes/contact/Contacts";
 import Deals from "@/routes/deals/Deals";
 import Accounts from "@/routes/accounts/Accounts";
@@ -12,6 +13,8 @@ import NewLead from "@/routes/leads/LeadCreationForm";
 import ViewLead from "@/routes/leads/ViewLeadPage";
 import Workflow from "@/routes/workflow/ReactFlowComponent";
 import "./App.css"
+import 'react-toastify/dist/ReactToastify.css'; 
+
 
 
 function App() {
@@ -34,7 +37,7 @@ function App() {
                 },
                 {
                     path: "Leads",
-                    element: <Leads/>,
+                    element: <LeadsNew/>,
                 },
                 {
                     path: "Contacts",
@@ -88,6 +91,7 @@ function App() {
     return (
         <ThemeProvider storageKey="theme">
             <RouterProvider router={router} />
+       
         </ThemeProvider>
     );
 }

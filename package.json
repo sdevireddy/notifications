@@ -25,6 +25,7 @@
     "react-icons": "^5.5.0",
     "react-router-dom": "^6.30.0",
     "react-select": "^5.10.1",
+    "react-toastify": "^11.0.5",
     "reactflow": "^11.11.4",
     "recharts": "^2.12.7",
     "shadcn": "^2.4.0-canary.17",
