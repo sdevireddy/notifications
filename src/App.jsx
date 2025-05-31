@@ -14,6 +14,7 @@ import ViewLead from "@/routes/leads/ViewLeadPage";
 import Workflow from "@/routes/workflow/ReactFlowComponent";
 import "./App.css"
 import 'react-toastify/dist/ReactToastify.css'; 
+import Lead from "./routes/leads/new/Lead";
 
 
 
@@ -37,7 +38,7 @@ function App() {
                 },
                 {
                     path: "Leads",
-                    element: <LeadsNew/>,
+                    element: <Lead/>,
                 },
                 {
                     path: "Contacts",
