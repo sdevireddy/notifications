@@ -7,7 +7,7 @@ import DashboardPage from "@/routes/dashboard/page";
 import Leads from "@/routes/leads/Leads";
 import LeadsNew from "@/routes/leads/LeadsNew";
 import Contacts from "@/routes/contact/Contacts";
-import Deals from "@/routes/deals/Deals";
+import DealsPage from "@/routes/deals/Deals";
 import Accounts from "@/routes/accounts/Accounts";
 import NewLead from "@/routes/leads/LeadCreationForm";
 import ViewLead from "@/routes/leads/ViewLeadPage";
@@ -45,7 +45,7 @@ function App() {
                 },
                 {
                     path: "Deals",
-                    element: <Deals/>,
+                    element: <DealsPage/>,
                 },
                 {
                     path: "workflow",
