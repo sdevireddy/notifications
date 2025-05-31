@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { Table } from "../../../components/Table";
 import { ChevronDown } from "lucide-react";
 const headers = [
-    { label: "Name", key: "name" },
+    { label: "Lead Name", key: "name" },
+    { label: "Company", key: "company" },
     { label: "Email", key: "email" },
     { label: "Phone", key: "phone" },
-    { label: "Company", key: "company" },
+      { label: "Lead Source", key: "source" },
+      { label: "Lead Owner", key: "owner" },
     { label: "Status", key: "status" },
     { label: "Created", key: "createdAt" },
 ];
@@ -30,6 +32,9 @@ const data = [
 
 const Lead = () => {
      const [open, setOpen] = useState(false);
+     const [recordsPerPage,setRecordsPerPage]=useState(10)
+     const [currentPage,setCurrentPage]=useState(1)
+     const [totalPages,setTotalPages]=useState(10)
     return (
         <section className="p-3">
             <div className="flex justify-between py-3">
@@ -84,6 +89,12 @@ const Lead = () => {
             <Table
                 headers={headers}
                 data={data}
+                setCurrentPage={setCurrentPage}
+                setRecordsPerPage={setRecordsPerPage}
+                setTotalPages={setTotalPages}
+                currentPage={currentPage}
+                recordsPerPage={recordsPerPage}
+                totalPages={totalPages}
             />
         </section>
     );
