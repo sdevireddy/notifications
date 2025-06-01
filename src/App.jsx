@@ -23,6 +23,7 @@ function App() {
         {
             path: "/",
             element: <Layout />,
+            
             children: [
                 {
                     index: true,
