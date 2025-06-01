@@ -510,7 +510,7 @@ export default function ZohoCRMContacts() {
 
                 <Separator />
 
-                {/* Additional Filters */}
+              {/* Additional Filters
                 <div className="space-y-3">
                   <div>
                     <Label className="text-sm font-medium">Touched/Untouched Records</Label>
@@ -569,10 +569,10 @@ export default function ZohoCRMContacts() {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-              </div>
+                </div> */}
+              </div> 
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> 
 
           {/* Status Filter Dropdown */}
           <Select defaultValue="all-statuses">
