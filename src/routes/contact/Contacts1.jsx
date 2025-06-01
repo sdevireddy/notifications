@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -83,6 +83,110 @@ const contacts = [
     lastContactType: "Meeting",
     lastActivity: "3 weeks ago",
   },
+  {
+    id: 4,
+    name: "Emily Chen",
+    company: "InnovateX",
+    jobTitle: "Marketing Director",
+    email: "emily.chen@innovatex.com",
+    phone: "+1 (555) 234-5678",
+    status: "active",
+    tags: ["Influencer", "Partner"],
+    lastContactDate: "2024-01-18",
+    lastContactType: "Email",
+    lastActivity: "1 day ago",
+  },
+  {
+    id: 5,
+    name: "Robert Kim",
+    company: "DataSystems",
+    jobTitle: "Product Manager",
+    email: "robert.kim@datasystems.io",
+    phone: "+1 (555) 876-5432",
+    status: "prospect",
+    tags: ["Technical", "Evaluation"],
+    lastContactDate: "2024-01-14",
+    lastContactType: "Call",
+    lastActivity: "4 days ago",
+  },
+  {
+    id: 6,
+    name: "Lisa Wong",
+    company: "CloudTech",
+    jobTitle: "CFO",
+    email: "lisa.wong@cloudtech.com",
+    phone: "+1 (555) 345-6789",
+    status: "customer",
+    tags: ["Enterprise", "Renewal"],
+    lastContactDate: "2024-01-05",
+    lastContactType: "Meeting",
+    lastActivity: "2 weeks ago",
+  },
+  {
+    id: 7,
+    name: "Lisa Wong1",
+    company: "CloudTech11",
+    jobTitle: "CFO1",
+    email: "lisa.wong@cloudtech.com",
+    phone: "+1 (555) 345-6789",
+    status: "customer",
+    tags: ["Enterprise", "Renewal"],
+    lastContactDate: "2024-01-05",
+    lastContactType: "Meeting",
+    lastActivity: "2 weeks ago",
+  },
+  {
+    id: 8,
+    name: "Lisa Wong2",
+    company: "CloudTech2",
+    jobTitle: "CFO2",
+    email: "lisa.wong@cloudtech.com",
+    phone: "+1 (555) 345-6789",
+    status: "customer",
+    tags: ["Enterprise", "Renewal"],
+    lastContactDate: "2024-01-05",
+    lastContactType: "Meeting",
+    lastActivity: "2 weeks ago",
+  },
+  {
+    id: 9,
+    name: "Lisa Wong3",
+    company: "CloudTech3",
+    jobTitle: "CFO3",
+    email: "lisa.wong@cloudtech.com",
+    phone: "+1 (555) 345-6789",
+    status: "customer",
+    tags: ["Enterprise", "Renewal"],
+    lastContactDate: "2024-01-05",
+    lastContactType: "Meeting",
+    lastActivity: "2 weeks ago",
+  },
+  {
+    id: 10,
+    name: "Lisa Wong4",
+    company: "CloudTech4",
+    jobTitle: "CFO",
+    email: "lisa.wong@cloudtech.com",
+    phone: "+1 (555) 345-6789",
+    status: "customer",
+    tags: ["Enterprise", "Renewal"],
+    lastContactDate: "2024-01-05",
+    lastContactType: "Meeting",
+    lastActivity: "2 weeks ago",
+  },
+  {
+    id: 11,
+    name: "Lisa Wong5",
+    company: "CloudTech5",
+    jobTitle: "CEO",
+    email: "lisa.wong@cloudtech.com",
+    phone: "+1 (555) 345-6789",
+    status: "customer",
+    tags: ["Enterprise", "Renewal"],
+    lastContactDate: "2024-01-05",
+    lastContactType: "Meeting",
+    lastActivity: "2 weeks ago",
+  },
 ]
 
 export default function ZohoCRMContacts() {
@@ -90,9 +194,11 @@ export default function ZohoCRMContacts() {
   const [recordsPerPage, setRecordsPerPage] = useState("25")
   const [isCreateContactOpen, setIsCreateContactOpen] = useState(false)
   const [createContactType, setCreateContactType] = useState(null)
-
   const [selectedContact, setSelectedContact] = useState(null)
   const [isContactDetailsOpen, setIsContactDetailsOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [filteredContacts, setFilteredContacts] = useState(contacts)
 
   // Filter states
   const [systemFiltersOpen, setSystemFiltersOpen] = useState(false)
@@ -100,14 +206,40 @@ export default function ZohoCRMContacts() {
   const [filterByFieldsOpen, setFilterByFieldsOpen] = useState(false)
   const [relatedModulesOpen, setRelatedModulesOpen] = useState(false)
 
+  // Filter contacts based on search term
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredContacts(contacts)
+    } else {
+      const term = searchTerm.toLowerCase()
+      setFilteredContacts(
+        contacts.filter(
+          (contact) =>
+            contact.name.toLowerCase().includes(term) ||
+            contact.company.toLowerCase().includes(term) ||
+            contact.email.toLowerCase().includes(term) ||
+            contact.phone.toLowerCase().includes(term)
+        )
+      )
+    }
+    setCurrentPage(1) // Reset to first page when search changes
+  }, [searchTerm])
+
+  // Pagination calculation
+  const recordsPerPageValue = parseInt(recordsPerPage)
+  const indexOfLastRecord = currentPage * recordsPerPageValue
+  const indexOfFirstRecord = indexOfLastRecord - recordsPerPageValue
+  const currentContacts = filteredContacts.slice(indexOfFirstRecord, indexOfLastRecord)
+  const totalPages = Math.ceil(filteredContacts.length / recordsPerPageValue)
+
   const handleContactSelect = (contactId) => {
     setSelectedContacts((prev) =>
-      prev.includes(contactId) ? prev.filter((id) => id !== contactId) : [...prev, contactId],
+      prev.includes(contactId) ? prev.filter((id) => id !== contactId) : [...prev, contactId]
     )
   }
 
   const handleSelectAll = () => {
-    setSelectedContacts(selectedContacts.length === contacts.length ? [] : contacts.map((contact) => contact.id))
+    setSelectedContacts(selectedContacts.length === currentContacts.length ? [] : currentContacts.map((contact) => contact.id))
   }
 
   return (
@@ -147,41 +279,41 @@ export default function ZohoCRMContacts() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem>
+                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Users className="mr-2 h-4 w-4" />
                   Mass Transfer Contacts
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Edit className="mr-2 h-4 w-4" />
                   Update Multiple Contacts
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete Selected
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Tag className="mr-2 h-4 w-4" />
                   Tag Contacts
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Send className="mr-2 h-4 w-4" />
                   Send Mass Email
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Plus className="mr-2 h-4 w-4" />
                   Add to Campaign
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <UserCheck className="mr-2 h-4 w-4" />
                   Approve Contacts
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Copy className="mr-2 h-4 w-4" />
                   Deduplicate Entries
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Download className="mr-2 h-4 w-4" />
                   Export Contact Data
                 </DropdownMenuItem>
@@ -197,7 +329,8 @@ export default function ZohoCRMContacts() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem
+                <DropdownMenuItem 
+                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
                   onClick={() => {
                     setCreateContactType("form")
                     setIsCreateContactOpen(true)
@@ -207,7 +340,8 @@ export default function ZohoCRMContacts() {
                   Create New Contact
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
+                <DropdownMenuItem 
+                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
                   onClick={() => {
                     setCreateContactType("import-contacts")
                     setIsCreateContactOpen(true)
@@ -216,7 +350,8 @@ export default function ZohoCRMContacts() {
                   <Upload className="mr-2 h-4 w-4" />
                   Import from Contacts
                 </DropdownMenuItem>
-                <DropdownMenuItem
+                <DropdownMenuItem 
+                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
                   onClick={() => {
                     setCreateContactType("import-notes")
                     setIsCreateContactOpen(true)
@@ -237,7 +372,12 @@ export default function ZohoCRMContacts() {
           {/* Search Input */}
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input placeholder="Search contacts..." className="pl-10" />
+            <Input 
+              placeholder="Search contacts..." 
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
 
           {/* Filter Button */}
@@ -258,19 +398,19 @@ export default function ZohoCRMContacts() {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pl-4 space-y-2">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="all-contacts" />
+                      <Checkbox id="all-contacts" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="all-contacts" className="text-sm">
                         All Contacts
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="my-contacts" />
+                      <Checkbox id="my-contacts" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="my-contacts" className="text-sm">
                         My Contacts
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="recently-created" />
+                      <Checkbox id="recently-created" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="recently-created" className="text-sm">
                         Recently Created
                       </Label>
@@ -286,19 +426,19 @@ export default function ZohoCRMContacts() {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pl-4 space-y-2">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="page-visits" />
+                      <Checkbox id="page-visits" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="page-visits" className="text-sm">
                         Page Visits
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="form-submissions" />
+                      <Checkbox id="form-submissions" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="form-submissions" className="text-sm">
                         Form Submissions
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="downloads" />
+                      <Checkbox id="downloads" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="downloads" className="text-sm">
                         Downloads
                       </Label>
@@ -314,25 +454,25 @@ export default function ZohoCRMContacts() {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pl-4 space-y-2">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="contact-name" />
+                      <Checkbox id="contact-name" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="contact-name" className="text-sm">
                         Contact Name
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="company" />
+                      <Checkbox id="company" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="company" className="text-sm">
                         Company
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="email" />
+                      <Checkbox id="email" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="email" className="text-sm">
                         Email
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="phone" />
+                      <Checkbox id="phone" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="phone" className="text-sm">
                         Phone
                       </Label>
@@ -348,19 +488,19 @@ export default function ZohoCRMContacts() {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pl-4 space-y-2">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="deals" />
+                      <Checkbox id="deals" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="deals" className="text-sm">
                         Deals
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="campaigns" />
+                      <Checkbox id="campaigns" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="campaigns" className="text-sm">
                         Campaigns
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="activities" />
+                      <Checkbox id="activities" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
                       <Label htmlFor="activities" className="text-sm">
                         Activities
                       </Label>
@@ -464,7 +604,7 @@ export default function ZohoCRMContacts() {
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-2xl font-semibold">All Contacts ({contacts.length})</CardTitle>
+                  <CardTitle className="text-2xl font-semibold">All Contacts ({filteredContacts.length})</CardTitle>
                   <p className="text-gray-600 mt-1">Manage and view all your contact information</p>
                 </div>
                 {selectedContacts.length > 0 && (
@@ -478,7 +618,14 @@ export default function ZohoCRMContacts() {
               {/* Table Header */}
               <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50 border-b text-sm font-medium text-gray-700">
                 <div className="col-span-1 flex items-center">
-                  <Checkbox checked={selectedContacts.length === contacts.length} onCheckedChange={handleSelectAll} />
+                  <Checkbox 
+                    checked={
+                      selectedContacts.length > 0 && 
+                      selectedContacts.length === currentContacts.length
+                    } 
+                    onCheckedChange={handleSelectAll}
+                    className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+                  />
                 </div>
                 <div className="col-span-3">Contact</div>
                 <div className="col-span-2">Company</div>
@@ -490,16 +637,21 @@ export default function ZohoCRMContacts() {
 
               {/* Contact Rows */}
               <div className="divide-y">
-                {contacts.map((contact) => (
+                {currentContacts.map((contact) => (
                   <div
                     key={contact.id}
-                    className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors"
+                    className={`grid grid-cols-12 gap-4 px-6 py-4 transition-colors ${
+                      selectedContacts.includes(contact.id) 
+                        ? 'bg-blue-50' 
+                        : 'hover:bg-gray-50'
+                    }`}
                   >
                     {/* Checkbox */}
                     <div className="col-span-1 flex items-center">
                       <Checkbox
                         checked={selectedContacts.includes(contact.id)}
                         onCheckedChange={() => handleContactSelect(contact.id)}
+                        className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
                       />
                     </div>
 
@@ -576,7 +728,8 @@ export default function ZohoCRMContacts() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem
+                          <DropdownMenuItem 
+                            className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
                             onClick={() => {
                               setSelectedContact(contact)
                               setIsContactDetailsOpen(true)
@@ -585,24 +738,24 @@ export default function ZohoCRMContacts() {
                             <User className="mr-2 h-4 w-4" />
                             View Profile
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                             <Edit className="mr-2 h-4 w-4" />
                             Edit Contact
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                             <Mail className="mr-2 h-4 w-4" />
                             Send Email
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                             <Phone className="mr-2 h-4 w-4" />
                             Call Contact
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                             <Tag className="mr-2 h-4 w-4" />
                             Add Tags
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
+                          <DropdownMenuItem className="text-red-600 data-[highlighted]:bg-red-100">
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete Contact
                           </DropdownMenuItem>
@@ -611,6 +764,36 @@ export default function ZohoCRMContacts() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Pagination */}
+              <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
+                <div className="text-sm text-gray-600">
+                  Showing {indexOfFirstRecord + 1} to{" "}
+                  {Math.min(indexOfLastRecord, filteredContacts.length)} of{" "}
+                  {filteredContacts.length} results
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </Button>
+                  <span className="px-3 py-1 bg-white border rounded-md text-sm">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage >= totalPages}
+                  >
+                    Next
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
