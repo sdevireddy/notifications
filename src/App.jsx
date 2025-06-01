@@ -40,6 +40,7 @@ function App() {
                 {
                     path: "Leads",
                     element: <LeadPage/>,
+
                 },
                 {
                     path: "Contacts",
