@@ -41,6 +41,7 @@ import {
 } from "lucide-react"
 import { ContactDetailsModal } from "@/components/contact-details-modal"
 import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar"
+import { useNavigate } from "react-router-dom"
 
 // Sample contact data
 const contacts = [
@@ -199,7 +200,7 @@ export default function LeadPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [filteredContacts, setFilteredContacts] = useState(contacts)
-
+  const navigate=useNavigate()
   // Filter states
   const [systemFiltersOpen, setSystemFiltersOpen] = useState(false)
   const [websiteActivityOpen, setWebsiteActivityOpen] = useState(false)
@@ -332,8 +333,7 @@ export default function LeadPage() {
                 <DropdownMenuItem 
                   className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
                   onClick={() => {
-                    setCreateContactType("form")
-                    setIsCreateContactOpen(true)
+                   navigate("/leads/create")
                   }}
                 >
                   <User className="mr-2 h-4 w-4" />
