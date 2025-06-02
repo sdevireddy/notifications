@@ -41,7 +41,6 @@ import {
 } from "lucide-react"
 import { ContactDetailsModal } from "@/components/contact-details-modal"
 import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar"
-import { useNavigate } from "react-router-dom"
 
 // Sample contact data
 const contacts = [
@@ -190,7 +189,7 @@ const contacts = [
   },
 ]
 
-export default function LeadPage() {
+export default function ZohoCRMContacts() {
   const [selectedContacts, setSelectedContacts] = useState([])
   const [recordsPerPage, setRecordsPerPage] = useState("25")
   const [isCreateContactOpen, setIsCreateContactOpen] = useState(false)
@@ -200,7 +199,7 @@ export default function LeadPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [filteredContacts, setFilteredContacts] = useState(contacts)
-  const navigate=useNavigate()
+
   // Filter states
   const [systemFiltersOpen, setSystemFiltersOpen] = useState(false)
   const [websiteActivityOpen, setWebsiteActivityOpen] = useState(false)
@@ -249,8 +248,8 @@ export default function LeadPage() {
       <div className="bg-white border-b px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Leads</h1>
-            <p className="text-sm text-gray-600 mt-1">Manage and organize your leads database</p>
+            <h1 className="text-2xl font-semibold text-gray-900">Contacts</h1>
+            <p className="text-sm text-gray-600 mt-1">Manage and organize your contact database</p>
           </div>
 
           <div className="flex items-center gap-3">
@@ -282,11 +281,11 @@ export default function LeadPage() {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Users className="mr-2 h-4 w-4" />
-                  Mass Transfer Leads
+                  Mass Transfer Contacts
                 </DropdownMenuItem>
                 <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Edit className="mr-2 h-4 w-4" />
-                  Update Multiple Leads
+                  Update Multiple Contacts
                 </DropdownMenuItem>
                 <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Trash2 className="mr-2 h-4 w-4" />
@@ -294,7 +293,7 @@ export default function LeadPage() {
                 </DropdownMenuItem>
                 <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Tag className="mr-2 h-4 w-4" />
-                  Tag Leads
+                  Tag Contacts
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
@@ -308,7 +307,7 @@ export default function LeadPage() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <UserCheck className="mr-2 h-4 w-4" />
-                  Approve Leads
+                  Approve Contacts
                 </DropdownMenuItem>
                 <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Copy className="mr-2 h-4 w-4" />
@@ -316,7 +315,7 @@ export default function LeadPage() {
                 </DropdownMenuItem>
                 <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Download className="mr-2 h-4 w-4" />
-                  Export Leads Data
+                  Export Contact Data
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -326,18 +325,19 @@ export default function LeadPage() {
               <DropdownMenuTrigger asChild>
                 <Button>
                   <Plus className="mr-2 h-4 w-4" />
-                  Create Lead <ChevronDown className="ml-2 h-4 w-4" />
+                  Create Contact <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem 
                   className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
                   onClick={() => {
-                   navigate("/leads/create")
+                    setCreateContactType("form")
+                    setIsCreateContactOpen(true)
                   }}
                 >
                   <User className="mr-2 h-4 w-4" />
-                  Create New Lead
+                  Create New Contact
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
@@ -348,7 +348,7 @@ export default function LeadPage() {
                   }}
                 >
                   <Upload className="mr-2 h-4 w-4" />
-                  Import from Leads
+                  Import from Contacts
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
@@ -604,8 +604,8 @@ export default function LeadPage() {
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-2xl font-semibold">All Leads ({filteredContacts.length})</CardTitle>
-                  <p className="text-gray-600 mt-1">Manage and view all your leads information</p>
+                  <CardTitle className="text-2xl font-semibold">All Contacts ({filteredContacts.length})</CardTitle>
+                  <p className="text-gray-600 mt-1">Manage and view all your contact information</p>
                 </div>
                 {selectedContacts.length > 0 && (
                   <Badge variant="secondary" className="text-sm">
@@ -627,11 +627,11 @@ export default function LeadPage() {
                     className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
                   />
                 </div>
-                <div className="col-span-3">Lead</div>
+                <div className="col-span-3">Contact</div>
                 <div className="col-span-2">Company</div>
                 <div className="col-span-1">Status</div>
-                <div className="col-span-2">Owner</div>
-                <div className="col-span-2">Source</div>
+                <div className="col-span-2">Tags</div>
+                <div className="col-span-2">Last Contact</div>
                 <div className="col-span-1 text-center">Actions</div>
               </div>
 
