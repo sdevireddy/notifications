@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "../../components/layout/ui/button";
 import { Card, CardContent } from "../../components/layout/ui/card";
 import { Badge } from "../../components/layout/ui/badge";
@@ -22,8 +22,21 @@ import {
   CalendarDaysIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  Search,
+  Filter,
+  ChevronRight,
 } from "lucide-react";
+import { Checkbox } from "../../components/layout/ui/checkbox"
+// import {Seperator}  from "../../components/layout/ui/seperator"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../components/layout/ui/collapsible"
 import { format } from "date-fns";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "../../components/layout/ui/dropdown-menu"
 
 // Initial data (using the 30 samples generated previously for better demonstration)
 const initialDeals = [
@@ -497,6 +510,11 @@ export default function DealsPage() {
   const [isAddDealOpen, setIsAddDealOpen] = useState(false);
   const [sortField, setSortField] = useState("dealName");
   const [sortDirection, setSortDirection] = useState("asc");
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filteredContacts, setFilteredContacts] = useState(deals)
+  const [websiteActivityOpen, setWebsiteActivityOpen] = useState(false)
+  const [filterByFieldsOpen, setFilterByFieldsOpen] = useState(false)
+  const [relatedModulesOpen, setRelatedModulesOpen] = useState(false)
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -517,6 +535,29 @@ export default function DealsPage() {
     campaignSource: "",
     description: "",
   });
+
+//searching
+
+useEffect(() => {
+  if (!searchTerm) {
+    setFilteredContacts(deals)
+  } else {
+    const term = searchTerm.toLowerCase()
+    setFilteredContacts(
+      deals.filter(
+        (deal) =>
+          deal.dealName.toLowerCase().includes(term) ||
+          deal.accountName.toLowerCase().includes(term) ||
+          deal.stage.toLowerCase().includes(term) ||
+          deal.dealOwner.toLowerCase().includes(term)
+      )
+    )
+  }
+  setCurrentPage(1) // Reset to first page when search changes
+}, [searchTerm])
+
+
+
 
   // Calculate pipeline summary
   const pipelineStages = useMemo(() => {
@@ -579,6 +620,7 @@ export default function DealsPage() {
   const indexOfFirstDeal = indexOfLastDeal - dealsPerPage;
   const currentDeals = sortedDeals.slice(indexOfFirstDeal, indexOfLastDeal);
   const totalPages = Math.ceil(sortedDeals.length / dealsPerPage);
+  const [systemFiltersOpen, setSystemFiltersOpen] = useState(false)
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -897,7 +939,156 @@ export default function DealsPage() {
             </Card>
           ))}
         </div>
+        <div className="flex items-center justify-between">
+          {/* Horizontal Filter Bar */}
+      <div className="bg-white items-start border-b px-6 py-8">
+        <div className="flex place-items-start  gap-4">
+          {/* Search Input */}
+          <div className="relative flex max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input 
+              placeholder="Search Deals..." 
+              className="pl-10 px-24"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          </div>
+          </div>
+          {/* Filter Button */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Filter className="h-4 w-4" />
+                Filter
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-80">
+              <div className="p-4 space-y-4">
+                {/* System Defined Filters */}
+                <Collapsible open={systemFiltersOpen} onOpenChange={setSystemFiltersOpen}>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+                    <span className="font-medium text-sm">System Defined Filters</span>
+                    {systemFiltersOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pl-4 space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="all-contacts" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="all-contacts" className="text-sm">
+                        All Contacts
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="my-contacts" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="my-contacts" className="text-sm">
+                        My Contacts
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="recently-created" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="recently-created" className="text-sm">
+                        Recently Created
+                      </Label>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
 
+                {/* Website Activity */}
+                <Collapsible open={websiteActivityOpen} onOpenChange={setWebsiteActivityOpen}>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+                    <span className="font-medium text-sm">Website Activity</span>
+                    {websiteActivityOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pl-4 space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="page-visits" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="page-visits" className="text-sm">
+                        Page Visits
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="form-submissions" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="form-submissions" className="text-sm">
+                        Form Submissions
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="downloads" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="downloads" className="text-sm">
+                        Downloads
+                      </Label>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* Filter By Fields */}
+                <Collapsible open={filterByFieldsOpen} onOpenChange={setFilterByFieldsOpen}>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+                    <span className="font-medium text-sm">Filter By Fields</span>
+                    {filterByFieldsOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pl-4 space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="contact-name" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="contact-name" className="text-sm">
+                        Contact Name
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="company" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="company" className="text-sm">
+                        Company
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="email" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="email" className="text-sm">
+                        Email
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="phone" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="phone" className="text-sm">
+                        Phone
+                      </Label>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* Filter By Related Modules */}
+                <Collapsible open={relatedModulesOpen} onOpenChange={setRelatedModulesOpen}>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+                    <span className="font-medium text-sm">Filter By Related Modules</span>
+                    {relatedModulesOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pl-4 space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="deals" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="deals" className="text-sm">
+                        Deals
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="campaigns" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="campaigns" className="text-sm">
+                        Campaigns
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="activities" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Label htmlFor="activities" className="text-sm">
+                        Activities
+                      </Label>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* <Separator /> */}
+          </div> 
+            </DropdownMenuContent>
+          </DropdownMenu> 
+
+          </div>
         {/* Active Deals Table */}
         <Card className="shadow-sm">
           <CardContent className="p-6">
@@ -1012,7 +1203,7 @@ export default function DealsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {currentDeals.map((deal) => (
+                  {filteredContacts.map((deal) => (
                     <tr key={deal.id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-4 px-4">
                         <div>

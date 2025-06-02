@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Sidebar } from "@/sidebar/Sidebar";
 import { Header } from "@/header/Header";
-import { cn } from "@/utils/cn";
+import { cn } from "../util/cn";
 import { ToastContainer } from 'react-toastify';
 
 
