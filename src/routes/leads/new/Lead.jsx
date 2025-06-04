@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -206,7 +206,7 @@ export default function LeadPage() {
   const [websiteActivityOpen, setWebsiteActivityOpen] = useState(false)
   const [filterByFieldsOpen, setFilterByFieldsOpen] = useState(false)
   const [relatedModulesOpen, setRelatedModulesOpen] = useState(false)
-
+const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
   // Filter contacts based on search term
   useEffect(() => {
     if (!searchTerm) {
@@ -230,7 +230,6 @@ export default function LeadPage() {
   const recordsPerPageValue = parseInt(recordsPerPage)
   const indexOfLastRecord = currentPage * recordsPerPageValue
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPageValue
-  const currentContacts = filteredContacts.slice(indexOfFirstRecord, indexOfLastRecord)
   const totalPages = Math.ceil(filteredContacts.length / recordsPerPageValue)
 
   const handleContactSelect = (contactId) => {
@@ -238,10 +237,30 @@ export default function LeadPage() {
       prev.includes(contactId) ? prev.filter((id) => id !== contactId) : [...prev, contactId]
     )
   }
+  const sortedContacts = useMemo(() => {
+  if (!sortConfig.key) return filteredContacts;
+
+  return [...filteredContacts].sort((a, b) => {
+    const aVal = a[sortConfig.key]?.toString().toLowerCase() || '';
+    const bVal = b[sortConfig.key]?.toString().toLowerCase() || '';
+    if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+}, [filteredContacts, sortConfig]);
+
+const currentContacts = sortedContacts.slice(indexOfFirstRecord, indexOfLastRecord);
 
   const handleSelectAll = () => {
     setSelectedContacts(selectedContacts.length === currentContacts.length ? [] : currentContacts.map((contact) => contact.id))
   }
+const handleSort = (key) => {
+  setSortConfig((prev) =>
+    prev.key === key
+      ? { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' }
+      : { key, direction: 'asc' }
+  );
+};
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -373,7 +392,7 @@ export default function LeadPage() {
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input 
-              placeholder="Search contacts..." 
+              placeholder="Search leads..." 
               className="pl-10"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -454,7 +473,7 @@ export default function LeadPage() {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pl-4 space-y-2">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="contact-name" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+                      <Checkbox id="contact-name" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border border-gray-400" />
                       <Label htmlFor="contact-name" className="text-sm">
                         Contact Name
                       </Label>
@@ -614,6 +633,7 @@ export default function LeadPage() {
                 )}
               </div>
             </CardHeader>
+            {/* table */}
             <CardContent className="p-0">
               {/* Table Header */}
               <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50 border-b text-sm font-medium text-gray-700">
@@ -627,11 +647,11 @@ export default function LeadPage() {
                     className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
                   />
                 </div>
-                <div className="col-span-3">Lead</div>
-                <div className="col-span-2">Company</div>
-                <div className="col-span-1">Status</div>
-                <div className="col-span-2">Owner</div>
-                <div className="col-span-2">Source</div>
+              <div className="col-span-3 cursor-pointer" onClick={() => handleSort('name')}> Lead {sortConfig.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</div>
+                <div className="col-span-2 cursor-pointer" onClick={() => handleSort('company')}>Company {sortConfig.key === 'company' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</div>
+                <div className="col-span-1 cursor-pointer" onClick={() => handleSort('status')}>Status {sortConfig.key === 'status' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</div>
+                <div className="col-span-2 cursor-pointer" onClick={() => handleSort('owner')}>Owner {sortConfig.key === 'owner' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</div>
+                <div className="col-span-2 cursor-pointer" onClick={() => handleSort('source')}>Source {sortConfig.key === 'sourcex' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</div>
                 <div className="col-span-1 text-center">Actions</div>
               </div>
 
@@ -651,7 +671,7 @@ export default function LeadPage() {
                       <Checkbox
                         checked={selectedContacts.includes(contact.id)}
                         onCheckedChange={() => handleContactSelect(contact.id)}
-                        className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+                        className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border border-gray-400"
                       />
                     </div>
 
