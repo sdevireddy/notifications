@@ -17,6 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Contacts1 from "./routes/contact/Contacts1";
 import LeadPage from "./routes/leads/new/Lead";
 import LeadCreationForm from "./routes/leads/LeadCreationForm";
+import ViewLeadPage from "./routes/leads/ViewLeadPage";
 
 function App() {
     const router = createBrowserRouter([
@@ -43,6 +44,10 @@ function App() {
                 {
                     path: "leads/create",
                     element: <LeadCreationForm />,
+                },
+                 {
+                    path: "leads/profile/:id",
+                    element: <ViewLeadPage />,
                 },
                 {
                     path: "Contacts",
