@@ -41,7 +41,8 @@ import {
 } from "lucide-react"
 import { ContactDetailsModal } from "@/components/contact-details-modal"
 import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import LeadStatsCard from "./Card"
 
 // Sample contact data
 const contacts = [
@@ -249,6 +250,7 @@ const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
   });
 }, [filteredContacts, sortConfig]);
 
+
 const currentContacts = sortedContacts.slice(indexOfFirstRecord, indexOfLastRecord);
 
   const handleSelectAll = () => {
@@ -271,7 +273,7 @@ const handleSort = (key) => {
             <h1 className="text-2xl font-semibold text-gray-900">Leads</h1>
             <p className="text-sm text-gray-600 mt-1">Manage and organize your leads database</p>
           </div>
-
+       
           <div className="flex items-center gap-3">
             {/* Records per page */}
             <div className="flex items-center gap-2">
@@ -384,7 +386,7 @@ const handleSort = (key) => {
           </div>
         </div>
       </div>
-
+ {/* <LeadStatsCard active={100} inactive={50} total={150}/>    */}
       {/* Horizontal Filter Bar */}
       <div className="bg-white border-b px-6 py-4">
         <div className="flex items-center gap-4">
@@ -681,7 +683,9 @@ const handleSort = (key) => {
                         <User className="h-5 w-5 text-gray-500" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">{contact.name}</h3>
+                        <Link to={`/leads/profile/${contact.id}`}>
+                        <h3 className="font-semibold text-gray-900 hover:text-blue-500 cursor-pointer" >{contact.name}</h3>
+                        </Link>
                         <p className="text-sm text-gray-600">{contact.email}</p>
                         <p className="text-sm text-gray-500">{contact.phone}</p>
                       </div>
