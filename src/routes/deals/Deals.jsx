@@ -520,6 +520,14 @@ export default function DealsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [dealsPerPage, setDealsPerPage] = useState(10); // Default items per page
 
+  const [filterOwners, setFilterOwners] = useState([]);
+const [filterStages, setFilterStages] = useState([]);
+const [filterTypes, setFilterTypes] = useState([]);
+const [filterLeadSources, setFilterLeadSources] = useState([]);
+const [filterCompanies, setFilterCompanies] = useState([]);
+const [filterProbability, setFilterProbability] = useState([0, 100]);
+const [filterAmount, setFilterAmount] = useState([0, Math.max(...deals.map(d => d.amount))]);
+
   // Form state
   const [formData, setFormData] = useState({
     dealOwner: "",
@@ -539,6 +547,8 @@ export default function DealsPage() {
 //searching
 
 useEffect(() => {
+  let filtered = deals;
+
   if (!searchTerm) {
     setFilteredContacts(deals)
   } else {
@@ -553,9 +563,72 @@ useEffect(() => {
       )
     )
   }
-  setCurrentPage(1) // Reset to first page when search changes
+  filtered = filtered.filter(
+    deal => deal.amount >= filterAmount[0] && deal.amount <= filterAmount[1]
+  );
+
+  setFilteredContacts(filtered); // <-- Correct: update filteredContacts
+  setCurrentPage(1);            // <-- Correct: reset to first page
+// ...rest of code... // Reset to first page when search changes
 }, [searchTerm])
 
+useEffect(() => {
+  let filtered = deals;
+
+  // Search filter
+  if (searchTerm) {
+    const term = searchTerm.toLowerCase();
+    filtered = filtered.filter(
+      (deal) =>
+        deal.dealName.toLowerCase().includes(term) ||
+        deal.accountName.toLowerCase().includes(term) ||
+        deal.stage.toLowerCase().includes(term) ||
+        deal.dealOwner.toLowerCase().includes(term)
+    );
+  }
+
+  // Owner filter
+  if (filterOwners.length > 0) {
+    filtered = filtered.filter(deal => filterOwners.includes(deal.dealOwner));
+  }
+  // Stage filter
+  if (filterStages.length > 0) {
+    filtered = filtered.filter(deal => filterStages.includes(deal.stage));
+  }
+  // Type filter
+  if (filterTypes.length > 0) {
+    filtered = filtered.filter(deal => filterTypes.includes(deal.type));
+  }
+  // Lead Source filter
+  if (filterLeadSources.length > 0) {
+    filtered = filtered.filter(deal => filterLeadSources.includes(deal.leadSource));
+  }
+  // Company filter
+  if (filterCompanies.length > 0) {
+    filtered = filtered.filter(deal => filterCompanies.includes(deal.accountName));
+  }
+  // Probability filter
+  filtered = filtered.filter(
+    deal => deal.probability >= filterProbability[0] && deal.probability <= filterProbability[1]
+  );
+  // Amount filter
+  filtered = filtered.filter(
+    deal => deal.amount >= filterAmount[0] && deal.amount <= filterAmount[1]
+  );
+  setFilteredContacts(filtered); // <-- Correct: update filteredContacts
+  setCurrentPage(filtered);
+  setCurrentPage(1);
+}, [
+  searchTerm,
+  deals,
+  filterOwners,
+  filterStages,
+  filterTypes,
+  filterLeadSources,
+  filterCompanies,
+  filterProbability,
+  filterAmount
+]);
 
 
 
@@ -600,7 +673,7 @@ useEffect(() => {
 
   // Sorting logic
   const sortedDeals = useMemo(() => {
-    return [...deals].sort((a, b) => {
+    return [...filteredContacts].sort((a, b) => {
       let aValue = a[sortField];
       let bValue = b[sortField];
 
@@ -613,7 +686,7 @@ useEffect(() => {
       if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
-  }, [deals, sortField, sortDirection]);
+  }, [filteredContacts, sortField, sortDirection]);
 
   // Pagination logic
   const indexOfLastDeal = currentPage * dealsPerPage;
@@ -691,6 +764,11 @@ useEffect(() => {
   const formatDate = (dateString) => {
     return format(new Date(dateString), "yyyy-MM-dd");
   };
+  const uniqueOwners = useMemo(() => [...new Set(deals.map(d => d.dealOwner))], [deals]);
+const uniqueStages = useMemo(() => [...new Set(deals.map(d => d.stage))], [deals]);
+const uniqueTypes = useMemo(() => [...new Set(deals.map(d => d.type))], [deals]);
+const uniqueLeadSources = useMemo(() => [...new Set(deals.map(d => d.leadSource))], [deals]);
+const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))], [deals]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -939,9 +1017,9 @@ useEffect(() => {
             </Card>
           ))}
         </div>
-        <div className="flex items-center justify-between">
+        <div className=" items-center justify-between">
           {/* Horizontal Filter Bar */}
-      <div className="bg-white items-start border-b px-6 py-8">
+      <div className=" flex justify-between bg-white items-start border-b px-6 py-8">
         <div className="flex place-items-start  gap-4">
           {/* Search Input */}
           <div className="relative flex max-w-md">
@@ -954,141 +1032,150 @@ useEffect(() => {
             />
           </div>
           </div>
-          </div>
           {/* Filter Button */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <Filter className="h-4 w-4" />
-                Filter
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-80">
-              <div className="p-4 space-y-4">
-                {/* System Defined Filters */}
-                <Collapsible open={systemFiltersOpen} onOpenChange={setSystemFiltersOpen}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
-                    <span className="font-medium text-sm">System Defined Filters</span>
-                    {systemFiltersOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="all-contacts" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="all-contacts" className="text-sm">
-                        All Contacts
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="my-contacts" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="my-contacts" className="text-sm">
-                        My Contacts
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="recently-created" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="recently-created" className="text-sm">
-                        Recently Created
-                      </Label>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="outline" className="gap-2">
+      <Filter className="h-4 w-4" />
+      Filter
+    </Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="start" className="w-80">
+    <div className="p-4 space-y-4">
 
-                {/* Website Activity */}
-                <Collapsible open={websiteActivityOpen} onOpenChange={setWebsiteActivityOpen}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
-                    <span className="font-medium text-sm">Website Activity</span>
-                    {websiteActivityOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="page-visits" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="page-visits" className="text-sm">
-                        Page Visits
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="form-submissions" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="form-submissions" className="text-sm">
-                        Form Submissions
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="downloads" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="downloads" className="text-sm">
-                        Downloads
-                      </Label>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
+{/* Deal Owner Filter */}
+<Collapsible open={systemFiltersOpen} onOpenChange={setSystemFiltersOpen}>
+  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+    <span className="font-medium text-sm">Deal Owner</span>
+    {systemFiltersOpen ? <ChevronDownIcon className="h-4 w-4" /> : <ChevronRightIcon className="h-4 w-4" />}
+  </CollapsibleTrigger>
+  <CollapsibleContent className="pl-4 space-y-2">
+    {uniqueOwners.map((owner) => (
+      <div className="flex items-center space-x-2" key={owner}>
+        <Checkbox
+          id={`owner-${owner}`}
+          checked={filterOwners.includes(owner)}
+          onCheckedChange={(checked) => {
+            setFilterOwners((prev) =>
+              checked ? [...prev, owner] : prev.filter((o) => o !== owner)
+            );
+          }}
+        />
+        <Label htmlFor={`owner-${owner}`} className="text-sm">
+          {owner}
+        </Label>
+      </div>
+    ))}
+  </CollapsibleContent>
+</Collapsible>
 
-                {/* Filter By Fields */}
-                <Collapsible open={filterByFieldsOpen} onOpenChange={setFilterByFieldsOpen}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
-                    <span className="font-medium text-sm">Filter By Fields</span>
-                    {filterByFieldsOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="contact-name" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="contact-name" className="text-sm">
-                        Contact Name
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="company" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="company" className="text-sm">
-                        Company
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="email" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="email" className="text-sm">
-                        Email
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="phone" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="phone" className="text-sm">
-                        Phone
-                      </Label>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
+{/* Stage Filter */}
+<Collapsible open={filterByFieldsOpen} onOpenChange={setFilterByFieldsOpen}>
+  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+    <span className="font-medium text-sm">Stage</span>
+    {filterByFieldsOpen ? <ChevronDownIcon className="h-4 w-4" /> : <ChevronRightIcon className="h-4 w-4" />}
+  </CollapsibleTrigger>
+  <CollapsibleContent className="pl-4 space-y-2">
+    {uniqueStages.map((stage) => (
+      <div className="flex items-center space-x-2" key={stage}>
+        <Checkbox
+          id={`stage-${stage}`}
+          checked={filterStages.includes(stage)}
+          onCheckedChange={(checked) => {
+            setFilterStages((prev) =>
+              checked ? [...prev, stage] : prev.filter((s) => s !== stage)
+            );
+          }}
+        />
+        <Label htmlFor={`stage-${stage}`} className="text-sm">
+          {stage}
+        </Label>
+      </div>
+    ))}
+  </CollapsibleContent>
+</Collapsible>
 
-                {/* Filter By Related Modules */}
-                <Collapsible open={relatedModulesOpen} onOpenChange={setRelatedModulesOpen}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
-                    <span className="font-medium text-sm">Filter By Related Modules</span>
-                    {relatedModulesOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="deals" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="deals" className="text-sm">
-                        Deals
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="campaigns" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="campaigns" className="text-sm">
-                        Campaigns
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="activities" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="activities" className="text-sm">
-                        Activities
-                      </Label>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
+{/* Type Filter */}
+<Collapsible open={relatedModulesOpen} onOpenChange={setRelatedModulesOpen}>
+  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+    <span className="font-medium text-sm">Type</span>
+    {relatedModulesOpen ? <ChevronDownIcon className="h-4 w-4" /> : <ChevronRightIcon className="h-4 w-4" />}
+  </CollapsibleTrigger>
+  <CollapsibleContent className="pl-4 space-y-2">
+    {uniqueTypes.map((type) => (
+      <div className="flex items-center space-x-2" key={type}>
+        <Checkbox
+          id={`type-${type}`}
+          checked={filterTypes.includes(type)}
+          onCheckedChange={(checked) => {
+            setFilterTypes((prev) =>
+              checked ? [...prev, type] : prev.filter((t) => t !== type)
+            );
+          }}
+        />
+        <Label htmlFor={`type-${type}`} className="text-sm">
+          {type}
+        </Label>
+      </div>
+    ))}
+  </CollapsibleContent>
+</Collapsible>
 
-                {/* <Separator /> */}
-          </div> 
-            </DropdownMenuContent>
-          </DropdownMenu> 
+{/* Lead Source Filter */}
+<Collapsible>
+  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+    <span className="font-medium text-sm">Lead Source</span>
+    <ChevronRightIcon className="h-4 w-4" />
+  </CollapsibleTrigger>
+  <CollapsibleContent className="pl-4 space-y-2">
+    {uniqueLeadSources.map((source) => (
+      <div className="flex items-center space-x-2" key={source}>
+        <Checkbox
+          id={`leadSource-${source}`}
+          checked={filterLeadSources.includes(source)}
+          onCheckedChange={(checked) => {
+            setFilterLeadSources((prev) =>
+              checked ? [...prev, source] : prev.filter((s) => s !== source)
+            );
+          }}
+        />
+        <Label htmlFor={`leadSource-${source}`} className="text-sm">
+          {source}
+        </Label>
+      </div>
+    ))}
+  </CollapsibleContent>
+</Collapsible>
 
-          </div>
+{/* Company Filter */}
+<Collapsible>
+  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+    <span className="font-medium text-sm">Company</span>
+    <ChevronRightIcon className="h-4 w-4" />
+  </CollapsibleTrigger>
+  <CollapsibleContent className="pl-4 space-y-2">
+    {uniqueCompanies.map((company) => (
+      <div className="flex items-center space-x-2" key={company}>
+        <Checkbox
+          id={`company-${company}`}
+          checked={filterCompanies.includes(company)}
+          onCheckedChange={(checked) => {
+            setFilterCompanies((prev) =>
+              checked ? [...prev, company] : prev.filter((c) => c !== company)
+            );
+          }}
+        />
+        <Label htmlFor={`company-${company}`} className="text-sm">
+          {company}
+        </Label>
+      </div>
+    ))}
+  </CollapsibleContent>
+</Collapsible>
+</div>
+</DropdownMenuContent></DropdownMenu>  
+</div>
+
         {/* Active Deals Table */}
         <Card className="shadow-sm">
           <CardContent className="p-6">
@@ -1257,8 +1344,7 @@ useEffect(() => {
                   ))}
                 </tbody>
               </table>
-            </div>
-
+              </div>           
             {/* Pagination Controls */}
             <div className="mt-6 flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -1304,7 +1390,8 @@ useEffect(() => {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
-  );
+        </div>
+        </div>
+        </div>
+      );
 }
