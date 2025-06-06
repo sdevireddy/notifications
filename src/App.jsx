@@ -12,11 +12,12 @@ import Accounts from "@/routes/accounts/Accounts";
 import NewLead from "@/routes/leads/LeadCreationForm";
 import ViewLead from "@/routes/leads/ViewLeadPage";
 import Workflow from "@/routes/workflow/ReactFlowComponent";
-import "./App.css"
-import 'react-toastify/dist/ReactToastify.css'; 
+import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
 import Contacts1 from "./routes/contact/Contacts1";
-
-
+import LeadPage from "./routes/leads/new/Lead";
+import LeadCreationForm from "./routes/leads/LeadCreationForm";
+import ViewLeadPage from "./routes/leads/ViewLeadPage";
 
 function App() {
     const router = createBrowserRouter([
@@ -37,33 +38,41 @@ function App() {
                     element: <h1 className="title">Reports</h1>,
                 },
                 {
-                    path: "Leads",
-                    element: <LeadsNew/>,
+                    path: "leads",
+                    element: <LeadPage />,
+                },
+                {
+                    path: "leads/create",
+                    element: <LeadCreationForm />,
+                },
+                 {
+                    path: "leads/profile/:id",
+                    element: <ViewLeadPage />,
                 },
                 {
                     path: "Contacts",
-                   /* element: <Contacts/>, */
-                   element: <Contacts1 />,
+                    /* element: <Contacts/>, */
+                    element: <Contacts1 />,
                 },
                 {
                     path: "Deals",
-                    element: <DealsPage/>,
+                    element: <DealsPage />,
                 },
                 {
                     path: "workflow",
-                    element: <Workflow/>,
+                    element: <Workflow />,
                 },
                 {
                     path: "Accounts",
-                    element: <Accounts/>,
+                    element: <Accounts />,
                 },
                 {
                     path: "LeadCreationForm",
-                    element: <NewLead/>,
+                    element: <NewLead />,
                 },
                 {
                     path: "ViewLead/:id",
-                    element: <ViewLead/>,
+                    element: <ViewLead />,
                 },
                 {
                     path: "verified-customers",
@@ -85,7 +94,6 @@ function App() {
                     path: "settings",
                     element: <h1 className="title">Settings</h1>,
                 },
-               
             ],
         },
     ]);
@@ -93,7 +101,6 @@ function App() {
     return (
         <ThemeProvider storageKey="theme">
             <RouterProvider router={router} />
-       
         </ThemeProvider>
     );
 }
