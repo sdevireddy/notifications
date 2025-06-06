@@ -276,7 +276,68 @@ const handleSort = (key) => {
        
           <div className="flex items-center gap-3">
             {/* Records per page */}
-            <div className="flex items-center gap-2">
+         <Button className={"bg-black text-white"} onClick={() => {
+                   navigate("/leads/create")
+                  }}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Lead 
+                </Button>
+            {/* Create Contact Dropdown */}
+            {/* <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+               
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem 
+                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
+                  onClick={() => {
+                   navigate("/leads/create")
+                  }}
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  Create New Lead
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
+                  onClick={() => {
+                    setCreateContactType("import-contacts")
+                    setIsCreateContactOpen(true)
+                  }}
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  Import from Leads
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
+                  onClick={() => {
+                    setCreateContactType("import-notes")
+                    setIsCreateContactOpen(true)
+                  }}
+                >
+                  <FileText className="mr-2 h-4 w-4" />
+                  Import from Notes
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu> */}
+          </div>
+        </div>
+      </div>
+ {/* <LeadStatsCard active={100} inactive={50} total={150}/>    */}
+      {/* Horizontal Filter Bar */}
+      <div className="bg-white border-b px-6 py-4">
+        <div className="flex items-center gap-4">
+          {/* Search Input */}
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input 
+              placeholder="Search leads..." 
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+  <div className="flex items-center gap-2">
               <Label htmlFor="records-per-page" className="text-sm">
                 Records per page:
               </Label>
@@ -331,9 +392,15 @@ const handleSort = (key) => {
                   <UserCheck className="mr-2 h-4 w-4" />
                   Approve Leads
                 </DropdownMenuItem>
-                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
+                {/* <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Copy className="mr-2 h-4 w-4" />
                   Deduplicate Entries
+                </DropdownMenuItem> */}
+                 <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900" onClick={()=>{
+                    navigate("/import/leads")
+                 }}>
+                  <Download className="mr-2 h-4 w-4" />
+                  Import Leads Data
                 </DropdownMenuItem>
                 <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                   <Download className="mr-2 h-4 w-4" />
@@ -341,65 +408,6 @@ const handleSort = (key) => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            {/* Create Contact Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Lead <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem 
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                  onClick={() => {
-                   navigate("/leads/create")
-                  }}
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  Create New Lead
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                  onClick={() => {
-                    setCreateContactType("import-contacts")
-                    setIsCreateContactOpen(true)
-                  }}
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  Import from Leads
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                  onClick={() => {
-                    setCreateContactType("import-notes")
-                    setIsCreateContactOpen(true)
-                  }}
-                >
-                  <FileText className="mr-2 h-4 w-4" />
-                  Import from Notes
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </div>
- {/* <LeadStatsCard active={100} inactive={50} total={150}/>    */}
-      {/* Horizontal Filter Bar */}
-      <div className="bg-white border-b px-6 py-4">
-        <div className="flex items-center gap-4">
-          {/* Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input 
-              placeholder="Search leads..." 
-              className="pl-10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
 
           {/* Filter Button */}
           <DropdownMenu>
