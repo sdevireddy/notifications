@@ -7,7 +7,7 @@ import logoLight from "@/assets/logo-light.svg";
 import logoDark from "@/assets/logo-dark.svg";
 import PropTypes from "prop-types";
 
-import "@/sidebar/sidebar.css";
+import "@/sidebar/Sidebar.css";
 import "@/sidebar/sidebar-theme.css";
 import "@/sidebar/sidebar-search.css";
 import "@/sidebar/sidebar-nav.css";
