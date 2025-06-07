@@ -43,7 +43,7 @@ const Layout = () => {
   <div className={cn(
     "transition-all duration-300 sticky overflow-y-auto top-0 h-[100vh] z-10"
   )}
-   onMouseEnter={() => isDesktopDevice && setCollapsed(false)}
+        onMouseEnter={() => isDesktopDevice && setCollapsed(false)}
         onMouseLeave={() => isDesktopDevice && setCollapsed(true)}>
     <Sidebar
       ref={sidebarRef}
