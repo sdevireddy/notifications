@@ -36,7 +36,7 @@ const Leads = () => {
   const fetchLeads = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("http://localhost:8081/api/leads");
+      const response = await axios.get("http://ec2-13-49-44-42.eu-north-1.compute.amazonaws.com:8081/api/leads");
       const data = response.data.map((lead) => ({
         id: lead.id,
         name: `${lead.firstName ?? ""} ${lead.lastName ?? ""}`,
