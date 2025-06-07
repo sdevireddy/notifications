@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "../../components/layout/ui/button";
 import { Card, CardContent } from "../../components/layout/ui/card";
 import { Badge } from "../../components/layout/ui/badge";
@@ -22,8 +22,21 @@ import {
   CalendarDaysIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  Search,
+  Filter,
+  ChevronRight,
 } from "lucide-react";
+import { Checkbox } from "../../components/layout/ui/checkbox"
+// import {Seperator}  from "../../components/layout/ui/seperator"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../components/layout/ui/collapsible"
 import { format } from "date-fns";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "../../components/layout/ui/dropdown-menu"
 
 // Initial data (using the 30 samples generated previously for better demonstration)
 const initialDeals = [
@@ -497,10 +510,23 @@ export default function DealsPage() {
   const [isAddDealOpen, setIsAddDealOpen] = useState(false);
   const [sortField, setSortField] = useState("dealName");
   const [sortDirection, setSortDirection] = useState("asc");
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filteredContacts, setFilteredContacts] = useState(deals)
+  const [websiteActivityOpen, setWebsiteActivityOpen] = useState(false)
+  const [filterByFieldsOpen, setFilterByFieldsOpen] = useState(false)
+  const [relatedModulesOpen, setRelatedModulesOpen] = useState(false)
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [dealsPerPage, setDealsPerPage] = useState(10); // Default items per page
+
+  const [filterOwners, setFilterOwners] = useState([]);
+const [filterStages, setFilterStages] = useState([]);
+const [filterTypes, setFilterTypes] = useState([]);
+const [filterLeadSources, setFilterLeadSources] = useState([]);
+const [filterCompanies, setFilterCompanies] = useState([]);
+const [filterProbability, setFilterProbability] = useState([0, 100]);
+const [filterAmount, setFilterAmount] = useState([0, Math.max(...deals.map(d => d.amount))]);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -517,6 +543,94 @@ export default function DealsPage() {
     campaignSource: "",
     description: "",
   });
+
+//searching
+
+useEffect(() => {
+  let filtered = deals;
+
+  if (!searchTerm) {
+    setFilteredContacts(deals)
+  } else {
+    const term = searchTerm.toLowerCase()
+    setFilteredContacts(
+      deals.filter(
+        (deal) =>
+          deal.dealName.toLowerCase().includes(term) ||
+          deal.accountName.toLowerCase().includes(term) ||
+          deal.stage.toLowerCase().includes(term) ||
+          deal.dealOwner.toLowerCase().includes(term)
+      )
+    )
+  }
+  filtered = filtered.filter(
+    deal => deal.amount >= filterAmount[0] && deal.amount <= filterAmount[1]
+  );
+
+  setFilteredContacts(filtered); // <-- Correct: update filteredContacts
+  setCurrentPage(1);            // <-- Correct: reset to first page
+// ...rest of code... // Reset to first page when search changes
+}, [searchTerm])
+
+useEffect(() => {
+  let filtered = deals;
+
+  // Search filter
+  if (searchTerm) {
+    const term = searchTerm.toLowerCase();
+    filtered = filtered.filter(
+      (deal) =>
+        deal.dealName.toLowerCase().includes(term) ||
+        deal.accountName.toLowerCase().includes(term) ||
+        deal.stage.toLowerCase().includes(term) ||
+        deal.dealOwner.toLowerCase().includes(term)
+    );
+  }
+
+  // Owner filter
+  if (filterOwners.length > 0) {
+    filtered = filtered.filter(deal => filterOwners.includes(deal.dealOwner));
+  }
+  // Stage filter
+  if (filterStages.length > 0) {
+    filtered = filtered.filter(deal => filterStages.includes(deal.stage));
+  }
+  // Type filter
+  if (filterTypes.length > 0) {
+    filtered = filtered.filter(deal => filterTypes.includes(deal.type));
+  }
+  // Lead Source filter
+  if (filterLeadSources.length > 0) {
+    filtered = filtered.filter(deal => filterLeadSources.includes(deal.leadSource));
+  }
+  // Company filter
+  if (filterCompanies.length > 0) {
+    filtered = filtered.filter(deal => filterCompanies.includes(deal.accountName));
+  }
+  // Probability filter
+  filtered = filtered.filter(
+    deal => deal.probability >= filterProbability[0] && deal.probability <= filterProbability[1]
+  );
+  // Amount filter
+  filtered = filtered.filter(
+    deal => deal.amount >= filterAmount[0] && deal.amount <= filterAmount[1]
+  );
+  setFilteredContacts(filtered); // <-- Correct: update filteredContacts
+  setCurrentPage(filtered);
+  setCurrentPage(1);
+}, [
+  searchTerm,
+  deals,
+  filterOwners,
+  filterStages,
+  filterTypes,
+  filterLeadSources,
+  filterCompanies,
+  filterProbability,
+  filterAmount
+]);
+
+
 
   // Calculate pipeline summary
   const pipelineStages = useMemo(() => {
@@ -559,7 +673,7 @@ export default function DealsPage() {
 
   // Sorting logic
   const sortedDeals = useMemo(() => {
-    return [...deals].sort((a, b) => {
+    return [...filteredContacts].sort((a, b) => {
       let aValue = a[sortField];
       let bValue = b[sortField];
 
@@ -572,13 +686,14 @@ export default function DealsPage() {
       if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
-  }, [deals, sortField, sortDirection]);
+  }, [filteredContacts, sortField, sortDirection]);
 
   // Pagination logic
   const indexOfLastDeal = currentPage * dealsPerPage;
   const indexOfFirstDeal = indexOfLastDeal - dealsPerPage;
   const currentDeals = sortedDeals.slice(indexOfFirstDeal, indexOfLastDeal);
   const totalPages = Math.ceil(sortedDeals.length / dealsPerPage);
+  const [systemFiltersOpen, setSystemFiltersOpen] = useState(false)
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -649,6 +764,11 @@ export default function DealsPage() {
   const formatDate = (dateString) => {
     return format(new Date(dateString), "yyyy-MM-dd");
   };
+  const uniqueOwners = useMemo(() => [...new Set(deals.map(d => d.dealOwner))], [deals]);
+const uniqueStages = useMemo(() => [...new Set(deals.map(d => d.stage))], [deals]);
+const uniqueTypes = useMemo(() => [...new Set(deals.map(d => d.type))], [deals]);
+const uniqueLeadSources = useMemo(() => [...new Set(deals.map(d => d.leadSource))], [deals]);
+const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))], [deals]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -897,6 +1017,164 @@ export default function DealsPage() {
             </Card>
           ))}
         </div>
+        <div className=" items-center justify-between">
+          {/* Horizontal Filter Bar */}
+      <div className=" flex justify-between bg-white items-start border-b px-6 py-8">
+        <div className="flex place-items-start  gap-4">
+          {/* Search Input */}
+          <div className="relative flex max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input 
+              placeholder="Search Deals..." 
+              className="pl-10 px-24"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          </div>
+          {/* Filter Button */}
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="outline" className="gap-2">
+      <Filter className="h-4 w-4" />
+      Filter
+    </Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="start" className="w-80">
+    <div className="p-4 space-y-4">
+
+{/* Deal Owner Filter */}
+<Collapsible open={systemFiltersOpen} onOpenChange={setSystemFiltersOpen}>
+  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+    <span className="font-medium text-sm">Deal Owner</span>
+    {systemFiltersOpen ? <ChevronDownIcon className="h-4 w-4" /> : <ChevronRightIcon className="h-4 w-4" />}
+  </CollapsibleTrigger>
+  <CollapsibleContent className="pl-4 space-y-2">
+    {uniqueOwners.map((owner) => (
+      <div className="flex items-center space-x-2" key={owner}>
+        <Checkbox
+          id={`owner-${owner}`}
+          checked={filterOwners.includes(owner)}
+          onCheckedChange={(checked) => {
+            setFilterOwners((prev) =>
+              checked ? [...prev, owner] : prev.filter((o) => o !== owner)
+            );
+          }}
+        />
+        <Label htmlFor={`owner-${owner}`} className="text-sm">
+          {owner}
+        </Label>
+      </div>
+    ))}
+  </CollapsibleContent>
+</Collapsible>
+
+{/* Stage Filter */}
+<Collapsible open={filterByFieldsOpen} onOpenChange={setFilterByFieldsOpen}>
+  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+    <span className="font-medium text-sm">Stage</span>
+    {filterByFieldsOpen ? <ChevronDownIcon className="h-4 w-4" /> : <ChevronRightIcon className="h-4 w-4" />}
+  </CollapsibleTrigger>
+  <CollapsibleContent className="pl-4 space-y-2">
+    {uniqueStages.map((stage) => (
+      <div className="flex items-center space-x-2" key={stage}>
+        <Checkbox
+          id={`stage-${stage}`}
+          checked={filterStages.includes(stage)}
+          onCheckedChange={(checked) => {
+            setFilterStages((prev) =>
+              checked ? [...prev, stage] : prev.filter((s) => s !== stage)
+            );
+          }}
+        />
+        <Label htmlFor={`stage-${stage}`} className="text-sm">
+          {stage}
+        </Label>
+      </div>
+    ))}
+  </CollapsibleContent>
+</Collapsible>
+
+{/* Type Filter */}
+<Collapsible open={relatedModulesOpen} onOpenChange={setRelatedModulesOpen}>
+  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+    <span className="font-medium text-sm">Type</span>
+    {relatedModulesOpen ? <ChevronDownIcon className="h-4 w-4" /> : <ChevronRightIcon className="h-4 w-4" />}
+  </CollapsibleTrigger>
+  <CollapsibleContent className="pl-4 space-y-2">
+    {uniqueTypes.map((type) => (
+      <div className="flex items-center space-x-2" key={type}>
+        <Checkbox
+          id={`type-${type}`}
+          checked={filterTypes.includes(type)}
+          onCheckedChange={(checked) => {
+            setFilterTypes((prev) =>
+              checked ? [...prev, type] : prev.filter((t) => t !== type)
+            );
+          }}
+        />
+        <Label htmlFor={`type-${type}`} className="text-sm">
+          {type}
+        </Label>
+      </div>
+    ))}
+  </CollapsibleContent>
+</Collapsible>
+
+{/* Lead Source Filter */}
+<Collapsible>
+  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+    <span className="font-medium text-sm">Lead Source</span>
+    <ChevronRightIcon className="h-4 w-4" />
+  </CollapsibleTrigger>
+  <CollapsibleContent className="pl-4 space-y-2">
+    {uniqueLeadSources.map((source) => (
+      <div className="flex items-center space-x-2" key={source}>
+        <Checkbox
+          id={`leadSource-${source}`}
+          checked={filterLeadSources.includes(source)}
+          onCheckedChange={(checked) => {
+            setFilterLeadSources((prev) =>
+              checked ? [...prev, source] : prev.filter((s) => s !== source)
+            );
+          }}
+        />
+        <Label htmlFor={`leadSource-${source}`} className="text-sm">
+          {source}
+        </Label>
+      </div>
+    ))}
+  </CollapsibleContent>
+</Collapsible>
+
+{/* Company Filter */}
+<Collapsible>
+  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+    <span className="font-medium text-sm">Company</span>
+    <ChevronRightIcon className="h-4 w-4" />
+  </CollapsibleTrigger>
+  <CollapsibleContent className="pl-4 space-y-2">
+    {uniqueCompanies.map((company) => (
+      <div className="flex items-center space-x-2" key={company}>
+        <Checkbox
+          id={`company-${company}`}
+          checked={filterCompanies.includes(company)}
+          onCheckedChange={(checked) => {
+            setFilterCompanies((prev) =>
+              checked ? [...prev, company] : prev.filter((c) => c !== company)
+            );
+          }}
+        />
+        <Label htmlFor={`company-${company}`} className="text-sm">
+          {company}
+        </Label>
+      </div>
+    ))}
+  </CollapsibleContent>
+</Collapsible>
+</div>
+</DropdownMenuContent></DropdownMenu>  
+</div>
 
         {/* Active Deals Table */}
         <Card className="shadow-sm">
@@ -1012,7 +1290,7 @@ export default function DealsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {currentDeals.map((deal) => (
+                  {filteredContacts.map((deal) => (
                     <tr key={deal.id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-4 px-4">
                         <div>
@@ -1066,8 +1344,7 @@ export default function DealsPage() {
                   ))}
                 </tbody>
               </table>
-            </div>
-
+              </div>           
             {/* Pagination Controls */}
             <div className="mt-6 flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -1113,7 +1390,8 @@ export default function DealsPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
-  );
+        </div>
+        </div>
+        </div>
+      );
 }

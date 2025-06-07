@@ -134,7 +134,7 @@ const LeadCreationForm = () => {
     };
 
     return (
-        <div className="ml-[10px] w-[calc(100%-10px)] text-sm">
+        <div className=" w-[calc(100%-10px)] text-sm">
             <form
                 onSubmit={handleSubmit}
                 className="rounded-lg bg-white shadow-md"
