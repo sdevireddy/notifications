@@ -38,12 +38,15 @@ import {
   Copy,
   FileText,
   Users,
+  XIcon,
 } from "lucide-react"
 import { ContactDetailsModal } from "@/components/contact-details-modal"
 import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar"
 import { Link, useNavigate } from "react-router-dom"
 import LeadStatsCard from "./Card"
 import FiltersPopUp from "../FiltersPopup"
+import useFetchData from "../../../hooks/useFetchData"
+import { apiSummary } from "../../../common/apiSummary"
 
 // Sample contact data
 const contacts = [
@@ -193,9 +196,67 @@ const contacts = [
 ]
 
 export default function LeadPage() {
+    const [leads,setLeads]=useState([])
+    const leadsData={
+    "totalRecords": 2,
+    "pageSize": 10,
+    "currentPage": 0,
+    "totalPages": 1,
+    "data": [
+        {
+            "id": 1,
+            "leadOwner": "sales_user1",
+            "company": "Tech Innovations Pvt Ltd",
+            "firstName": "Jane",
+            "lastName": "Smith",
+            "title": "Marketing Manager",
+            "email": "jane.smith@ab.com",
+            "fax": "123-456-7890",
+            "mobile": "+91-9876543210",
+            "website": "tt",
+            "leadSource": "OTHER",
+            "leadStatus": "New",
+            "industry": "Technology",
+            "noOfEmployees": 150,
+            "annualRevenue": 1200000.5,
+            "rating": "Hot",
+            "emailOptOut": false,
+            "skypeId": "jane.smith.skype",
+            "secondaryEmail": "jane.smith.alt@abc.com",
+            "twitter": "@janesmith",
+            "description": "Interested in premium product plan",
+            "converted": false
+        },
+        {
+            "id": 2,
+            "leadOwner": "sales_user1",
+            "company": "Tech Innovations Pvt Ltd",
+            "firstName": "Jane",
+            "lastName": "Smith",
+            "title": "Marketing Manager",
+            "email": "jane.smith@example.com",
+            "fax": "123-456-7890",
+            "mobile": "+91-9876543210",
+            "website": "https://techinnovations.com",
+            "leadSource": "OTHER",
+            "leadStatus": "New",
+            "industry": "Technology",
+            "noOfEmployees": 150,
+            "annualRevenue": 1200000.5,
+            "rating": "Hot",
+            "emailOptOut": false,
+            "skypeId": "jane.smith.skype",
+            "secondaryEmail": "jane.smith.alt@example.com",
+            "twitter": "@janesmith",
+            "description": "Interested in premium product plan",
+            "converted": false
+        }
+    ]
+}
     const [filterModelOpen,setFilterModelOpen]=useState(false)
   const [selectedContacts, setSelectedContacts] = useState([])
   const [recordsPerPage, setRecordsPerPage] = useState("25")
+  const [totalRecord,setTotalRecords]=useState(0)
   const [isCreateContactOpen, setIsCreateContactOpen] = useState(false)
   const [createContactType, setCreateContactType] = useState(null)
   const [selectedContact, setSelectedContact] = useState(null)
@@ -203,14 +264,14 @@ export default function LeadPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [filteredContacts, setFilteredContacts] = useState(contacts)
+  const [emailModel,setEmailModel]=useState(false)
   const navigate=useNavigate()
-  // Filter states
-  const [systemFiltersOpen, setSystemFiltersOpen] = useState(false)
-  const [websiteActivityOpen, setWebsiteActivityOpen] = useState(false)
-  const [filterByFieldsOpen, setFilterByFieldsOpen] = useState(false)
-  const [relatedModulesOpen, setRelatedModulesOpen] = useState(false)
 const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
-  // Filter contacts based on search term
+  useEffect(()=>{
+    setLeads(leadsData?.data)
+    setCurrentPage(leadsData?.currentPage)
+    setTotalRecords(leadsData?.totalRecords)
+  },[])
   useEffect(() => {
     if (!searchTerm) {
       setFilteredContacts(contacts)
@@ -233,7 +294,7 @@ const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
   const recordsPerPageValue = parseInt(recordsPerPage)
   const indexOfLastRecord = currentPage * recordsPerPageValue
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPageValue
-  const totalPages = Math.ceil(filteredContacts.length / recordsPerPageValue)
+  const totalPages = Math.ceil(totalRecord / recordsPerPageValue)
 
   const handleContactSelect = (contactId) => {
     setSelectedContacts((prev) =>
@@ -337,44 +398,6 @@ const handleSort = (key) => {
                   <Plus className="mr-2 h-4 w-4" />
                   Create Lead 
                 </Button>
-            {/* Create Contact Dropdown */}
-            {/* <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-               
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem 
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                  onClick={() => {
-                   navigate("/leads/create")
-                  }}
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  Create New Lead
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                  onClick={() => {
-                    setCreateContactType("import-contacts")
-                    setIsCreateContactOpen(true)
-                  }}
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  Import from Leads
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                  onClick={() => {
-                    setCreateContactType("import-notes")
-                    setIsCreateContactOpen(true)
-                  }}
-                >
-                  <FileText className="mr-2 h-4 w-4" />
-                  Import from Notes
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu> */}
           </div>
         </div>
       </div>
@@ -443,21 +466,7 @@ const handleSort = (key) => {
             onClearSelection={() => setSelectedContacts([])}
           />
 
-          {/* Contact List */}
-          {/* <Card>
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-2xl font-semibold">All Leads ({filteredContacts.length})</CardTitle>
-                  <p className="text-gray-600 mt-1">Manage and view all your leads information</p>
-                </div>
-                {selectedContacts.length > 0 && (
-                  <Badge variant="secondary" className="text-sm">
-                    {selectedContacts.length} selected
-                  </Badge>
-                )}
-              </div>
-            </CardHeader>
+         
             {/* table */}
             <CardContent className="p-0">
               {/* Table Header */}
@@ -482,11 +491,11 @@ const handleSort = (key) => {
 
               {/* Contact Rows */}
               <div className="divide-y bg-white">
-                {currentContacts.map((contact) => (
+                {leads?.map((lead) => (
                   <div
-                    key={contact.id}
+                    key={lead.id}
                     className={`grid grid-cols-12 gap-4 px-6 py-4 transition-colors ${
-                      selectedContacts.includes(contact.id) 
+                      selectedContacts.includes(lead.id) 
                         ? 'bg-blue-50' 
                         : 'hover:bg-gray-100'
                     }`}
@@ -494,73 +503,72 @@ const handleSort = (key) => {
                     {/* Checkbox */}
                     <div className="col-span-1 flex items-center">
                       <Checkbox
-                        checked={selectedContacts.includes(contact.id)}
-                        onCheckedChange={() => handleContactSelect(contact.id)}
+                        checked={selectedContacts.includes(lead.id)}
+                        onCheckedChange={() => handleContactSelect(lead.id)}
                         className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border border-gray-400"
                       />
                     </div>
 
                     {/* Contact Info */}
-                    <div className="col-span-3 flex items-center gap-3">
+                    <div className="col-span-3  flex items-center gap-3">
                       <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                         <User className="h-5 w-5 text-gray-500" />
                       </div>
                       <div>
-                        <Link to={`/leads/profile/${contact.id}`}>
-                        <h3 className="font-semibold text-gray-900 hover:text-blue-500 cursor-pointer" >{contact.name}</h3>
+                        <Link to={`/leads/profile/${lead.id}`}>
+                        <h3 className="font-semibold text-gray-900 hover:text-blue-500 cursor-pointer" >{lead.firstName +" "+ lead.lastName}</h3>
                         </Link>
-                        <p className="text-sm text-gray-600">{contact.email}</p>
-                        <p className="text-sm text-gray-500">{contact.phone}</p>
+                        <p className="text-sm text-gray-600">{lead.email}</p>
+                        <p className="text-sm text-gray-500">{lead.mobile}</p>
                       </div>
                     </div>
 
                     {/* Company */}
                     <div className="col-span-2 flex flex-col justify-center">
-                      <p className="font-medium text-gray-900">{contact.company}</p>
-                      <p className="text-sm text-gray-600">{contact.jobTitle}</p>
+                      <p className="font-medium text-gray-900">{lead.company}</p>
+                      <p className="text-sm text-gray-600">{lead.title}</p>
                     </div>
 
                     {/* Status */}
                     <div className="col-span-1 flex items-center">
                       <Badge
                         variant={
-                          contact.status === "active"
+                          lead.leadStatus === "New"
                             ? "default"
-                            : contact.status === "prospect"
+                            : lead.leadStatus === "prospect"
                               ? "secondary"
                               : "outline"
                         }
                         className={
-                          contact.status === "active"
+                          lead.leadStatus === "active"
                             ? "bg-green-100 text-green-800 hover:bg-green-100"
-                            : contact.status === "prospect"
+                            : lead.status === "prospect"
                               ? "bg-blue-100 text-blue-800 hover:bg-blue-100"
                               : "bg-purple-100 text-purple-800 hover:bg-purple-100"
                         }
                       >
-                        {contact.status}
+                        {lead.leadStatus}
                       </Badge>
                     </div>
 
                     {/* Tags */}
                     <div className="col-span-2 flex items-center gap-1 flex-wrap">
-                      {contact.tags.map((tag, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
+                        <p className="font-medium text-gray-900">{lead?.leadOwner}</p>
+                    </div>
+                    <div className="col-span-2 flex items-center gap-1 flex-wrap">
+                        <p className="font-medium text-gray-900">{lead?.leadSource}</p>
                     </div>
 
                     {/* Last Contact */}
-                    <div className="col-span-2 flex flex-col justify-center">
-                      <p className="text-sm text-gray-900">{contact.lastContactDate}</p>
-                      <p className="text-xs text-gray-500">{contact.lastContactType}</p>
-                    </div>
+                    {/* <div className="col-span-2 flex flex-col justify-center">
+                      <p className="text-sm text-gray-900">{lead.lastContactDate}</p>
+                      <p className="text-xs text-gray-500">{lead.lastContactType}</p>
+                    </div> */}
 
                     {/* Actions */}
                     <div className="col-span-1 flex items-center justify-center gap-1">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <Mail className="h-4 w-4 text-gray-600" />
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0" >
+                        <Mail className="h-4 w-4 text-gray-600" onClick={()=>setEmailModel(true)}/>
                       </Button>
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                         <Phone className="h-4 w-4 text-gray-600" />
@@ -578,7 +586,7 @@ const handleSort = (key) => {
                           <DropdownMenuItem 
                             className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
                             onClick={() => {
-                              setSelectedContact(contact)
+                              setSelectedContact(lead)
                               setIsContactDetailsOpen(true)
                             }}
                           >
@@ -647,113 +655,12 @@ const handleSort = (key) => {
         </div>
       </div>
 
-      {/* Create Contact Dialog */}
-      <Dialog open={isCreateContactOpen} onOpenChange={setIsCreateContactOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              {createContactType === "form" && "Create New Contact"}
-              {createContactType === "import-contacts" && "Import from Contacts"}
-              {createContactType === "import-notes" && "Import from Notes"}
-            </DialogTitle>
-          </DialogHeader>
-
-          {createContactType === "form" && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="firstName">First Name *</Label>
-                  <Input id="firstName" placeholder="Enter first name" />
-                </div>
-                <div>
-                  <Label htmlFor="lastName">Last Name *</Label>
-                  <Input id="lastName" placeholder="Enter last name" />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="company">Company</Label>
-                <Input id="company" placeholder="Enter company name" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="email">Email *</Label>
-                  <Input id="email" type="email" placeholder="Enter email address" />
-                </div>
-                <div>
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" placeholder="Enter phone number" />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="title">Job Title</Label>
-                <Input id="title" placeholder="Enter job title" />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={() => setIsCreateContactOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => setIsCreateContactOpen(false)}>Create Contact</Button>
-              </div>
-            </div>
-          )}
-
-          {createContactType === "import-contacts" && (
-            <div className="space-y-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <p className="text-lg font-medium mb-2">Import Contacts</p>
-                <p className="text-gray-600 mb-4">Upload a CSV or Excel file with your contact data</p>
-                <Button>
-                  <Upload className="mr-2 h-4 w-4" />
-                  Choose File
-                </Button>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsCreateContactOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => setIsCreateContactOpen(false)}>Import</Button>
-              </div>
-            </div>
-          )}
-
-          {createContactType === "import-notes" && (
-            <div className="space-y-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <p className="text-lg font-medium mb-2">Import from Notes</p>
-                <p className="text-gray-600 mb-4">Extract contact information from your notes and documents</p>
-                <Button>
-                  <FileText className="mr-2 h-4 w-4" />
-                  Select Notes
-                </Button>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsCreateContactOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => setIsCreateContactOpen(false)}>Import</Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
       {/* Contact Details Modal */}
-      <ContactDetailsModal
-        contact={selectedContact}
-        isOpen={isContactDetailsOpen}
-        onClose={() => {
-          setIsContactDetailsOpen(false)
-          setSelectedContact(null)
-        }}
-      />
       {
         filterModelOpen && <FiltersPopUp onClose={()=>setFilterModelOpen(false)}/>
+      }
+      {
+        emailModel && <EmailComposer/>
       }
     </div>
   )
@@ -956,3 +863,64 @@ const handleSort = (key) => {
 //               </div> 
 //             </DropdownMenuContent>
 //           </DropdownMenu> 
+
+
+
+
+
+
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
+export const EmailComposer=()=> {
+  const [to, setTo] = useState("");
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+
+  const handleSend = async () => {
+    await fetch("/api/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to, subject, html: body }),
+    });
+  };
+
+  return (
+      <div className="fixed bottom-0 left-0 right-0 top-0 z-[100] flex items-center justify-center bg-neutral-600/60 p-4">
+          <div className="h-[90vh] w-[80vw] rounded bg-white p-5 flex flex-col gap-4">
+              <div className="flex gap-3 items-center">
+                  <p>From</p>
+                  <p className="rounded-full bg-blue-50 px-3 py-1">sfkdsfsfll@gmail.com</p>
+              </div>
+              <div className="flex items-center gap-3">
+                  <p>To</p>
+                  <div className="border rounded border-gray-400 w-full p-1">
+
+                  <div className="" >
+
+                    <p className="rounded-full w-fit  bg-blue-50 px-3 py-1 flex gap-2 items-center ">sfkdsfsfll@gmail.com <XIcon size={10}/></p>
+                  </div>
+                  </div>
+              </div>
+              <input
+                  type="text"
+                  placeholder="Subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  className="mb-2 w-full border p-2"
+              />
+              <ReactQuill
+                  theme="snow"
+                  value={body}
+                  onChange={setBody}
+              />
+              <button
+                  onClick={handleSend}
+                  className="mt-20 rounded bg-blue-500 p-2 text-white"
+              >
+                  Send
+              </button>
+          </div>
+      </div>
+  );
+}
