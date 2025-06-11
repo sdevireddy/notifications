@@ -805,7 +805,7 @@ export const EmailComposer = ({ onClose,selectedLeads }) => {
   const [selectedmails,setSelectedMails]=useState([])
   const didMountRef = useRef(false);
 
-  console.log(selectedLeads)
+//   console.log(selectedLeads)
   const getMails=()=>{
     const mails=selectedLeads?.map((lead)=>{
         return {
