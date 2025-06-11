@@ -140,7 +140,7 @@ const LeadCreationForm = () => {
                 className="rounded-lg bg-white shadow-md"
             >
                 {/* Header */}
-                <div className="flex items-center justify-between border-b p-3   sticky top-0 z-50 bg-white">
+                <div className="flex items-center justify-between border-b p-3    sticky top-0 bg-white">
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => navigate(-1)}
@@ -169,7 +169,7 @@ const LeadCreationForm = () => {
 
                         <h2 className="text-xl font-bold">Create Lead</h2>
                     </div>
-                    <div className="space-x-3">
+                    <div className="grid md:grid-cols-4 sm:grid-cols-2 gap-3 grid-cols-1">
                         <button
                             type="button"
                             className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"

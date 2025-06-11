@@ -20,6 +20,7 @@ import LeadCreationForm from "./routes/leads/LeadCreationForm";
 import ViewLeadPage from "./routes/leads/ViewLeadPage";
 import CRMSelectionImport from "./routes/import/Import";
 import DataMigrationUpload from "./routes/import/DataMigration";
+import EditLead from "./routes/leads/EditLead";
 
 function App() {
     const router = createBrowserRouter([
@@ -50,6 +51,10 @@ function App() {
                  {
                     path: "leads/profile/:id",
                     element: <ViewLeadPage />,
+                },
+                {
+                    path:"leads/edit/:id",
+                    element:<EditLead/>
                 },
                 {
                     path: "import/:source",

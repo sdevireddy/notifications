@@ -521,7 +521,11 @@ const handleSort = (key) => {
                   <Phone className="h-4 w-4 text-gray-600" />
                 </Button>
                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <Edit className="h-4 w-4 text-gray-600" />
+                  <Edit className="h-4 w-4 text-gray-600" onClick={()=>{
+                    navigate(`/leads/edit/${lead.id}`,{
+                        state:lead
+                    })
+                  }}/>
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
