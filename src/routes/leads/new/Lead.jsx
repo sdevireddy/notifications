@@ -43,6 +43,7 @@ import { ContactDetailsModal } from "@/components/contact-details-modal"
 import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar"
 import { Link, useNavigate } from "react-router-dom"
 import LeadStatsCard from "./Card"
+import FiltersPopUp from "../FiltersPopup"
 
 // Sample contact data
 const contacts = [
@@ -192,6 +193,7 @@ const contacts = [
 ]
 
 export default function LeadPage() {
+    const [filterModelOpen,setFilterModelOpen]=useState(false)
   const [selectedContacts, setSelectedContacts] = useState([])
   const [recordsPerPage, setRecordsPerPage] = useState("25")
   const [isCreateContactOpen, setIsCreateContactOpen] = useState(false)
@@ -265,97 +267,18 @@ const handleSort = (key) => {
 };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <div className="bg-white border-b px-6 py-4">
+      <div className=" border-b px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">Leads</h1>
-            <p className="text-sm text-gray-600 mt-1">Manage and organize your leads database</p>
+            <p classNamFe="text-sm text-gray-600 mt-1">Manage and organize your leads database</p>
           </div>
        
           <div className="flex items-center gap-3">
             {/* Records per page */}
-         <Button className={"bg-black text-white"} onClick={() => {
-                   navigate("/leads/create")
-                  }}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Lead 
-                </Button>
-            {/* Create Contact Dropdown */}
-            {/* <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-               
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem 
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                  onClick={() => {
-                   navigate("/leads/create")
-                  }}
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  Create New Lead
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                  onClick={() => {
-                    setCreateContactType("import-contacts")
-                    setIsCreateContactOpen(true)
-                  }}
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  Import from Leads
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                  onClick={() => {
-                    setCreateContactType("import-notes")
-                    setIsCreateContactOpen(true)
-                  }}
-                >
-                  <FileText className="mr-2 h-4 w-4" />
-                  Import from Notes
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu> */}
-          </div>
-        </div>
-      </div>
- {/* <LeadStatsCard active={100} inactive={50} total={150}/>    */}
-      {/* Horizontal Filter Bar */}
-      <div className="bg-white border-b px-6 py-4">
-        <div className="flex items-center gap-4">
-          {/* Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input 
-              placeholder="Search leads..." 
-              className="pl-10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-  <div className="flex items-center gap-2">
-              <Label htmlFor="records-per-page" className="text-sm">
-                Records per page:
-              </Label>
-              <Select value={recordsPerPage} onValueChange={setRecordsPerPage}>
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Actions Dropdown */}
-            <DropdownMenu>
+              <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline">
                   Actions <ChevronDown className="ml-2 h-4 w-4" />
@@ -408,201 +331,75 @@ const handleSort = (key) => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+         <Button className={"bg-black text-white"} onClick={() => {
+                   navigate("/leads/create")
+                  }}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Lead 
+                </Button>
+            {/* Create Contact Dropdown */}
+            {/* <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+               
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem 
+                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
+                  onClick={() => {
+                   navigate("/leads/create")
+                  }}
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  Create New Lead
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
+                  onClick={() => {
+                    setCreateContactType("import-contacts")
+                    setIsCreateContactOpen(true)
+                  }}
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  Import from Leads
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
+                  onClick={() => {
+                    setCreateContactType("import-notes")
+                    setIsCreateContactOpen(true)
+                  }}
+                >
+                  <FileText className="mr-2 h-4 w-4" />
+                  Import from Notes
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu> */}
+          </div>
+        </div>
+      </div>
+ {/* <LeadStatsCard active={100} inactive={50} total={150}/>    */}
+      {/* Horizontal Filter Bar */}
+      <div className=" border-b px-6 py-4">
+        <div className="flex items-center justify-between gap-4">
+          {/* Search Input */}
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input 
+              placeholder="Search leads..." 
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+ 
 
-          {/* Filter Button */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <Filter className="h-4 w-4" />
-                Filter
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-80">
-              <div className="p-4 space-y-4">
-                {/* System Defined Filters */}
-                <Collapsible open={systemFiltersOpen} onOpenChange={setSystemFiltersOpen}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
-                    <span className="font-medium text-sm">System Defined Filters</span>
-                    {systemFiltersOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="all-contacts" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="all-contacts" className="text-sm">
-                        All Contacts
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="my-contacts" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="my-contacts" className="text-sm">
-                        My Contacts
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="recently-created" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="recently-created" className="text-sm">
-                        Recently Created
-                      </Label>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
+            {/* Actions Dropdown */}
+        
+<div className="flex gap-3">
 
-                {/* Website Activity */}
-                <Collapsible open={websiteActivityOpen} onOpenChange={setWebsiteActivityOpen}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
-                    <span className="font-medium text-sm">Website Activity</span>
-                    {websiteActivityOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="page-visits" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="page-visits" className="text-sm">
-                        Page Visits
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="form-submissions" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="form-submissions" className="text-sm">
-                        Form Submissions
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="downloads" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="downloads" className="text-sm">
-                        Downloads
-                      </Label>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                {/* Filter By Fields */}
-                <Collapsible open={filterByFieldsOpen} onOpenChange={setFilterByFieldsOpen}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
-                    <span className="font-medium text-sm">Filter By Fields</span>
-                    {filterByFieldsOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="contact-name" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border border-gray-400" />
-                      <Label htmlFor="contact-name" className="text-sm">
-                        Contact Name
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="company" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="company" className="text-sm">
-                        Company
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="email" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="email" className="text-sm">
-                        Email
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="phone" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="phone" className="text-sm">
-                        Phone
-                      </Label>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                {/* Filter By Related Modules */}
-                <Collapsible open={relatedModulesOpen} onOpenChange={setRelatedModulesOpen}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
-                    <span className="font-medium text-sm">Filter By Related Modules</span>
-                    {relatedModulesOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="deals" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="deals" className="text-sm">
-                        Deals
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="campaigns" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="campaigns" className="text-sm">
-                        Campaigns
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="activities" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
-                      <Label htmlFor="activities" className="text-sm">
-                        Activities
-                      </Label>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <Separator />
-
-              {/* Additional Filters
-                <div className="space-y-3">
-                  <div>
-                    <Label className="text-sm font-medium">Touched/Untouched Records</Label>
-                    <Select>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="touched">Touched</SelectItem>
-                        <SelectItem value="untouched">Untouched</SelectItem>
-                        <SelectItem value="all">All</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label className="text-sm font-medium">Email Sentiment</Label>
-                    <Select>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select sentiment" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="positive">Positive</SelectItem>
-                        <SelectItem value="neutral">Neutral</SelectItem>
-                        <SelectItem value="negative">Negative</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label className="text-sm font-medium">Latest Email Status</Label>
-                    <Select>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="sent">Sent</SelectItem>
-                        <SelectItem value="opened">Opened</SelectItem>
-                        <SelectItem value="clicked">Clicked</SelectItem>
-                        <SelectItem value="bounced">Bounced</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label className="text-sm font-medium">Activities and Campaigns</Label>
-                    <Select>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="email-campaign">Email Campaign</SelectItem>
-                        <SelectItem value="call-activity">Call Activity</SelectItem>
-                        <SelectItem value="meeting">Meeting</SelectItem>
-                        <SelectItem value="task">Task</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div> */}
-              </div> 
-            </DropdownMenuContent>
-          </DropdownMenu> 
-
+       
+<button onClick={()=>setFilterModelOpen(true)} className="px-5 py-1 border rounded">Filter</button>
           {/* Status Filter Dropdown */}
           <Select defaultValue="all-statuses">
             <SelectTrigger className="w-40">
@@ -616,6 +413,24 @@ const handleSort = (key) => {
               <SelectItem value="inactive">Inactive</SelectItem>
             </SelectContent>
           </Select>
+           <div className="flex items-center gap-2">
+              <Label htmlFor="records-per-page" className="text-sm">
+                Records per page:
+              </Label>
+              <Select value={recordsPerPage} onValueChange={setRecordsPerPage}>
+                <SelectTrigger className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+</div>
+          {/* Filter Button */}
         </div>
       </div>
 
@@ -629,7 +444,7 @@ const handleSort = (key) => {
           />
 
           {/* Contact List */}
-          <Card>
+          {/* <Card>
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -646,7 +461,7 @@ const handleSort = (key) => {
             {/* table */}
             <CardContent className="p-0">
               {/* Table Header */}
-              <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50 border-b text-sm font-medium text-gray-700">
+              <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50 rounded-t-md border-b text-sm font-medium text-gray-700">
                 <div className="col-span-1 flex items-center">
                   <Checkbox 
                     checked={
@@ -666,14 +481,14 @@ const handleSort = (key) => {
               </div>
 
               {/* Contact Rows */}
-              <div className="divide-y">
+              <div className="divide-y bg-white">
                 {currentContacts.map((contact) => (
                   <div
                     key={contact.id}
                     className={`grid grid-cols-12 gap-4 px-6 py-4 transition-colors ${
                       selectedContacts.includes(contact.id) 
                         ? 'bg-blue-50' 
-                        : 'hover:bg-gray-50'
+                        : 'hover:bg-gray-100'
                     }`}
                   >
                     {/* Checkbox */}
@@ -828,7 +643,7 @@ const handleSort = (key) => {
                 </div>
               </div>
             </CardContent>
-          </Card>
+          {/* </Card> */}
         </div>
       </div>
 
@@ -937,6 +752,207 @@ const handleSort = (key) => {
           setSelectedContact(null)
         }}
       />
+      {
+        filterModelOpen && <FiltersPopUp onClose={()=>setFilterModelOpen(false)}/>
+      }
     </div>
   )
 }
+
+
+
+
+
+
+//    <DropdownMenu>
+//             <DropdownMenuTrigger asChild>
+//               <Button variant="outline" className="gap-2">
+//                 <Filter className="h-4 w-4" />
+//                 Filter
+//               </Button>
+//             </DropdownMenuTrigger>
+//             <DropdownMenuContent align="start" className="w-80">
+//               <div className="p-4 space-y-4">
+//                 {/* System Defined Filters */}
+//                 <Collapsible open={systemFiltersOpen} onOpenChange={setSystemFiltersOpen}>
+//                   <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+//                     <span className="font-medium text-sm">System Defined Filters</span>
+//                     {systemFiltersOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+//                   </CollapsibleTrigger>
+//                   <CollapsibleContent className="pl-4 space-y-2">
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="all-contacts" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+//                       <Label htmlFor="all-contacts" className="text-sm">
+//                         All Contacts
+//                       </Label>
+//                     </div>
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="my-contacts" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+//                       <Label htmlFor="my-contacts" className="text-sm">
+//                         My Contacts
+//                       </Label>
+//                     </div>
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="recently-created" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+//                       <Label htmlFor="recently-created" className="text-sm">
+//                         Recently Created
+//                       </Label>
+//                     </div>
+//                   </CollapsibleContent>
+//                 </Collapsible>
+
+//                 {/* Website Activity */}
+//                 <Collapsible open={websiteActivityOpen} onOpenChange={setWebsiteActivityOpen}>
+//                   <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+//                     <span className="font-medium text-sm">Website Activity</span>
+//                     {websiteActivityOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+//                   </CollapsibleTrigger>
+//                   <CollapsibleContent className="pl-4 space-y-2">
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="page-visits" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+//                       <Label htmlFor="page-visits" className="text-sm">
+//                         Page Visits
+//                       </Label>
+//                     </div>
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="form-submissions" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+//                       <Label htmlFor="form-submissions" className="text-sm">
+//                         Form Submissions
+//                       </Label>
+//                     </div>
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="downloads" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+//                       <Label htmlFor="downloads" className="text-sm">
+//                         Downloads
+//                       </Label>
+//                     </div>
+//                   </CollapsibleContent>
+//                 </Collapsible>
+
+//                 {/* Filter By Fields */}
+//                 <Collapsible open={filterByFieldsOpen} onOpenChange={setFilterByFieldsOpen}>
+//                   <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+//                     <span className="font-medium text-sm">Filter By Fields</span>
+//                     {filterByFieldsOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+//                   </CollapsibleTrigger>
+//                   <CollapsibleContent className="pl-4 space-y-2">
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="contact-name" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border border-gray-400" />
+//                       <Label htmlFor="contact-name" className="text-sm">
+//                         Contact Name
+//                       </Label>
+//                     </div>
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="company" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+//                       <Label htmlFor="company" className="text-sm">
+//                         Company
+//                       </Label>
+//                     </div>
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="email" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+//                       <Label htmlFor="email" className="text-sm">
+//                         Email
+//                       </Label>
+//                     </div>
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="phone" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+//                       <Label htmlFor="phone" className="text-sm">
+//                         Phone
+//                       </Label>
+//                     </div>
+//                   </CollapsibleContent>
+//                 </Collapsible>
+
+//                 {/* Filter By Related Modules */}
+//                 <Collapsible open={relatedModulesOpen} onOpenChange={setRelatedModulesOpen}>
+//                   <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+//                     <span className="font-medium text-sm">Filter By Related Modules</span>
+//                     {relatedModulesOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+//                   </CollapsibleTrigger>
+//                   <CollapsibleContent className="pl-4 space-y-2">
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="deals" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+//                       <Label htmlFor="deals" className="text-sm">
+//                         Deals
+//                       </Label>
+//                     </div>
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="campaigns" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+//                       <Label htmlFor="campaigns" className="text-sm">
+//                         Campaigns
+//                       </Label>
+//                     </div>
+//                     <div className="flex items-center space-x-2">
+//                       <Checkbox id="activities" className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white" />
+//                       <Label htmlFor="activities" className="text-sm">
+//                         Activities
+//                       </Label>
+//                     </div>
+//                   </CollapsibleContent>
+//                 </Collapsible>
+
+//                 <Separator />
+
+//               {/* Additional Filters
+//                 <div className="space-y-3">
+//                   <div>
+//                     <Label className="text-sm font-medium">Touched/Untouched Records</Label>
+//                     <Select>
+//                       <SelectTrigger className="mt-1">
+//                         <SelectValue placeholder="Select status" />
+//                       </SelectTrigger>
+//                       <SelectContent>
+//                         <SelectItem value="touched">Touched</SelectItem>
+//                         <SelectItem value="untouched">Untouched</SelectItem>
+//                         <SelectItem value="all">All</SelectItem>
+//                       </SelectContent>
+//                     </Select>
+//                   </div>
+
+//                   <div>
+//                     <Label className="text-sm font-medium">Email Sentiment</Label>
+//                     <Select>
+//                       <SelectTrigger className="mt-1">
+//                         <SelectValue placeholder="Select sentiment" />
+//                       </SelectTrigger>
+//                       <SelectContent>
+//                         <SelectItem value="positive">Positive</SelectItem>
+//                         <SelectItem value="neutral">Neutral</SelectItem>
+//                         <SelectItem value="negative">Negative</SelectItem>
+//                       </SelectContent>
+//                     </Select>
+//                   </div>
+
+//                   <div>
+//                     <Label className="text-sm font-medium">Latest Email Status</Label>
+//                     <Select>
+//                       <SelectTrigger className="mt-1">
+//                         <SelectValue placeholder="Select status" />
+//                       </SelectTrigger>
+//                       <SelectContent>
+//                         <SelectItem value="sent">Sent</SelectItem>
+//                         <SelectItem value="opened">Opened</SelectItem>
+//                         <SelectItem value="clicked">Clicked</SelectItem>
+//                         <SelectItem value="bounced">Bounced</SelectItem>
+//                       </SelectContent>
+//                     </Select>
+//                   </div>
+
+//                   <div>
+//                     <Label className="text-sm font-medium">Activities and Campaigns</Label>
+//                     <Select>
+//                       <SelectTrigger className="mt-1">
+//                         <SelectValue placeholder="Select type" />
+//                       </SelectTrigger>
+//                       <SelectContent>
+//                         <SelectItem value="email-campaign">Email Campaign</SelectItem>
+//                         <SelectItem value="call-activity">Call Activity</SelectItem>
+//                         <SelectItem value="meeting">Meeting</SelectItem>
+//                         <SelectItem value="task">Task</SelectItem>
+//                       </SelectContent>
+//                     </Select>
+//                   </div>
+//                 </div> */}
+//               </div> 
+//             </DropdownMenuContent>
+//           </DropdownMenu> 
