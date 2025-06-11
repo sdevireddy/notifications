@@ -8,7 +8,7 @@ import { Header } from "@/header/Header";
 import { cn } from "../utils/cn";
 import { ToastContainer } from "react-toastify";
 import { useLocation } from "react-router-dom";
-import { NewSidebar } from "../sidebar/NewSideBar";
+
 
 export const ScrollToTop = () => {
   const { pathname } = useLocation();
