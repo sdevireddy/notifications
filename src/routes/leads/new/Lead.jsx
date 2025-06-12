@@ -331,9 +331,9 @@ export default function LeadPage() {
                         <p className="mt-1 text-sm text-gray-600">Manage and organize your leads database</p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <DropdownMenu>
+                        <DropdownMenu className={"bg-blue-200"}>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="outline">
+                                <Button variant="outline" className={"bg-blue-400"}>
                                     Actions <ChevronDown className="ml-2 h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -386,12 +386,12 @@ export default function LeadPage() {
                     </div>
 
                     <div className="flex gap-3">
-                        <button
+                          <Button variant="outline"
                             onClick={() => setFilterModelOpen(true)}
-                            className="rounded border px-5 py-1"
+                            className="rounded border px-5 py-1 bg-blue-400 "
                         >
                             Filter
-                        </button>
+                        </Button>
 
                         {/* <Select defaultValue="all-statuses">
                             <SelectTrigger className="w-40">
