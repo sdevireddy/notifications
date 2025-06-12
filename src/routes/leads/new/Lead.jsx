@@ -333,7 +333,7 @@ export default function LeadPage() {
                     <div className="flex items-center gap-3">
                         <DropdownMenu className={"bg-blue-200"}>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="outline" className={"bg-blue-400"}>
+                                <Button variant="outline">
                                     Actions <ChevronDown className="ml-2 h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -388,7 +388,7 @@ export default function LeadPage() {
                     <div className="flex gap-3">
                           <Button variant="outline"
                             onClick={() => setFilterModelOpen(true)}
-                            className="rounded border px-5 py-1 bg-blue-400 "
+                            className="rounded border px-5 py-1  "
                         >
                             Filter
                         </Button>
@@ -439,7 +439,7 @@ export default function LeadPage() {
                     onClearSelection={() => setSelectedLeads([])}
                 />
             </div>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            {/* <div className="relative overflow-x-auto shadow-md sm:rounded-lg max-w-[90%]">
                 <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
                     <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -454,6 +454,7 @@ export default function LeadPage() {
                                     className="accent-blue-600"
                                 />
                             </th>
+                           
                             <th
                                 scope="col"
                                 className="px-6 py-3 cursor-pointer"
@@ -461,7 +462,39 @@ export default function LeadPage() {
                                 
                             >
                                         <p className="flex items-center gap-3">
-                                Lead
+                                Name
+                                            {sortConfig.key === "firstName" &&
+                                                (sortConfig.direction === "asc" ? (
+                                                    <ArrowUp className="h-4 w-4" />
+                                                ) : (
+                                                    <ArrowDown className="h-4 w-4" />
+                                                ))}
+                                        </p>
+                            </th>
+                             <th
+                                scope="col"
+                                className="px-6 py-3 cursor-pointer"
+                                onClick={()=>handleSort("firstName")}
+                                
+                            >
+                                        <p className="flex items-center gap-3">
+                                Phone
+                                            {sortConfig.key === "firstName" &&
+                                                (sortConfig.direction === "asc" ? (
+                                                    <ArrowUp className="h-4 w-4" />
+                                                ) : (
+                                                    <ArrowDown className="h-4 w-4" />
+                                                ))}
+                                        </p>
+                            </th>
+                             <th
+                                scope="col"
+                                className="px-6 py-3 cursor-pointer"
+                                onClick={()=>handleSort("firstName")}
+                                
+                            >
+                                        <p className="flex items-center gap-3">
+                                Phone
                                             {sortConfig.key === "firstName" &&
                                                 (sortConfig.direction === "asc" ? (
                                                     <ArrowUp className="h-4 w-4" />
@@ -562,6 +595,20 @@ export default function LeadPage() {
                                     <div className="text-sm text-gray-500">{lead.email}</div>
                                     <div className="text-sm text-gray-400">{lead.mobile}</div>
                                 </th>
+                                 <th
+                                    scope="row"
+                                    className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
+                                >
+                                   
+                                    <div className="text-sm text-gray-500">{lead.email}</div>
+                                  
+                                </th>
+                                 <th
+                                    scope="row"
+                                    className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
+                                >
+                                    <div className="text-sm text-gray-400">{lead.mobile}</div>
+                                </th>
                                 <td className="px-6 py-4">
                                     <div>{lead.company}</div>
                                     <div className="text-sm text-gray-400">{lead.title}</div>
@@ -648,8 +695,192 @@ export default function LeadPage() {
                         ))}
                     </tbody>
                 </table>
-            </div>
+            </div> */}
+<CardContent className="p-0">
+              {/* Table Header */}
+              <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50 border-b text-sm font-medium text-gray-700">
+                <div className="col-span-1 flex items-center">
+                  <Checkbox 
+                    checked={
+                      selectedLeads.length > 0 && 
+                      selectedLeads.length === currentLeads.length
+                    } 
+                    onCheckedChange={handleSelectAll}
+                    className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+                  />
+                </div>
+                <div className="col-span-3" onClick={()=>handleSort("firstName")}> <p className="flex items-center gap-3">
+                                Name
+                                            {sortConfig.key === "firstName" &&
+                                                (sortConfig.direction === "asc" ? (
+                                                    <ArrowUp className="h-4 w-4" />
+                                                ) : (
+                                                    <ArrowDown className="h-4 w-4" />
+                                                ))}
+                                        </p></div>
+                <div className="col-span-2" onClick={()=>handleSort("company")}> <p className="flex items-center gap-3">
+                                Company
+                                            {sortConfig.key === "company" &&
+                                                (sortConfig.direction === "asc" ? (
+                                                    <ArrowUp className="h-4 w-4" />
+                                                ) : (
+                                                    <ArrowDown className="h-4 w-4" />
+                                                ))}
+                                        </p></div>
+                <div className="col-span-1" onClick={()=>handleSort("leadStatus")}> <p className="flex items-center gap-3">
+                                Status
+                                            {sortConfig.key === "leadStatus" &&
+                                                (sortConfig.direction === "asc" ? (
+                                                    <ArrowUp className="h-4 w-4" />
+                                                ) : (
+                                                    <ArrowDown className="h-4 w-4" />
+                                                ))}
+                                        </p></div>
+                <div className="col-span-2" onClick={()=>handleSort("leadOwner")}> <p className="flex items-center gap-3">
+                                Owner
+                                            {sortConfig.key === "leadOwner" &&
+                                                (sortConfig.direction === "asc" ? (
+                                                    <ArrowUp className="h-4 w-4" />
+                                                ) : (
+                                                    <ArrowDown className="h-4 w-4" />
+                                                ))}
+                                        </p></div>
+                <div className="col-span-2" onClick={()=>handleSort("leadSource")}> <p className="flex items-center gap-3">
+                                Source
+                                            {sortConfig.key === "leadSource" &&
+                                                (sortConfig.direction === "asc" ? (
+                                                    <ArrowUp className="h-4 w-4" />
+                                                ) : (
+                                                    <ArrowDown className="h-4 w-4" />
+                                                ))}
+                                        </p></div>
+                <div className="col-span-1 text-center">Actions</div>
+              </div>
 
+              {/* Contact Rows */}
+              <div className="divide-y bg-white">
+                {currentLeads.map((lead) => (
+                  <div
+                    key={lead.id}
+                    className={`grid grid-cols-12 gap-4 px-6 py-4 transition-colors ${
+                      selectedLeads.includes(lead.id) 
+                        ? 'bg-blue-50' 
+                        : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    {/* Checkbox */}
+                    <div className="col-span-1 flex items-center">
+                      <Checkbox
+                        checked={selectedLeads.includes(lead.id)}
+                        onCheckedChange={() => handleContactSelect(lead)}
+                        className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+                      />
+                    </div>
+
+                    {/* Contact Info */}
+                    <div className="col-span-3 flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                        <User className="h-5 w-5 text-gray-500" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{lead.firstName+" "+lead.lastName}</h3>
+                        <p className="text-sm text-gray-600">{lead.email}</p>
+                        <p className="text-sm text-gray-500">{lead.mobile}</p>
+                      </div>
+                    </div>
+
+                    {/* Company */}
+                    <div className="col-span-2 flex flex-col justify-center">
+                      <p className="font-medium text-gray-900">{lead.company}</p>
+                      <p className="text-sm text-gray-600">{lead.title}</p>
+                    </div>
+
+                    {/* Status */}
+                    <div className="col-span-1 flex items-center">
+                      <Badge
+                        variant={
+                          lead.status === "active"
+                            ? "default"
+                            : lead.status === "prospect"
+                              ? "secondary"
+                              : "outline"
+                        }
+                        className={
+                          lead.status === "active"
+                            ? "bg-green-100 text-green-800 hover:bg-green-100"
+                            : lead.status === "prospect"
+                              ? "bg-blue-100 text-blue-800 hover:bg-blue-100"
+                              : "bg-purple-100 text-purple-800 hover:bg-purple-100"
+                        }
+                      >
+                        {lead.leadStatus}
+                      </Badge>
+                    </div>
+<div className="col-span-2 flex flex-col justify-center">
+                      <p className="font-medium text-gray-900">{lead.leadOwner}</p>
+                      
+                    </div>
+                    <div className="col-span-2 flex flex-col justify-center">
+                      <p className="font-medium text-gray-900">{lead.leadSource}</p>
+                    
+                    </div>
+                    {/* Tags */}
+                    
+
+                    {/* Last Contact */}
+
+                    {/* Actions */}
+                    <div className="col-span-1 flex items-center justify-center gap-1">
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <Mail className="h-4 w-4 text-gray-600" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <Phone className="h-4 w-4 text-gray-600" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <Edit className="h-4 w-4 text-gray-600" />
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreVertical className="h-4 w-4 text-gray-600" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem 
+                            className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
+                          >
+                            <User className="mr-2 h-4 w-4" />
+                            View Profile
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit Contact
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
+                            <Mail className="mr-2 h-4 w-4" />
+                            Send Email
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
+                            <Phone className="mr-2 h-4 w-4" />
+                            Call Contact
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
+                            <Tag className="mr-2 h-4 w-4" />
+                            Add Tags
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600 data-[highlighted]:bg-red-100">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete Contact
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
             {/* Pagination */}
             <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-4">
                 <div className="text-sm text-gray-600">
