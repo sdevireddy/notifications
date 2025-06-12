@@ -393,7 +393,7 @@ export default function LeadPage() {
                             Filter
                         </button>
 
-                        <Select defaultValue="all-statuses">
+                        {/* <Select defaultValue="all-statuses">
                             <SelectTrigger className="w-40">
                                 <SelectValue placeholder="All Statuses" />
                             </SelectTrigger>
@@ -404,7 +404,7 @@ export default function LeadPage() {
                                 <SelectItem value="customer">Customer</SelectItem>
                                 <SelectItem value="inactive">Inactive</SelectItem>
                             </SelectContent>
-                        </Select>
+                        </Select> */}
 
                         <div className="flex items-center gap-2">
                             <Label
