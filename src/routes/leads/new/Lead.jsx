@@ -439,25 +439,29 @@ export default function LeadPage() {
                     onClearSelection={() => setSelectedLeads([])}
                 />
             </div>
-            <CardContent>
-                <div className="w-full overflow-hidden rounded border">
-                    <div className="max-h-[400px] overflow-y-auto">
-                        <table className="w-full text-sm text-gray-700">
-                            <thead className="sticky top-0 z-10 border-b bg-gray-50 text-left font-medium">
-                                <tr>
-                                    <th className="px-6 py-3">
-                                        <Checkbox
-                                            checked={selectedLeads.length > 0 && selectedLeads.length === currentLeads.length}
-                                            onCheckedChange={handleSelectAll}
-                                            className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
-                                        />
-                                    </th>
-                                    <th
-                                        className="cursor-pointer px-6 py-3"
-                                        onClick={() => handleSort("firstName")}
-                                    >
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                    <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th
+                                scope="col"
+                                className="px-6 py-3"
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={selectedLeads.length > 0 && selectedLeads.length === currentLeads.length}
+                                    onChange={handleSelectAll}
+                                    className="accent-blue-600"
+                                />
+                            </th>
+                            <th
+                                scope="col"
+                                className="px-6 py-3 cursor-pointer"
+                                onClick={()=>handleSort("firstName")}
+                                
+                            >
                                         <p className="flex items-center gap-3">
-                                            Lead
+                                Lead
                                             {sortConfig.key === "firstName" &&
                                                 (sortConfig.direction === "asc" ? (
                                                     <ArrowUp className="h-4 w-4" />
@@ -465,13 +469,14 @@ export default function LeadPage() {
                                                     <ArrowDown className="h-4 w-4" />
                                                 ))}
                                         </p>
-                                    </th>
-                                    <th
-                                        className="cursor-pointer px-6 py-3"
-                                        onClick={() => handleSort("company")}
-                                    >
+                            </th>
+                            <th
+                                scope="col"
+                                className="px-6 py-3 cursor-pointer"
+                                onClick={()=>handleSort("company")}
+                            >
                                         <p className="flex items-center gap-3">
-                                            Company
+                                Company
                                             {sortConfig.key === "company" &&
                                                 (sortConfig.direction === "asc" ? (
                                                     <ArrowUp className="h-4 w-4" />
@@ -479,13 +484,14 @@ export default function LeadPage() {
                                                     <ArrowDown className="h-4 w-4" />
                                                 ))}
                                         </p>
-                                    </th>
-                                    <th
-                                        className="cursor-pointer px-6 py-3"
-                                        onClick={() => handleSort("status")}
-                                    >
+                            </th>
+                            <th
+                                scope="col"
+                                className="px-6 py-3 cursor-pointer"
+                                onClick={()=>handleSort("status")}
+                            >
                                         <p className="flex items-center gap-3">
-                                            Status
+                                Status
                                             {sortConfig.key === "status" &&
                                                 (sortConfig.direction === "asc" ? (
                                                     <ArrowUp className="h-4 w-4" />
@@ -493,13 +499,14 @@ export default function LeadPage() {
                                                     <ArrowDown className="h-4 w-4" />
                                                 ))}
                                         </p>
-                                    </th>
-                                    <th
-                                        className="cursor-pointer px-6 py-3"
-                                        onClick={() => handleSort("owner")}
-                                    >
+                            </th>
+                            <th
+                                scope="col"
+                                className="px-6 py-3 cursor-pointer"
+                                onClick={()=>handleSort("owner")}
+                            >
                                         <p className="flex items-center gap-3">
-                                            Owner
+                                Owner
                                             {sortConfig.key === "owner" &&
                                                 (sortConfig.direction === "asc" ? (
                                                     <ArrowUp className="h-4 w-4" />
@@ -507,13 +514,14 @@ export default function LeadPage() {
                                                     <ArrowDown className="h-4 w-4" />
                                                 ))}
                                         </p>
-                                    </th>
-                                    <th
-                                        className="cursor-pointer px-6 py-3"
-                                        onClick={() => handleSort("source")}
-                                    >
+                            </th>
+                            <th
+                                scope="col"
+                              className="px-6 py-3 cursor-pointer"
+                                onClick={()=>handleSort("source")}
+                            >
                                         <p className="flex items-center gap-3">
-                                            Source
+                                Source
                                             {sortConfig.key === "source" &&
                                                 (sortConfig.direction === "asc" ? (
                                                     <ArrowUp className="h-4 w-4" />
@@ -521,63 +529,50 @@ export default function LeadPage() {
                                                     <ArrowDown className="h-4 w-4" />
                                                 ))}
                                         </p>
-                                    </th>
-                                    <th className="px-6 py-3 text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y bg-white">
-                                {currentLeads?.map((lead) => (
-                                    <tr
-                                        key={lead.id}
-                                        className={selectedLeads.includes(lead.id) ? "bg-blue-50" : "hover:bg-gray-100"}
-                                    >
-                                        <td className="px-6 py-4">
-                                            <Checkbox
-                                                checked={selectedLeads.includes(lead.id)}
-                                                onCheckedChange={() => handleContactSelect(lead)}
-                                                className="border border-gray-400 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
-                                            />
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200">
-                                                    <User className="h-5 w-5 text-gray-500" />
-                                                </div>
-                                                <div>
-                                                    <Link to={`/leads/profile/${lead.id}`}>
-                                                        <h3 className="cursor-pointer font-semibold text-gray-900 hover:text-blue-500">
-                                                            {lead.firstName + " " + lead.lastName}
-                                                        </h3>
-                                                    </Link>
-                                                    <p className="text-sm text-gray-600">{lead.email}</p>
-                                                    <p className="text-sm text-gray-500">{lead.mobile}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <p className="font-medium text-gray-900">{lead.company}</p>
-                                            <p className="text-sm text-gray-600">{lead.title}</p>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <Badge
-                                                variant={
-                                                    lead.leadStatus === "New" ? "default" : lead.leadStatus === "prospect" ? "secondary" : "outline"
-                                                }
-                                                className={
-                                                    lead.leadStatus === "active"
-                                                        ? "bg-green-100 text-green-800 hover:bg-green-100"
-                                                        : lead.status === "prospect"
-                                                          ? "bg-blue-100 text-blue-800 hover:bg-blue-100"
-                                                          : "bg-purple-100 text-purple-800 hover:bg-purple-100"
-                                                }
-                                            >
-                                                {lead.leadStatus}
-                                            </Badge>
-                                        </td>
-                                        <td className="px-6 py-4 font-medium">{lead?.leadOwner}</td>
-                                        <td className="px-6 py-4 font-medium">{lead?.leadSource}</td>
-                                        <td className="px-6 py-4 text-center">
-                                            <div className="flex justify-center gap-1">
+                            </th>
+                            <th
+                                scope="col"
+                                className="px-6 py-3 text-left"
+                            >
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentLeads?.map((lead) => (
+                            <tr
+                                key={lead.id}
+                                className={`border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600 ${
+                                    selectedLeads.includes(lead.id) ? "bg-blue-50" : ""
+                                }`}
+                            >
+                                <td className="px-6 py-4">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedLeads.includes(lead.id)}
+                                        onChange={() => handleContactSelect(lead)}
+                                        className="accent-blue-600"
+                                    />
+                                </td>
+                                <th
+                                    scope="row"
+                                    className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
+                                >
+                                    {lead.firstName} {lead.lastName}
+                                    <div className="text-sm text-gray-500">{lead.email}</div>
+                                    <div className="text-sm text-gray-400">{lead.mobile}</div>
+                                </th>
+                                <td className="px-6 py-4">
+                                    <div>{lead.company}</div>
+                                    <div className="text-sm text-gray-400">{lead.title}</div>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <span className="rounded-full bg-blue-100 px-2 py-1 text-sm font-medium text-blue-800">{lead.leadStatus}</span>
+                                </td>
+                                <td className="px-6 py-4">{lead.leadOwner}</td>
+                                <td className="px-6 py-4">{lead.leadSource}</td>
+                                <td className="px-6 py-4 text-right">
+                                     <div className="flex justify-center gap-1">
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
@@ -648,14 +643,12 @@ export default function LeadPage() {
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </CardContent>
+                                                                    </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
             {/* Pagination */}
             <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-4">
