@@ -57,6 +57,7 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
                         <SidebarLink to="/deals" icon={<Briefcase size={20} />} label="Deals" collapsed={collapsed} />
                         <SidebarLink to="/workflow" icon={<Briefcase size={20} />} label="Workflow" collapsed={collapsed} />
                         <SidebarLink to="/settings" icon={<Briefcase size={20} />} label="Settings" collapsed={collapsed} />
+                        <SidebarLink to="/users" icon={<Briefcase size={20} />} label="Users" collapsed={collapsed} />
                     </>
                 )}
 
