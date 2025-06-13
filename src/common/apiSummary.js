@@ -11,9 +11,9 @@ export const apiSummary={
         url:"/leads",
         method:"get"
     },
-     getLead:{
-        url:"/leads/",
-        method:"get"
-    },
+     getLead:(id) => ({
+    url: `/leads/${id}`,
+    method: "get",
+  }),
 
 }
