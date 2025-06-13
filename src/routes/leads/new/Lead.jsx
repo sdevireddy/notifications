@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -38,12 +38,15 @@ import {
   Copy,
   FileText,
   Users,
+  XIcon,
 } from "lucide-react"
 import { ContactDetailsModal } from "@/components/contact-details-modal"
 import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar"
 import { Link, useNavigate } from "react-router-dom"
 import LeadStatsCard from "./Card"
 import FiltersPopUp from "../FiltersPopup"
+import useFetchData from "../../../hooks/useFetchData"
+import { apiSummary } from "../../../common/apiSummary"
 
 // Sample contact data
 const contacts = [
@@ -193,9 +196,69 @@ const contacts = [
 ]
 
 export default function LeadPage() {
+    const [leads,setLeads]=useState([])
+    const leadsData={
+    "totalRecords": 2,
+    "pageSize": 10,
+    "currentPage": 0,
+    "totalPages": 1,
+    "data": [
+        {
+            "id": 1,
+            "leadOwner": "sales_user1",
+            "company": "Tech Innovations Pvt Ltd",
+            "firstName": "Jane",
+            "lastName": "Smith",
+            "title": "Marketing Manager",
+            "email": "jane.smith@ab.com",
+            "fax": "123-456-7890",
+            "mobile": "+91-9876543210",
+            "website": "tt",
+            "leadSource": "OTHER",
+            "leadStatus": "New",
+            "industry": "Technology",
+            "noOfEmployees": 150,
+            "annualRevenue": 1200000.5,
+            "rating": "Hot",
+            "emailOptOut": false,
+            "skypeId": "jane.smith.skype",
+            "secondaryEmail": "jane.smith.alt@abc.com",
+            "twitter": "@janesmith",
+            "description": "Interested in premium product plan",
+            "converted": false
+        },
+        {
+            "id": 2,
+            "leadOwner": "sales_user1",
+            "company": "Tech Innovations Pvt Ltd",
+            "firstName": "Jane",
+            "lastName": "Smith",
+            "title": "Marketing Manager",
+            "email": "jane.smith@example.com",
+            "fax": "123-456-7890",
+            "mobile": "+91-9876543210",
+            "website": "https://techinnovations.com",
+            "leadSource": "OTHER",
+            "leadStatus": "New",
+            "industry": "Technology",
+            "noOfEmployees": 150,
+            "annualRevenue": 1200000.5,
+            "rating": "Hot",
+            "emailOptOut": false,
+            "skypeId": "jane.smith.skype",
+            "secondaryEmail": "jane.smith.alt@example.com",
+            "twitter": "@janesmith",
+            "description": "Interested in premium product plan",
+            "converted": false
+        }
+    ]
+}
     const [filterModelOpen,setFilterModelOpen]=useState(false)
   const [selectedContacts, setSelectedContacts] = useState([])
+  const [selectSingleLead,setSelectSingleLead]=useState([])
+  const [selectMultipleLead,setSelectMultipleLead]=useState([])
   const [recordsPerPage, setRecordsPerPage] = useState("25")
+  const [totalRecord,setTotalRecords]=useState(0)
   const [isCreateContactOpen, setIsCreateContactOpen] = useState(false)
   const [createContactType, setCreateContactType] = useState(null)
   const [selectedContact, setSelectedContact] = useState(null)
@@ -203,14 +266,15 @@ export default function LeadPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [filteredContacts, setFilteredContacts] = useState(contacts)
+  const [emailModel,setEmailModel]=useState(false)
+  const [isMassEmail,setIsMassEmail]=useState(false)
   const navigate=useNavigate()
-  // Filter states
-  const [systemFiltersOpen, setSystemFiltersOpen] = useState(false)
-  const [websiteActivityOpen, setWebsiteActivityOpen] = useState(false)
-  const [filterByFieldsOpen, setFilterByFieldsOpen] = useState(false)
-  const [relatedModulesOpen, setRelatedModulesOpen] = useState(false)
 const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
-  // Filter contacts based on search term
+  useEffect(()=>{
+    setLeads(leadsData?.data)
+    setCurrentPage(leadsData?.currentPage)
+    setTotalRecords(leadsData?.totalRecords)
+  },[])
   useEffect(() => {
     if (!searchTerm) {
       setFilteredContacts(contacts)
@@ -233,12 +297,17 @@ const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
   const recordsPerPageValue = parseInt(recordsPerPage)
   const indexOfLastRecord = currentPage * recordsPerPageValue
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPageValue
-  const totalPages = Math.ceil(filteredContacts.length / recordsPerPageValue)
+  const totalPages = Math.ceil(totalRecord / recordsPerPageValue)
 
-  const handleContactSelect = (contactId) => {
+  const handleContactSelect = (lead) => {
     setSelectedContacts((prev) =>
-      prev.includes(contactId) ? prev.filter((id) => id !== contactId) : [...prev, contactId]
+      prev.includes(lead.id) ? prev.filter((id) => id !== lead.id) : [...prev, lead.id]
     )
+    setSelectMultipleLead((prev) =>
+    prev.some((item) => item.id === lead.id)
+      ? prev.filter((item) => item.id !== lead.id)
+      : [...prev, lead]
+  );
   }
   const sortedContacts = useMemo(() => {
   if (!sortConfig.key) return filteredContacts;
@@ -257,6 +326,7 @@ const currentContacts = sortedContacts.slice(indexOfFirstRecord, indexOfLastReco
 
   const handleSelectAll = () => {
     setSelectedContacts(selectedContacts.length === currentContacts.length ? [] : currentContacts.map((contact) => contact.id))
+    setSelectMultipleLead(selectedContacts.length === leads.length ? [] : leads.map((lead) => lead))
   }
 const handleSort = (key) => {
   setSortConfig((prev) =>
@@ -268,494 +338,259 @@ const handleSort = (key) => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <div className=" border-b px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Leads</h1>
-            <p classNamFe="text-sm text-gray-600 mt-1">Manage and organize your leads database</p>
-          </div>
-       
-          <div className="flex items-center gap-3">
-            {/* Records per page */}
-              <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  Actions <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                  <Users className="mr-2 h-4 w-4" />
-                  Mass Transfer Leads
-                </DropdownMenuItem>
-                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                  <Edit className="mr-2 h-4 w-4" />
-                  Update Multiple Leads
-                </DropdownMenuItem>
-                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete Selected
-                </DropdownMenuItem>
-                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                  <Tag className="mr-2 h-4 w-4" />
-                  Tag Leads
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                  <Send className="mr-2 h-4 w-4" />
-                  Send Mass Email
-                </DropdownMenuItem>
-                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add to Campaign
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                  <UserCheck className="mr-2 h-4 w-4" />
-                  Approve Leads
-                </DropdownMenuItem>
-                {/* <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                  <Copy className="mr-2 h-4 w-4" />
-                  Deduplicate Entries
-                </DropdownMenuItem> */}
-                 <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900" onClick={()=>{
-                    navigate("/import/leads")
-                 }}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Import Leads Data
-                </DropdownMenuItem>
-                <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                  <Download className="mr-2 h-4 w-4" />
-                  Export Leads Data
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-         <Button className={"bg-black text-white"} onClick={() => {
-                   navigate("/leads/create")
-                  }}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Lead 
-                </Button>
-            {/* Create Contact Dropdown */}
-            {/* <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-               
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem 
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                  onClick={() => {
-                   navigate("/leads/create")
-                  }}
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  Create New Lead
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                  onClick={() => {
-                    setCreateContactType("import-contacts")
-                    setIsCreateContactOpen(true)
-                  }}
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  Import from Leads
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                  onClick={() => {
-                    setCreateContactType("import-notes")
-                    setIsCreateContactOpen(true)
-                  }}
-                >
-                  <FileText className="mr-2 h-4 w-4" />
-                  Import from Notes
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu> */}
-          </div>
-        </div>
+  {/* Header */}
+  <div className="border-b px-6 py-4">
+    <div className="flex items-center justify-between">
+      <div>
+        <h1 className="text-2xl font-semibold text-gray-900">Leads</h1>
+        <p className="text-sm text-gray-600 mt-1">Manage and organize your leads database</p>
       </div>
- {/* <LeadStatsCard active={100} inactive={50} total={150}/>    */}
-      {/* Horizontal Filter Bar */}
-      <div className=" border-b px-6 py-4">
-        <div className="flex items-center justify-between gap-4">
-          {/* Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input 
-              placeholder="Search leads..." 
-              className="pl-10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
- 
+      <div className="flex items-center gap-3">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              Actions <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
 
-            {/* Actions Dropdown */}
-        
-<div className="flex gap-3">
+             <DropdownMenuItem >
+             
+              Mass Update
+            </DropdownMenuItem>
+            <DropdownMenuItem>Mass Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {
+               setIsMassEmail(true)
+            }}>Mass Send Email</DropdownMenuItem>
+            {/* dropdown items */}
+            <DropdownMenuItem onClick={() => navigate("/import/leads")}>
+              <Download className="mr-2 h-4 w-4" />
+              Import Leads Data
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Download className="mr-2 h-4 w-4" />
+              Export Leads Data
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Button className="bg-black text-white" onClick={() => navigate("/leads/create")}>
+          <Plus className="mr-2 h-4 w-4" />
+          Create Lead
+        </Button>
+      </div>
+    </div>
+  </div>
 
-       
-<button onClick={()=>setFilterModelOpen(true)} className="px-5 py-1 border rounded">Filter</button>
-          {/* Status Filter Dropdown */}
-          <Select defaultValue="all-statuses">
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="All Statuses" />
+  {/* Horizontal Filter Bar */}
+  <div className="border-b px-6 py-4">
+    <div className="flex items-center justify-between gap-4">
+      <div className="relative flex-1 max-w-md">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <Input
+          placeholder="Search leads..."
+          className="pl-10"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      <div className="flex gap-3">
+        <button onClick={() => setFilterModelOpen(true)} className="px-5 py-1 border rounded">Filter</button>
+
+        <Select defaultValue="all-statuses">
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="All Statuses" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all-statuses">All Statuses</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="prospect">Prospect</SelectItem>
+            <SelectItem value="customer">Customer</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <div className="flex items-center gap-2">
+          <Label htmlFor="records-per-page" className="text-sm">Records per page:</Label>
+          <Select value={recordsPerPage} onValueChange={setRecordsPerPage}>
+            <SelectTrigger className="w-20">
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all-statuses">All Statuses</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="prospect">Prospect</SelectItem>
-              <SelectItem value="customer">Customer</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="25">25</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+              <SelectItem value="100">100</SelectItem>
             </SelectContent>
           </Select>
-           <div className="flex items-center gap-2">
-              <Label htmlFor="records-per-page" className="text-sm">
-                Records per page:
-              </Label>
-              <Select value={recordsPerPage} onValueChange={setRecordsPerPage}>
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-</div>
-          {/* Filter Button */}
         </div>
       </div>
-
-      <div>
-        {/* Main Content */}
-        <div className="p-6">
-          {/* Bulk Actions Toolbar */}
-          <BulkActionsToolbar
-            selectedCount={selectedContacts.length}
-            onClearSelection={() => setSelectedContacts([])}
-          />
-
-          {/* Contact List */}
-          {/* <Card>
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-2xl font-semibold">All Leads ({filteredContacts.length})</CardTitle>
-                  <p className="text-gray-600 mt-1">Manage and view all your leads information</p>
-                </div>
-                {selectedContacts.length > 0 && (
-                  <Badge variant="secondary" className="text-sm">
-                    {selectedContacts.length} selected
-                  </Badge>
-                )}
-              </div>
-            </CardHeader>
-            {/* table */}
-            <CardContent className="p-0">
-              {/* Table Header */}
-              <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50 rounded-t-md border-b text-sm font-medium text-gray-700">
-                <div className="col-span-1 flex items-center">
-                  <Checkbox 
-                    checked={
-                      selectedContacts.length > 0 && 
-                      selectedContacts.length === currentContacts.length
-                    } 
-                    onCheckedChange={handleSelectAll}
-                    className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
-                  />
-                </div>
-              <div className="col-span-3 cursor-pointer" onClick={() => handleSort('name')}> Lead {sortConfig.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</div>
-                <div className="col-span-2 cursor-pointer" onClick={() => handleSort('company')}>Company {sortConfig.key === 'company' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</div>
-                <div className="col-span-1 cursor-pointer" onClick={() => handleSort('status')}>Status {sortConfig.key === 'status' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</div>
-                <div className="col-span-2 cursor-pointer" onClick={() => handleSort('owner')}>Owner {sortConfig.key === 'owner' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</div>
-                <div className="col-span-2 cursor-pointer" onClick={() => handleSort('source')}>Source {sortConfig.key === 'sourcex' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</div>
-                <div className="col-span-1 text-center">Actions</div>
-              </div>
-
-              {/* Contact Rows */}
-              <div className="divide-y bg-white">
-                {currentContacts.map((contact) => (
-                  <div
-                    key={contact.id}
-                    className={`grid grid-cols-12 gap-4 px-6 py-4 transition-colors ${
-                      selectedContacts.includes(contact.id) 
-                        ? 'bg-blue-50' 
-                        : 'hover:bg-gray-100'
-                    }`}
-                  >
-                    {/* Checkbox */}
-                    <div className="col-span-1 flex items-center">
-                      <Checkbox
-                        checked={selectedContacts.includes(contact.id)}
-                        onCheckedChange={() => handleContactSelect(contact.id)}
-                        className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border border-gray-400"
-                      />
-                    </div>
-
-                    {/* Contact Info */}
-                    <div className="col-span-3 flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                        <User className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <div>
-                        <Link to={`/leads/profile/${contact.id}`}>
-                        <h3 className="font-semibold text-gray-900 hover:text-blue-500 cursor-pointer" >{contact.name}</h3>
-                        </Link>
-                        <p className="text-sm text-gray-600">{contact.email}</p>
-                        <p className="text-sm text-gray-500">{contact.phone}</p>
-                      </div>
-                    </div>
-
-                    {/* Company */}
-                    <div className="col-span-2 flex flex-col justify-center">
-                      <p className="font-medium text-gray-900">{contact.company}</p>
-                      <p className="text-sm text-gray-600">{contact.jobTitle}</p>
-                    </div>
-
-                    {/* Status */}
-                    <div className="col-span-1 flex items-center">
-                      <Badge
-                        variant={
-                          contact.status === "active"
-                            ? "default"
-                            : contact.status === "prospect"
-                              ? "secondary"
-                              : "outline"
-                        }
-                        className={
-                          contact.status === "active"
-                            ? "bg-green-100 text-green-800 hover:bg-green-100"
-                            : contact.status === "prospect"
-                              ? "bg-blue-100 text-blue-800 hover:bg-blue-100"
-                              : "bg-purple-100 text-purple-800 hover:bg-purple-100"
-                        }
-                      >
-                        {contact.status}
-                      </Badge>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="col-span-2 flex items-center gap-1 flex-wrap">
-                      {contact.tags.map((tag, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-
-                    {/* Last Contact */}
-                    <div className="col-span-2 flex flex-col justify-center">
-                      <p className="text-sm text-gray-900">{contact.lastContactDate}</p>
-                      <p className="text-xs text-gray-500">{contact.lastContactType}</p>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="col-span-1 flex items-center justify-center gap-1">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <Mail className="h-4 w-4 text-gray-600" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <Phone className="h-4 w-4 text-gray-600" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <Edit className="h-4 w-4 text-gray-600" />
-                      </Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <MoreVertical className="h-4 w-4 text-gray-600" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem 
-                            className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                            onClick={() => {
-                              setSelectedContact(contact)
-                              setIsContactDetailsOpen(true)
-                            }}
-                          >
-                            <User className="mr-2 h-4 w-4" />
-                            View Profile
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit Contact
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                            <Mail className="mr-2 h-4 w-4" />
-                            Send Email
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                            <Phone className="mr-2 h-4 w-4" />
-                            Call Contact
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
-                            <Tag className="mr-2 h-4 w-4" />
-                            Add Tags
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600 data-[highlighted]:bg-red-100">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete Contact
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Pagination */}
-              <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
-                <div className="text-sm text-gray-600">
-                  Showing {indexOfFirstRecord + 1} to{" "}
-                  {Math.min(indexOfLastRecord, filteredContacts.length)} of{" "}
-                  {filteredContacts.length} results
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                  >
-                    Previous
-                  </Button>
-                  <span className="px-3 py-1 bg-white border rounded-md text-sm">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage >= totalPages}
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          {/* </Card> */}
-        </div>
-      </div>
-
-      {/* Create Contact Dialog */}
-      <Dialog open={isCreateContactOpen} onOpenChange={setIsCreateContactOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              {createContactType === "form" && "Create New Contact"}
-              {createContactType === "import-contacts" && "Import from Contacts"}
-              {createContactType === "import-notes" && "Import from Notes"}
-            </DialogTitle>
-          </DialogHeader>
-
-          {createContactType === "form" && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="firstName">First Name *</Label>
-                  <Input id="firstName" placeholder="Enter first name" />
-                </div>
-                <div>
-                  <Label htmlFor="lastName">Last Name *</Label>
-                  <Input id="lastName" placeholder="Enter last name" />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="company">Company</Label>
-                <Input id="company" placeholder="Enter company name" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="email">Email *</Label>
-                  <Input id="email" type="email" placeholder="Enter email address" />
-                </div>
-                <div>
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" placeholder="Enter phone number" />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="title">Job Title</Label>
-                <Input id="title" placeholder="Enter job title" />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={() => setIsCreateContactOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => setIsCreateContactOpen(false)}>Create Contact</Button>
-              </div>
-            </div>
-          )}
-
-          {createContactType === "import-contacts" && (
-            <div className="space-y-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <p className="text-lg font-medium mb-2">Import Contacts</p>
-                <p className="text-gray-600 mb-4">Upload a CSV or Excel file with your contact data</p>
-                <Button>
-                  <Upload className="mr-2 h-4 w-4" />
-                  Choose File
-                </Button>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsCreateContactOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => setIsCreateContactOpen(false)}>Import</Button>
-              </div>
-            </div>
-          )}
-
-          {createContactType === "import-notes" && (
-            <div className="space-y-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <p className="text-lg font-medium mb-2">Import from Notes</p>
-                <p className="text-gray-600 mb-4">Extract contact information from your notes and documents</p>
-                <Button>
-                  <FileText className="mr-2 h-4 w-4" />
-                  Select Notes
-                </Button>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsCreateContactOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => setIsCreateContactOpen(false)}>Import</Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Contact Details Modal */}
-      <ContactDetailsModal
-        contact={selectedContact}
-        isOpen={isContactDetailsOpen}
-        onClose={() => {
-          setIsContactDetailsOpen(false)
-          setSelectedContact(null)
-        }}
-      />
-      {
-        filterModelOpen && <FiltersPopUp onClose={()=>setFilterModelOpen(false)}/>
-      }
     </div>
+  </div>
+
+  {/* Main Content */}
+  <div className="p-6">
+    <BulkActionsToolbar
+      selectedCount={selectedContacts.length}
+      onClearSelection={() => setSelectedContacts([])}
+    />
+  </div>
+<CardContent>
+
+ <div className="w-full border rounded overflow-hidden">
+  <div className="max-h-[400px] overflow-y-auto">
+    <table className="w-full text-sm text-gray-700">
+      <thead className="bg-gray-50 border-b text-left font-medium sticky top-0 z-10">
+        <tr>
+          <th className="px-6 py-3">
+            <Checkbox
+              checked={selectedContacts.length > 0 && selectedContacts.length === currentContacts.length}
+              onCheckedChange={handleSelectAll}
+              className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+            />
+          </th>
+          <th className="px-6 py-3 cursor-pointer" onClick={() => handleSort('name')}>Lead</th>
+          <th className="px-6 py-3 cursor-pointer" onClick={() => handleSort('company')}>Company</th>
+          <th className="px-6 py-3 cursor-pointer" onClick={() => handleSort('status')}>Status</th>
+          <th className="px-6 py-3 cursor-pointer" onClick={() => handleSort('owner')}>Owner</th>
+          <th className="px-6 py-3 cursor-pointer" onClick={() => handleSort('source')}>Source</th>
+          <th className="px-6 py-3 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y">
+        {leads?.map((lead) => (
+          <tr key={lead.id} className={selectedContacts.includes(lead.id) ? 'bg-blue-50' : 'hover:bg-gray-100'}>
+            <td className="px-6 py-4">
+              <Checkbox
+                checked={selectedContacts.includes(lead.id)}
+                onCheckedChange={() => handleContactSelect(lead)}
+                className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border border-gray-400"
+              />
+            </td>
+            <td className="px-6 py-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                  <User className="h-5 w-5 text-gray-500" />
+                </div>
+                <div>
+                  <Link to={`/leads/profile/${lead.id}`}>
+                    <h3 className="font-semibold text-gray-900 hover:text-blue-500 cursor-pointer">
+                      {lead.firstName + " " + lead.lastName}
+                    </h3>
+                  </Link>
+                  <p className="text-sm text-gray-600">{lead.email}</p>
+                  <p className="text-sm text-gray-500">{lead.mobile}</p>
+                </div>
+              </div>
+            </td>
+            <td className="px-6 py-4">
+              <p className="font-medium text-gray-900">{lead.company}</p>
+              <p className="text-sm text-gray-600">{lead.title}</p>
+            </td>
+            <td className="px-6 py-4">
+              <Badge
+                variant={
+                  lead.leadStatus === "New"
+                    ? "default"
+                    : lead.leadStatus === "prospect"
+                    ? "secondary"
+                    : "outline"
+                }
+                className={
+                  lead.leadStatus === "active"
+                    ? "bg-green-100 text-green-800 hover:bg-green-100"
+                    : lead.status === "prospect"
+                    ? "bg-blue-100 text-blue-800 hover:bg-blue-100"
+                    : "bg-purple-100 text-purple-800 hover:bg-purple-100"
+                }
+              >
+                {lead.leadStatus}
+              </Badge>
+            </td>
+            <td className="px-6 py-4 font-medium">{lead?.leadOwner}</td>
+            <td className="px-6 py-4 font-medium">{lead?.leadSource}</td>
+            <td className="px-6 py-4 text-center">
+              <div className="flex justify-center gap-1">
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => {
+                    setEmailModel(true)
+                    setSelectSingleLead((prev)=>[lead]);
+                }}>
+                  <Mail className="h-4 w-4 text-gray-600" />
+                </Button>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <Phone className="h-4 w-4 text-gray-600" />
+                </Button>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <Edit className="h-4 w-4 text-gray-600" onClick={()=>{
+                    navigate(`/leads/edit/${lead.id}`,{
+                        state:lead
+                    })
+                  }}/>
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <MoreVertical className="h-4 w-4 text-gray-600" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => { setSelectedContact(lead); setIsContactDetailsOpen(true); }}>
+                      <User className="mr-2 h-4 w-4" /> View Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem><Edit className="mr-2 h-4 w-4" /> Edit Contact</DropdownMenuItem>
+                    <DropdownMenuItem><Mail className="mr-2 h-4 w-4" /> Send Email</DropdownMenuItem>
+                    <DropdownMenuItem><Phone className="mr-2 h-4 w-4" /> Call Contact</DropdownMenuItem>
+                    <DropdownMenuItem><Tag className="mr-2 h-4 w-4" /> Add Tags</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-red-600"><Trash2 className="mr-2 h-4 w-4" /> Delete Contact</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+</CardContent>
+
+  {/* Pagination */}
+  <div className="flex items-center justify-between px-6 py-4 border-t bg-gray-50">
+    <div className="text-sm text-gray-600">
+      Showing {indexOfFirstRecord + 1} to{" "}
+      {Math.min(indexOfLastRecord, filteredContacts.length)} of{" "}
+      {filteredContacts.length} results
+    </div>
+    <div className="flex items-center gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+        disabled={currentPage === 1}
+      >
+        Previous
+      </Button>
+      <span className="px-3 py-1 bg-white border rounded-md text-sm">
+        Page {currentPage} of {totalPages}
+      </span>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+        disabled={currentPage >= totalPages}
+      >
+        Next
+      </Button>
+    </div>
+  </div>
+
+  {/* Modals */}
+  {filterModelOpen && <FiltersPopUp onClose={() => setFilterModelOpen(false)} />}
+  {emailModel && <Model> <EmailComposer onClose={()=>setEmailModel(false)} selectedLeads={selectSingleLead}/></Model> }
+   {isMassEmail && <Model> <EmailComposer onClose={()=>setIsMassEmail(false)} selectedLeads={selectMultipleLead}/></Model> }
+</div>
+
   )
 }
 
@@ -956,3 +791,144 @@ const handleSort = (key) => {
 //               </div> 
 //             </DropdownMenuContent>
 //           </DropdownMenu> 
+
+
+
+
+
+
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import Model from "../../../components/Model"
+
+export const EmailComposer = ({ onClose,selectedLeads }) => {
+  const [subject, setSubject] = useState('');
+  const [body, setBody] = useState('');
+  const [showCc, setShowCc] = useState(false);
+  const [showBcc, setShowBcc] = useState(false);
+  const [selectedmails,setSelectedMails]=useState([])
+  const didMountRef = useRef(false);
+
+//   console.log(selectedLeads)
+  const getMails=()=>{
+    const mails=selectedLeads?.map((lead)=>{
+        return {
+            mail:lead.email,
+            name:lead.firstName+" "+lead.lastName,
+            id:lead.id
+        }
+
+    })
+    // console.log(mails)
+    setSelectedMails(mails);
+  }
+  useEffect(()=>{
+      getMails();
+    //   console.log(didMountRef)
+  },[])
+  const handleSend = () => {
+    console.log(body)
+    console.log('Sending...');
+  };
+const handleRemoveMail = (id) => {
+  setSelectedMails(prev => prev.filter(mail => mail.id !== id));
+};
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-neutral-600/60 p-4">
+      <div className="relative h-[90vh] w-[80vw] rounded bg-white flex flex-col overflow-hidden">
+        {/* Sticky Heading */}
+        <div className="sticky top-0 z-10 bg-white px-5 py-3 border-b flex justify-between items-center">
+          <h2 className="font-semibold">Send Mail</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-red-500 text-lg">
+            <XIcon />
+          </button>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="overflow-y-auto px-5 py-3 flex-1 space-y-4">
+           
+          <div className="flex gap-3 items-center">
+            <p>From</p>
+            <p className="rounded-full w-fit bg-blue-50 px-3 py-1 flex gap-2 items-center">
+                  sfkdsfsfll@gmail.com
+                </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <p>To</p>
+            <div className="flex-1 border rounded border-gray-400 p-1 flex gap-3 flex-wrap max-h-28 overflow-x-scroll">
+               {
+                selectedmails?.map((mail,ind)=>{
+                    return (
+                        
+                        <p className="rounded-full bg-blue-50 px-3 py-1 w-fit flex gap-2 items-center" key={ind}>{mail?.mail}<XIcon size={15} onClick={()=>handleRemoveMail(mail.id)} className="cursor-pointer  "/></p>
+                    )
+                })
+            }
+            </div>
+          </div>
+
+          {/* CC and BCC checkboxes */}
+          <div className="flex gap-4">
+            <label className="flex items-center gap-1">
+              <input type="checkbox" checked={showCc} onChange={() => setShowCc(!showCc)} />
+              CC
+            </label>
+            <label className="flex items-center gap-1">
+              <input type="checkbox" checked={showBcc} onChange={() => setShowBcc(!showBcc)} />
+              BCC
+            </label>
+          </div>
+
+          {showCc && (
+            <div className="flex items-center gap-3">
+              <p>CC</p>
+              <div className="flex-1 border rounded border-gray-400 p-1">
+                <p className="rounded-full w-fit bg-blue-50 px-3 py-1 flex gap-2 items-center">
+                  sfkdsfsfll@gmail.com <XIcon size={10} />
+                </p>
+              </div>
+            </div>
+          )}
+
+          {showBcc && (
+            <div className="flex items-center gap-3">
+              <p>BCC</p>
+              <div className="flex-1 border rounded border-gray-400 p-1">
+                <p className="rounded-full w-fit bg-blue-50 px-3 py-1 flex gap-2 items-center">
+                  sfkdsfsfll@gmail.com <XIcon size={10} />
+                </p>
+              </div>
+            </div>
+          )}
+
+          <input
+            type="text"
+            placeholder="Subject"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            className="w-full border p-2"
+          />
+
+         <ReactQuill
+  theme="snow"
+  value={body}
+  onChange={setBody}
+  className="custom-quill"
+/>
+        </div>
+
+        {/* Sticky Send Button */}
+        <div className="sticky bottom-0 bg-white px-5 py-3 border-t">
+          <button
+            onClick={handleSend}
+            className="w-full rounded bg-blue-500 p-2 text-white"
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+;
