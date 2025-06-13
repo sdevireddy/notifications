@@ -163,7 +163,7 @@ const contacts = [
   },
   {
     id: 10,
-    name: "Lisa Wong4",
+    name:     "Lisa Wong4",
     company: "CloudTech4",
     jobTitle: "CFO",
     email: "lisa.wong@cloudtech.com",
