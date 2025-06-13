@@ -37,6 +37,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "../../components/layout/ui/dropdown-menu"
+import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar"
+
 
 // Initial data (using the 30 samples generated previously for better demonstration)
 const initialDeals = [
@@ -494,7 +496,6 @@ const initialDeals = [
 
 const stageColors = {
   Qualification: "bg-gray-100 text-gray-800",
-  "Needs Analysis": "bg-blue-100 text-blue-800",
   "Value Proposition": "bg-purple-100 text-purple-800",
   "Identify Decision Makers": "bg-indigo-100 text-indigo-800",
   Proposal: "bg-yellow-100 text-yellow-800",
@@ -527,6 +528,60 @@ const [filterLeadSources, setFilterLeadSources] = useState([]);
 const [filterCompanies, setFilterCompanies] = useState([]);
 const [filterProbability, setFilterProbability] = useState([0, 100]);
 const [filterAmount, setFilterAmount] = useState([0, Math.max(...deals.map(d => d.amount))]);
+
+
+const [selectedDeals, setSelectedDeals] = useState([]);
+
+const handleDealSelect = (dealId) => {
+  setSelectedDeals((prev) =>
+    prev.includes(dealId) ? prev.filter((id) => id !== dealId) : [...prev, dealId]
+  );
+};
+
+const handleSelectAll = () => {
+  setSelectedDeals(selectedDeals.length === filteredContacts.length 
+    ? [] 
+    : currentDeals.map((deal) => deal.id));
+};
+const handleDeleteSelected = () => {
+  // Confirm deletion
+  if (!window.confirm(`Delete ${selectedDeals.length} selected deals?`)) return;
+
+  // Perform deletion (simulate or send to backend)
+  setFilteredContacts((prevDeals) =>
+    prevDeals.filter((deal) => !selectedDeals.includes(deal.id))
+  );
+
+  // Clear selection
+  setSelectedDeals([]);
+};
+const handleExportSelected = () => {
+  const selected = filteredContacts.filter((deal) =>
+    selectedDeals.includes(deal.id)
+  );
+
+  if (selected.length === 0) return;
+
+  const headers = Object.keys(selected[0]); // or choose specific fields
+  const csvRows = [
+    headers.join(','), // Header row
+    ...selected.map((deal) =>
+      headers.map((key) => `"${deal[key]}"`).join(',')
+    ),
+  ];
+
+  const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'selected-deals.csv';
+  a.click();
+
+  window.URL.revokeObjectURL(url);
+};
+
+
 
   // Form state
   const [formData, setFormData] = useState({
@@ -764,7 +819,7 @@ useEffect(() => {
   const formatDate = (dateString) => {
     return format(new Date(dateString), "yyyy-MM-dd");
   };
-  const uniqueOwners = useMemo(() => [...new Set(deals.map(d => d.dealOwner))], [deals]);
+const uniqueOwners = useMemo(() => [...new Set(deals.map(d => d.dealOwner))], [deals]);
 const uniqueStages = useMemo(() => [...new Set(deals.map(d => d.stage))], [deals]);
 const uniqueTypes = useMemo(() => [...new Set(deals.map(d => d.type))], [deals]);
 const uniqueLeadSources = useMemo(() => [...new Set(deals.map(d => d.leadSource))], [deals]);
@@ -779,6 +834,10 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
             <h1 className="text-3xl font-bold text-gray-900">Deals</h1>
             <p className="text-gray-600 mt-1">Track and manage your sales opportunities and revenue pipeline</p>
           </div>
+          <div>
+          </div>
+{/* add a new deal div start */}
+<div>
           <Dialog open={isAddDealOpen} onOpenChange={setIsAddDealOpen}>
             <DialogTrigger asChild>
               <Button className="bg-gray-900 hover:bg-gray-800 text-white">
@@ -995,7 +1054,11 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
               </form>
             </DialogContent>
           </Dialog>
+          </div>
+                  {/* add a new deal div end */}
+
         </div>
+
 
         {/* Pipeline Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -1017,6 +1080,8 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
             </Card>
           ))}
         </div>
+
+
         <div className=" items-center justify-between">
           {/* Horizontal Filter Bar */}
       <div className=" flex justify-between bg-white items-start border-b px-6 py-8">
@@ -1031,16 +1096,42 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          {/* pagination */}
+          <div className="flex items-center space-x-2">
+                <Label htmlFor="dealsPerPage" className="text-sm font-medium text-gray-600">
+                  Deals per page:
+                </Label>
+                <Select
+                  value={String(dealsPerPage)}
+                  onValueChange={handleDealsPerPageChange}
+                >
+                  <SelectTrigger className="w-[80px]">
+                    <SelectValue placeholder={dealsPerPage} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value={sortedDeals.length}>All</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
           </div>
-          {/* Filter Button */}
+
+
+{/* Filter Button */}
 <DropdownMenu>
+
   <DropdownMenuTrigger asChild>
     <Button variant="outline" className="gap-2">
       <Filter className="h-4 w-4" />
       Filter
     </Button>
   </DropdownMenuTrigger>
+
   <DropdownMenuContent align="start" className="w-80">
+
     <div className="p-4 space-y-4">
 
 {/* Deal Owner Filter */}
@@ -1173,8 +1264,22 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
   </CollapsibleContent>
 </Collapsible>
 </div>
-</DropdownMenuContent></DropdownMenu>  
+
+</DropdownMenuContent>
+
+</DropdownMenu>  
 </div>
+
+{selectedDeals.length > 0 && (
+  <div className="sticky top-0 z-10 bg-white border-b shadow-sm px-4 py-2">
+    <BulkActionsToolbar
+      selectedCount={selectedDeals.length}
+      onClearSelection={() => setSelectedDeals([])}
+      onDeleteSelected={ handleDeleteSelected} // example
+      onExportSelected={handleExportSelected} // example
+    />
+  </div>
+)}
 
         {/* Active Deals Table */}
         <Card className="shadow-sm">
@@ -1182,6 +1287,21 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
             <div className="mb-6">
               <h2 className="text-xl font-semibold text-gray-900">Active Deals</h2>
               <p className="text-gray-600 mt-1">Manage your sales opportunities and track progress</p>
+            </div>
+            <div>
+      <div>
+      <div className="col-span-1 flex items-center">
+  <Checkbox 
+    checked={
+      selectedDeals.length > 0 && 
+      selectedDeals.length === currentDeals.length
+    } 
+    onCheckedChange={handleSelectAll}
+    className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+  />
+</div>
+
+      </div>
             </div>
 
             <div className="overflow-x-auto">
@@ -1293,6 +1413,16 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
                   {filteredContacts.map((deal) => (
                     <tr key={deal.id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-4 px-4">
+                        <div className="flex-row">
+                        <div className="">
+  <Checkbox
+    checked={selectedDeals.includes(deal.id)}
+    onCheckedChange={() => handleDealSelect(deal.id)}
+    className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+  />
+</div>
+
+                        </div>
                         <div>
                           <p className="font-medium text-gray-900">{deal.dealName}</p>
                           <p className="text-sm text-gray-500">{deal.contactName}</p>
@@ -1347,25 +1477,7 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
               </div>           
             {/* Pagination Controls */}
             <div className="mt-6 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Label htmlFor="dealsPerPage" className="text-sm font-medium text-gray-600">
-                  Deals per page:
-                </Label>
-                <Select
-                  value={String(dealsPerPage)}
-                  onValueChange={handleDealsPerPageChange}
-                >
-                  <SelectTrigger className="w-[80px]">
-                    <SelectValue placeholder={dealsPerPage} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value={sortedDeals.length}>All</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
