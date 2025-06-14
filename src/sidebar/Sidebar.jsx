@@ -2,7 +2,10 @@ import { useState, useRef, useEffect, forwardRef } from "react";
 import { NavLink } from "react-router-dom";
 import {
     Search, Briefcase, Users, User, Building, ArrowLeftCircle,
-    BookOpen, Mail, Megaphone, HelpCircle
+    BookOpen, Mail, Megaphone, HelpCircle,
+    Workflow,
+    Settings,
+    UserPlus
 } from "lucide-react";
 import logoLight from "@/assets/logo-light.svg";
 import logoDark from "@/assets/logo-dark.svg";
@@ -55,9 +58,9 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
                         <SidebarLink to="/contacts" icon={<Users size={20} />} label="Contacts" collapsed={collapsed} />
                         <SidebarLink to="/accounts" icon={<Building size={20} />} label="Accounts" collapsed={collapsed} />
                         <SidebarLink to="/deals" icon={<Briefcase size={20} />} label="Deals" collapsed={collapsed} />
-                        <SidebarLink to="/workflow" icon={<Briefcase size={20} />} label="Workflow" collapsed={collapsed} />
-                        <SidebarLink to="/settings" icon={<Briefcase size={20} />} label="Settings" collapsed={collapsed} />
-                        <SidebarLink to="/users" icon={<Briefcase size={20} />} label="Users" collapsed={collapsed} />
+                        <SidebarLink to="/workflow" icon={<Workflow size={20}/>} label="Workflow" collapsed={collapsed} />
+                        <SidebarLink to="/settings" icon={<Settings  size={20}/>} label="Settings" collapsed={collapsed} />
+                        <SidebarLink to="/users" icon={<UserPlus size={20}/>} label="Users" collapsed={collapsed} />
                     </>
                 )}
 
@@ -104,7 +107,7 @@ const SidebarLink = ({ to, icon, label, collapsed }) => (
     <NavLink
         to={to}
         className={({ isActive }) =>
-            `flex items-center gap-x-3 px-3 py-2 rounded-md text-sm font-medium ${
+            `flex items-center gap-x-3 px-3 py-2 rounded-md text-sm font-medium border border-l-[3px] border-primary border-t-0 border-r-0 border-b-0 ${
                 isActive ? "bg-slate-200 dark:bg-slate-800 text-black dark:text-white" : "text-gray-700 dark:text-gray-300"
             } hover:bg-slate-100 dark:hover:bg-slate-700`
         }
