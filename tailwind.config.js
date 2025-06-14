@@ -6,9 +6,8 @@ export default {
         extend: {
       colors: {
         buttonprimary: {
-          DEFAULT: "#2563EB",    
-          light: "#3B82F6",     
-          dark: "#1E40AF",    
+         DEFAULT: "#2563EB",    // base
+          hover: "#1D4ED8",   
         },
       buttonsecondary: {
       DEFAULT: "#22C55E", 

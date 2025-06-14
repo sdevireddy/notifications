@@ -208,7 +208,7 @@ const LeadCreationForm = () => {
 
                         <button
                             type="submit"
-                            className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                            className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover"
                             onClick={() => (submitActionRef.current = "save")}
                         >
                             Save
