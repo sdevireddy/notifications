@@ -1,3 +1,194 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+  body {
+    @apply bg-white text-gray-900;
+  }
+}
+
+/* Enhanced dropdown styles for better visibility */
+.dropdown-content {
+  background-color: white;
+  border: 2px solid #d1d5db;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+  z-index: 60;
+  backdrop-filter: blur(8px);
+}
+
+.dropdown-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.dropdown-item:hover {
+  background-color: #eff6ff;
+  color: #1e40af;
+}
+
+/* Enhanced dialog overlay for better contrast */
+.dialog-overlay {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: none !important;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.dialog-content {
+  background-color: white !important;
+  border: 2px solid #d1d5db !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95%;
+  max-width: 96rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 60;
+}
+
+/* Enhanced form visibility */
+.form-section {
+  background-color: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-section h3 {
+  color: #1e293b !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+  border-bottom: 3px solid #64748b !important;
+  padding-bottom: 0.75rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Enhanced input field visibility */
+.enhanced-input {
+  background-color: white !important;
+  border: 2px solid #cbd5e1 !important;
+  color: #1e293b !important;
+  font-weight: 500 !important;
+}
+
+.enhanced-input:focus {
+  border-color: #64748b !important;
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1) !important;
+}
+
+.enhanced-label {
+  color: #374151 !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  margin-bottom: 0.5rem !important;
+  display: block;
+}
+
+/* Enhanced dropdown menu visibility */
+.enhanced-dropdown {
+  background-color: white !important;
+  border: 2px solid #d1d5db !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0.75rem !important;
+  z-index: 60 !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.enhanced-dropdown-item {
+  padding: 0.75rem 1rem !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+.enhanced-dropdown-item:hover {
+  background-color: #eff6ff !important;
+  color: #1e40af !important;
+}
+
+/* Filter dropdown enhancement - removed blue border */
+.filter-dropdown {
+  background-color: white !important;
+  border: 2px solid #d1d5db !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0.75rem !important;
+  z-index: 60 !important;
+}
+
+/* Professional white theme overrides */
+.contact-row:hover {
+  background-color: #f8fafc !important;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.contact-row.selected {
+  background-color: #eff6ff !important;
+  border-left: 3px solid #3b82f6;
+}
+
+/* Card styling for professional look */
+.professional-card {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Header styling */
+.header-section {
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Filter bar styling */
+.filter-bar {
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Table styling */
+.table-header {
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Button hover states */
+.btn-hover:hover {
+  background-color: #f3f4f6;
+  transition: background-color 0.15s ease-in-out;
+}
+
+/* Enhanced textarea styling */
+.enhanced-textarea {
+  background-color: white !important;
+  border: 2px solid #cbd5e1 !important;
+  color: #1e293b !important;
+  font-weight: 500 !important;
+  border-radius: 0.5rem !important;
+}
+
+.enhanced-textarea:focus {
+  border-color: #64748b !important;
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1) !important;
+  outline: none !important;
+}
+
+/* Enhanced checkbox styling */
+.enhanced-checkbox {
+  border: 2px solid #6b7280 !important;
+  background-color: white !important;
+}
+
+.enhanced-checkbox[data-state="checked"] {
+  background-color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+}
