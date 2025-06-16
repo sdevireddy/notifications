@@ -592,7 +592,7 @@ export default function ZohoCRMContacts() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
               placeholder={`Search ${statusFilter === "all-statuses" ? "all" : statusFilter} contacts...`}
-              className="pl-10"
+              className="pl-10 enhanced-input"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -640,9 +640,9 @@ export default function ZohoCRMContacts() {
                         id="all-contacts"
                         checked={activeFilters.allContacts}
                         onCheckedChange={(checked) => handleFilterChange("allContacts", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="all-contacts" className="text-sm">
+                      <Label htmlFor="all-contacts" className="text-sm enhanced-label">
                         All Contacts ({contacts.length})
                       </Label>
                     </div>
@@ -651,9 +651,9 @@ export default function ZohoCRMContacts() {
                         id="my-contacts"
                         checked={activeFilters.myContacts}
                         onCheckedChange={(checked) => handleFilterChange("myContacts", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="my-contacts" className="text-sm">
+                      <Label htmlFor="my-contacts" className="text-sm enhanced-label">
                         My Contacts ({contacts.filter((c) => c.owner === "me").length})
                       </Label>
                     </div>
@@ -662,9 +662,9 @@ export default function ZohoCRMContacts() {
                         id="recently-created"
                         checked={activeFilters.recentlyCreated}
                         onCheckedChange={(checked) => handleFilterChange("recentlyCreated", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="recently-created" className="text-sm">
+                      <Label htmlFor="recently-created" className="text-sm enhanced-label">
                         Recently Created (
                         {
                           contacts.filter((c) => {
@@ -691,9 +691,9 @@ export default function ZohoCRMContacts() {
                         id="page-visits"
                         checked={activeFilters.pageVisits}
                         onCheckedChange={(checked) => handleFilterChange("pageVisits", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="page-visits" className="text-sm">
+                      <Label htmlFor="page-visits" className="text-sm enhanced-label">
                         Page Visits ({contacts.filter((c) => c.hasPageVisits).length})
                       </Label>
                     </div>
@@ -702,9 +702,9 @@ export default function ZohoCRMContacts() {
                         id="form-submissions"
                         checked={activeFilters.formSubmissions}
                         onCheckedChange={(checked) => handleFilterChange("formSubmissions", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="form-submissions" className="text-sm">
+                      <Label htmlFor="form-submissions" className="text-sm enhanced-label">
                         Form Submissions ({contacts.filter((c) => c.hasFormSubmissions).length})
                       </Label>
                     </div>
@@ -713,9 +713,9 @@ export default function ZohoCRMContacts() {
                         id="downloads"
                         checked={activeFilters.downloads}
                         onCheckedChange={(checked) => handleFilterChange("downloads", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="downloads" className="text-sm">
+                      <Label htmlFor="downloads" className="text-sm enhanced-label">
                         Downloads ({contacts.filter((c) => c.hasDownloads).length})
                       </Label>
                     </div>
@@ -734,9 +734,9 @@ export default function ZohoCRMContacts() {
                         id="contact-name"
                         checked={activeFilters.contactName}
                         onCheckedChange={(checked) => handleFilterChange("contactName", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="contact-name" className="text-sm">
+                      <Label htmlFor="contact-name" className="text-sm enhanced-label">
                         Contact Name
                       </Label>
                     </div>
@@ -745,9 +745,9 @@ export default function ZohoCRMContacts() {
                         id="company"
                         checked={activeFilters.company}
                         onCheckedChange={(checked) => handleFilterChange("company", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="company" className="text-sm">
+                      <Label htmlFor="company" className="text-sm enhanced-label">
                         Company
                       </Label>
                     </div>
@@ -756,9 +756,9 @@ export default function ZohoCRMContacts() {
                         id="email"
                         checked={activeFilters.email}
                         onCheckedChange={(checked) => handleFilterChange("email", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="email" className="text-sm">
+                      <Label htmlFor="email" className="text-sm enhanced-label">
                         Email
                       </Label>
                     </div>
@@ -767,9 +767,9 @@ export default function ZohoCRMContacts() {
                         id="phone"
                         checked={activeFilters.phone}
                         onCheckedChange={(checked) => handleFilterChange("phone", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="phone" className="text-sm">
+                      <Label htmlFor="phone" className="text-sm enhanced-label">
                         Phone
                       </Label>
                     </div>
@@ -788,9 +788,9 @@ export default function ZohoCRMContacts() {
                         id="deals"
                         checked={activeFilters.deals}
                         onCheckedChange={(checked) => handleFilterChange("deals", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="deals" className="text-sm">
+                      <Label htmlFor="deals" className="text-sm enhanced-label">
                         Has Deals ({contacts.filter((c) => c.hasDeals).length})
                       </Label>
                     </div>
@@ -799,9 +799,9 @@ export default function ZohoCRMContacts() {
                         id="campaigns"
                         checked={activeFilters.campaigns}
                         onCheckedChange={(checked) => handleFilterChange("campaigns", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="campaigns" className="text-sm">
+                      <Label htmlFor="campaigns" className="text-sm enhanced-label">
                         Has Campaigns ({contacts.filter((c) => c.hasCam).length})
                       </Label>
                     </div>
@@ -810,9 +810,9 @@ export default function ZohoCRMContacts() {
                         id="activities"
                         checked={activeFilters.activities}
                         onCheckedChange={(checked) => handleFilterChange("activities", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                       />
-                      <Label htmlFor="activities" className="text-sm">
+                      <Label htmlFor="activities" className="text-sm enhanced-label">
                         Has Activities ({contacts.filter((c) => c.hasActivities).length})
                       </Label>
                     </div>
@@ -943,7 +943,7 @@ export default function ZohoCRMContacts() {
                   <Checkbox
                     checked={selectedContacts.length > 0 && selectedContacts.length === currentContacts.length}
                     onCheckedChange={handleSelectAll}
-                    className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                    className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                   />
                 </div>
 
@@ -1028,7 +1028,7 @@ export default function ZohoCRMContacts() {
                         <Checkbox
                           checked={selectedContacts.includes(contact.id)}
                           onCheckedChange={() => handleContactSelect(contact.id)}
-                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400"
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
                         />
                       </div>
 
@@ -1061,9 +1061,8 @@ export default function ZohoCRMContacts() {
 
                       {/* Company */}
                       {visibleColumns.company && (
-                        <div className="flex flex-col justify-center">
+                        <div className="flex items-center">
                           <p className="font-medium text-gray-900">{contact.company}</p>
-                          <p className="text-sm text-gray-600">{contact.jobTitle}</p>
                         </div>
                       )}
 
@@ -1107,8 +1106,8 @@ export default function ZohoCRMContacts() {
                       {/* Last Contact */}
                       {visibleColumns.lastContact && (
                         <div className="flex flex-col justify-center">
-                          <p className="text-sm text-gray-900">{contact.lastContactDate}</p>
-                          <p className="text-xs text-gray-500">{contact.lastContactType}</p>
+                          <p className="text-sm font-medium text-gray-900">{contact.lastContactDate}</p>
+                          <p className="text-xs text-gray-500 capitalize">{contact.lastContactType}</p>
                         </div>
                       )}
 
@@ -1209,9 +1208,9 @@ export default function ZohoCRMContacts() {
 
       {/* Create Contact Dialog */}
       <Dialog open={isCreateContactOpen} onOpenChange={setIsCreateContactOpen}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto dialog-content">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-900">
               {createContactType === "form" && "Create New Contact"}
               {createContactType === "import-contacts" && "Import from Contacts"}
               {createContactType === "import-notes" && "Import from Notes"}
@@ -1221,15 +1220,19 @@ export default function ZohoCRMContacts() {
           {createContactType === "form" && (
             <div className="space-y-8">
               {/* Contact Information Section */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Contact Information</h3>
+              <div className="form-section">
+                <h3 className="text-lg font-bold text-gray-900 mb-4 border-b-2 border-gray-500 pb-2">
+                  Contact Information
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Left Column */}
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="contactOwner">Contact Owner</Label>
+                      <Label htmlFor="contactOwner" className="enhanced-label">
+                        Contact Owner
+                      </Label>
                       <Select>
-                        <SelectTrigger>
+                        <SelectTrigger className="enhanced-input">
                           <SelectValue placeholder="Select owner" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1241,10 +1244,12 @@ export default function ZohoCRMContacts() {
                     </div>
 
                     <div>
-                      <Label htmlFor="firstName">First Name</Label>
+                      <Label htmlFor="firstName" className="enhanced-label">
+                        First Name
+                      </Label>
                       <div className="flex gap-2">
                         <Select>
-                          <SelectTrigger className="w-24">
+                          <SelectTrigger className="w-24 enhanced-input">
                             <SelectValue placeholder="Title" />
                           </SelectTrigger>
                           <SelectContent>
@@ -1254,14 +1259,16 @@ export default function ZohoCRMContacts() {
                             <SelectItem value="dr">Dr.</SelectItem>
                           </SelectContent>
                         </Select>
-                        <Input id="firstName" placeholder="Enter first name" className="flex-1" />
+                        <Input id="firstName" placeholder="Enter first name" className="flex-1 enhanced-input" />
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="accountName">Account Name</Label>
+                      <Label htmlFor="accountName" className="enhanced-label">
+                        Account Name
+                      </Label>
                       <div className="flex gap-2">
-                        <Input id="accountName" placeholder="Enter account name" className="flex-1" />
+                        <Input id="accountName" placeholder="Enter account name" className="flex-1 enhanced-input" />
                         <Button variant="outline" size="sm" className="px-3">
                           <Search className="h-4 w-4" />
                         </Button>
@@ -1269,37 +1276,49 @@ export default function ZohoCRMContacts() {
                     </div>
 
                     <div>
-                      <Label htmlFor="email">Email *</Label>
-                      <Input id="email" type="email" placeholder="Enter email address" />
+                      <Label htmlFor="email" className="enhanced-label">
+                        Email *
+                      </Label>
+                      <Input id="email" type="email" placeholder="Enter email address" className="enhanced-input" />
                     </div>
 
                     <div>
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input id="phone" placeholder="Enter phone number" />
+                      <Label htmlFor="phone" className="enhanced-label">
+                        Phone
+                      </Label>
+                      <Input id="phone" placeholder="Enter phone number" className="enhanced-input" />
                     </div>
 
                     <div>
-                      <Label htmlFor="otherPhone">Other Phone</Label>
-                      <Input id="otherPhone" placeholder="Enter other phone number" />
+                      <Label htmlFor="otherPhone" className="enhanced-label">
+                        Other Phone
+                      </Label>
+                      <Input id="otherPhone" placeholder="Enter other phone number" className="enhanced-input" />
                     </div>
 
                     <div>
-                      <Label htmlFor="mobile">Mobile</Label>
-                      <Input id="mobile" placeholder="Enter mobile number" />
+                      <Label htmlFor="mobile" className="enhanced-label">
+                        Mobile
+                      </Label>
+                      <Input id="mobile" placeholder="Enter mobile number" className="enhanced-input" />
                     </div>
 
                     <div>
-                      <Label htmlFor="assistant">Assistant</Label>
-                      <Input id="assistant" placeholder="Enter assistant name" />
+                      <Label htmlFor="assistant" className="enhanced-label">
+                        Assistant
+                      </Label>
+                      <Input id="assistant" placeholder="Enter assistant name" className="enhanced-input" />
                     </div>
                   </div>
 
                   {/* Right Column */}
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="leadSource">Lead Source</Label>
+                      <Label htmlFor="leadSource" className="enhanced-label">
+                        Lead Source
+                      </Label>
                       <Select>
-                        <SelectTrigger>
+                        <SelectTrigger className="enhanced-input">
                           <SelectValue placeholder="Select lead source" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1313,14 +1332,18 @@ export default function ZohoCRMContacts() {
                     </div>
 
                     <div>
-                      <Label htmlFor="lastName">Last Name *</Label>
-                      <Input id="lastName" placeholder="Enter last name" />
+                      <Label htmlFor="lastName" className="enhanced-label">
+                        Last Name *
+                      </Label>
+                      <Input id="lastName" placeholder="Enter last name" className="enhanced-input" />
                     </div>
 
                     <div>
-                      <Label htmlFor="vendorName">Vendor Name</Label>
+                      <Label htmlFor="vendorName" className="enhanced-label">
+                        Vendor Name
+                      </Label>
                       <div className="flex gap-2">
-                        <Input id="vendorName" placeholder="Enter vendor name" className="flex-1" />
+                        <Input id="vendorName" placeholder="Enter vendor name" className="flex-1 enhanced-input" />
                         <Button variant="outline" size="sm" className="px-3">
                           <Search className="h-4 w-4" />
                         </Button>
@@ -1328,28 +1351,38 @@ export default function ZohoCRMContacts() {
                     </div>
 
                     <div>
-                      <Label htmlFor="title">Title</Label>
-                      <Input id="title" placeholder="Enter job title" />
+                      <Label htmlFor="title" className="enhanced-label">
+                        Title
+                      </Label>
+                      <Input id="title" placeholder="Enter job title" className="enhanced-input" />
                     </div>
 
                     <div>
-                      <Label htmlFor="department">Department</Label>
-                      <Input id="department" placeholder="Enter department" />
+                      <Label htmlFor="department" className="enhanced-label">
+                        Department
+                      </Label>
+                      <Input id="department" placeholder="Enter department" className="enhanced-input" />
                     </div>
 
                     <div>
-                      <Label htmlFor="homePhone">Home Phone</Label>
-                      <Input id="homePhone" placeholder="Enter home phone number" />
+                      <Label htmlFor="homePhone" className="enhanced-label">
+                        Home Phone
+                      </Label>
+                      <Input id="homePhone" placeholder="Enter home phone number" className="enhanced-input" />
                     </div>
 
                     <div>
-                      <Label htmlFor="fax">Fax</Label>
-                      <Input id="fax" placeholder="Enter fax number" />
+                      <Label htmlFor="fax" className="enhanced-label">
+                        Fax
+                      </Label>
+                      <Input id="fax" placeholder="Enter fax number" className="enhanced-input" />
                     </div>
 
                     <div>
-                      <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                      <Input id="dateOfBirth" type="date" placeholder="DD/MM/YYYY" />
+                      <Label htmlFor="dateOfBirth" className="enhanced-label">
+                        Date of Birth
+                      </Label>
+                      <Input id="dateOfBirth" type="date" placeholder="DD/MM/YYYY" className="enhanced-input" />
                     </div>
                   </div>
                 </div>
@@ -1358,41 +1391,66 @@ export default function ZohoCRMContacts() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="asstPhone">Asst Phone</Label>
-                      <Input id="asstPhone" placeholder="Enter assistant phone" />
+                      <Label htmlFor="asstPhone" className="enhanced-label">
+                        Asst Phone
+                      </Label>
+                      <Input id="asstPhone" placeholder="Enter assistant phone" className="enhanced-input" />
                     </div>
 
                     <div>
-                      <Label htmlFor="skypeId">Skype ID</Label>
-                      <Input id="skypeId" placeholder="Enter Skype ID" />
+                      <Label htmlFor="skypeId" className="enhanced-label">
+                        Skype ID
+                      </Label>
+                      <Input id="skypeId" placeholder="Enter Skype ID" className="enhanced-input" />
                     </div>
 
                     <div>
-                      <Label htmlFor="twitter">Twitter</Label>
+                      <Label htmlFor="twitter" className="enhanced-label">
+                        Twitter
+                      </Label>
                       <div className="flex gap-2">
-                        <span className="flex items-center px-3 py-2 bg-gray-100 border border-r-0 rounded-l-md text-sm">
+                        <span className="flex items-center px-3 py-2 bg-gray-100 border border-r-0 rounded-l-md text-sm font-semibold">
                           @
                         </span>
-                        <Input id="twitter" placeholder="Enter Twitter handle" className="rounded-l-none" />
+                        <Input
+                          id="twitter"
+                          placeholder="Enter Twitter handle"
+                          className="rounded-l-none enhanced-input"
+                        />
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-4">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="emailOptOut" />
-                      <Label htmlFor="emailOptOut">Email Opt Out</Label>
+                      <Checkbox id="emailOptOut" className="enhanced-checkbox" />
+                      <Label htmlFor="emailOptOut" className="enhanced-label">
+                        Email Opt Out
+                      </Label>
                     </div>
 
                     <div>
-                      <Label htmlFor="secondaryEmail">Secondary Email</Label>
-                      <Input id="secondaryEmail" type="email" placeholder="Enter secondary email" />
+                      <Label htmlFor="secondaryEmail" className="enhanced-label">
+                        Secondary Email
+                      </Label>
+                      <Input
+                        id="secondaryEmail"
+                        type="email"
+                        placeholder="Enter secondary email"
+                        className="enhanced-input"
+                      />
                     </div>
 
                     <div>
-                      <Label htmlFor="reportingTo">Reporting To</Label>
+                      <Label htmlFor="reportingTo" className="enhanced-label">
+                        Reporting To
+                      </Label>
                       <div className="flex gap-2">
-                        <Input id="reportingTo" placeholder="Enter reporting manager" className="flex-1" />
+                        <Input
+                          id="reportingTo"
+                          placeholder="Enter reporting manager"
+                          className="flex-1 enhanced-input"
+                        />
                         <Button variant="outline" size="sm" className="px-3">
                           <Search className="h-4 w-4" />
                         </Button>
@@ -1403,9 +1461,11 @@ export default function ZohoCRMContacts() {
               </div>
 
               {/* Address Information Section */}
-              <div>
+              <div className="form-section">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Address Information</h3>
+                  <h3 className="text-lg font-bold text-gray-900 border-b-2 border-gray-500 pb-2">
+                    Address Information
+                  </h3>
                   <Button variant="outline" size="sm">
                     Copy Address
                   </Button>
@@ -1413,54 +1473,74 @@ export default function ZohoCRMContacts() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Mailing Address */}
                   <div>
-                    <h4 className="font-medium text-gray-700 mb-3">Mailing Address</h4>
+                    <h4 className="font-semibold text-gray-700 mb-3">Mailing Address</h4>
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="mailingStreet">Mailing Street</Label>
-                        <Input id="mailingStreet" placeholder="Enter street address" />
+                        <Label htmlFor="mailingStreet" className="enhanced-label">
+                          Mailing Street
+                        </Label>
+                        <Input id="mailingStreet" placeholder="Enter street address" className="enhanced-input" />
                       </div>
                       <div>
-                        <Label htmlFor="mailingCity">Mailing City</Label>
-                        <Input id="mailingCity" placeholder="Enter city" />
+                        <Label htmlFor="mailingCity" className="enhanced-label">
+                          Mailing City
+                        </Label>
+                        <Input id="mailingCity" placeholder="Enter city" className="enhanced-input" />
                       </div>
                       <div>
-                        <Label htmlFor="mailingState">Mailing State</Label>
-                        <Input id="mailingState" placeholder="Enter state" />
+                        <Label htmlFor="mailingState" className="enhanced-label">
+                          Mailing State
+                        </Label>
+                        <Input id="mailingState" placeholder="Enter state" className="enhanced-input" />
                       </div>
                       <div>
-                        <Label htmlFor="mailingZip">Mailing Zip</Label>
-                        <Input id="mailingZip" placeholder="Enter zip code" />
+                        <Label htmlFor="mailingZip" className="enhanced-label">
+                          Mailing Zip
+                        </Label>
+                        <Input id="mailingZip" placeholder="Enter zip code" className="enhanced-input" />
                       </div>
                       <div>
-                        <Label htmlFor="mailingCountry">Mailing Country</Label>
-                        <Input id="mailingCountry" placeholder="Enter country" />
+                        <Label htmlFor="mailingCountry" className="enhanced-label">
+                          Mailing Country
+                        </Label>
+                        <Input id="mailingCountry" placeholder="Enter country" className="enhanced-input" />
                       </div>
                     </div>
                   </div>
 
                   {/* Other Address */}
                   <div>
-                    <h4 className="font-medium text-gray-700 mb-3">Other Address</h4>
+                    <h4 className="font-semibold text-gray-700 mb-3">Other Address</h4>
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="otherStreet">Other Street</Label>
-                        <Input id="otherStreet" placeholder="Enter street address" />
+                        <Label htmlFor="otherStreet" className="enhanced-label">
+                          Other Street
+                        </Label>
+                        <Input id="otherStreet" placeholder="Enter street address" className="enhanced-input" />
                       </div>
                       <div>
-                        <Label htmlFor="otherCity">Other City</Label>
-                        <Input id="otherCity" placeholder="Enter city" />
+                        <Label htmlFor="otherCity" className="enhanced-label">
+                          Other City
+                        </Label>
+                        <Input id="otherCity" placeholder="Enter city" className="enhanced-input" />
                       </div>
                       <div>
-                        <Label htmlFor="otherState">Other State</Label>
-                        <Input id="otherState" placeholder="Enter state" />
+                        <Label htmlFor="otherState" className="enhanced-label">
+                          Other State
+                        </Label>
+                        <Input id="otherState" placeholder="Enter state" className="enhanced-input" />
                       </div>
                       <div>
-                        <Label htmlFor="otherZip">Other Zip</Label>
-                        <Input id="otherZip" placeholder="Enter zip code" />
+                        <Label htmlFor="otherZip" className="enhanced-label">
+                          Other Zip
+                        </Label>
+                        <Input id="otherZip" placeholder="Enter zip code" className="enhanced-input" />
                       </div>
                       <div>
-                        <Label htmlFor="otherCountry">Other Country</Label>
-                        <Input id="otherCountry" placeholder="Enter country" />
+                        <Label htmlFor="otherCountry" className="enhanced-label">
+                          Other Country
+                        </Label>
+                        <Input id="otherCountry" placeholder="Enter country" className="enhanced-input" />
                       </div>
                     </div>
                   </div>
@@ -1468,25 +1548,34 @@ export default function ZohoCRMContacts() {
               </div>
 
               {/* Description Information Section */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Description Information</h3>
+              <div className="form-section">
+                <h3 className="text-lg font-bold text-gray-900 mb-4 border-b-2 border-gray-500 pb-2">
+                  Description Information
+                </h3>
                 <div>
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" className="enhanced-label">
+                    Description
+                  </Label>
                   <textarea
                     id="description"
                     rows={4}
-                    className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="mt-1 block w-full rounded-md border-2 border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 ring-offset-background placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:border-gray-500 disabled:cursor-not-allowed disabled:opacity-50 enhanced-textarea"
                     placeholder="Enter contact description..."
                   />
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex justify-end gap-3 pt-6 border-t">
-                <Button variant="outline" onClick={() => setIsCreateContactOpen(false)}>
+              <div className="flex justify-end gap-3 pt-6 border-t-2 border-gray-200">
+                <Button variant="outline" onClick={() => setIsCreateContactOpen(false)} className="font-semibold">
                   Cancel
                 </Button>
-                <Button onClick={() => setIsCreateContactOpen(false)}>Save Contact</Button>
+                <Button
+                  onClick={() => setIsCreateContactOpen(false)}
+                  className="bg-blue-600 hover:bg-blue-700 font-semibold"
+                >
+                  Save Contact
+                </Button>
               </div>
             </div>
           )}

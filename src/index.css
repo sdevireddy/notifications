@@ -34,27 +34,66 @@
 
 /* Enhanced dialog overlay for better contrast */
 .dialog-overlay {
-  background-color: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: none !important;
   position: fixed;
   inset: 0;
   z-index: 50;
 }
 
 .dialog-content {
-  background-color: white;
-  border: 2px solid #e5e7eb;
-  border-radius: 1rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  background-color: white !important;
+  border: 2px solid #d1d5db !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 95%;
-  max-width: 32rem;
-  max-height: 85vh;
+  max-width: 96rem;
+  max-height: 90vh;
   overflow-y: auto;
   z-index: 60;
+}
+
+/* Enhanced form visibility */
+.form-section {
+  background-color: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-section h3 {
+  color: #1e293b !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+  border-bottom: 3px solid #64748b !important;
+  padding-bottom: 0.75rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Enhanced input field visibility */
+.enhanced-input {
+  background-color: white !important;
+  border: 2px solid #cbd5e1 !important;
+  color: #1e293b !important;
+  font-weight: 500 !important;
+}
+
+.enhanced-input:focus {
+  border-color: #64748b !important;
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1) !important;
+}
+
+.enhanced-label {
+  color: #374151 !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  margin-bottom: 0.5rem !important;
+  display: block;
 }
 
 /* Enhanced dropdown menu visibility */
@@ -77,11 +116,11 @@
   color: #1e40af !important;
 }
 
-/* Filter dropdown enhancement */
+/* Filter dropdown enhancement - removed blue border */
 .filter-dropdown {
   background-color: white !important;
-  border: 2px solid #3b82f6 !important;
-  box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.3), 0 10px 10px -5px rgba(59, 130, 246, 0.1) !important;
+  border: 2px solid #d1d5db !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
   border-radius: 0.75rem !important;
   z-index: 60 !important;
 }
@@ -126,4 +165,30 @@
 .btn-hover:hover {
   background-color: #f3f4f6;
   transition: background-color 0.15s ease-in-out;
+}
+
+/* Enhanced textarea styling */
+.enhanced-textarea {
+  background-color: white !important;
+  border: 2px solid #cbd5e1 !important;
+  color: #1e293b !important;
+  font-weight: 500 !important;
+  border-radius: 0.5rem !important;
+}
+
+.enhanced-textarea:focus {
+  border-color: #64748b !important;
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1) !important;
+  outline: none !important;
+}
+
+/* Enhanced checkbox styling */
+.enhanced-checkbox {
+  border: 2px solid #6b7280 !important;
+  background-color: white !important;
+}
+
+.enhanced-checkbox[data-state="checked"] {
+  background-color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
 }
