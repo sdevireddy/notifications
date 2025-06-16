@@ -22,6 +22,8 @@ import CRMSelectionImport from "./routes/import/Import";
 import DataMigrationUpload from "./routes/import/DataMigration";
 import EditLead from "./routes/leads/EditLead";
 import Users from "./routes/users/Users";
+import WorkflowRuleForm from "./routes/workflow/form/WorkflowRuleForm";
+import WorkflowPage from "./routes/workflow/WorkFlow";
 
 function App() {
     const router = createBrowserRouter([
@@ -80,7 +82,11 @@ function App() {
                 },
                 {
                     path: "workflow",
-                    element: <Workflow />,
+                    element: <WorkflowPage/>,
+                },
+                {
+                    path:"workflow/create",
+                    element:<WorkflowRuleForm/>
                 },
                 {
                     path: "Accounts",
