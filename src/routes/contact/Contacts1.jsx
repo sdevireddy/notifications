@@ -468,24 +468,6 @@ export default function ZohoCRMContacts() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Records per page */}
-            <div className="flex items-center gap-2">
-              <Label htmlFor="records-per-page" className="text-sm">
-                Records per page:
-              </Label>
-              <Select value={recordsPerPage} onValueChange={setRecordsPerPage}>
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
             {/* Actions Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -586,285 +568,321 @@ export default function ZohoCRMContacts() {
 
       {/* Horizontal Filter Bar */}
       <div className="bg-white border-b px-6 py-4">
-        <div className="flex items-center gap-4">
-          {/* Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder={`Search ${statusFilter === "all-statuses" ? "all" : statusFilter} contacts...`}
-              className="pl-10 enhanced-input"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        <div className="flex items-center justify-between gap-4">
+          {/* Left side - Filter Button and Records per page */}
+          <div className="flex items-center gap-4">
+            {/* Filter Button */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 relative">
+                  <Filter className="h-4 w-4" />
+                  Filter
+                  {getActiveFilterCount() > 0 && (
+                    <Badge variant="destructive" className="ml-2 h-5 w-5 p-0 text-xs flex items-center justify-center">
+                      {getActiveFilterCount()}
+                    </Badge>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-80 filter-dropdown max-h-[70vh] overflow-y-auto">
+                <div className="p-4 space-y-4">
+                  {/* Clear All Filters */}
+                  {getActiveFilterCount() > 0 && (
+                    <div className="flex justify-between items-center pb-2 border-b">
+                      <span className="text-sm font-medium">Active Filters ({getActiveFilterCount()})</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearAllFilters}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        Clear All
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* System Defined Filters */}
+                  <Collapsible open={systemFiltersOpen} onOpenChange={setSystemFiltersOpen}>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+                      <span className="font-medium text-sm">System Defined Filters</span>
+                      {systemFiltersOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="pl-4 space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="all-contacts"
+                          checked={activeFilters.allContacts}
+                          onCheckedChange={(checked) => handleFilterChange("allContacts", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="all-contacts" className="text-sm enhanced-label">
+                          All Contacts ({contacts.length})
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="my-contacts"
+                          checked={activeFilters.myContacts}
+                          onCheckedChange={(checked) => handleFilterChange("myContacts", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="my-contacts" className="text-sm enhanced-label">
+                          My Contacts ({contacts.filter((c) => c.owner === "me").length})
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="recently-created"
+                          checked={activeFilters.recentlyCreated}
+                          onCheckedChange={(checked) => handleFilterChange("recentlyCreated", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="recently-created" className="text-sm enhanced-label">
+                          Recently Created (
+                          {
+                            contacts.filter((c) => {
+                              const recentDate = new Date()
+                              recentDate.setDate(recentDate.getDate() - 7)
+                              return new Date(c.createdDate) >= recentDate
+                            }).length
+                          }
+                          )
+                        </Label>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+
+                  {/* Website Activity */}
+                  <Collapsible open={websiteActivityOpen} onOpenChange={setWebsiteActivityOpen}>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+                      <span className="font-medium text-sm">Website Activity</span>
+                      {websiteActivityOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="pl-4 space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="page-visits"
+                          checked={activeFilters.pageVisits}
+                          onCheckedChange={(checked) => handleFilterChange("pageVisits", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="page-visits" className="text-sm enhanced-label">
+                          Page Visits ({contacts.filter((c) => c.hasPageVisits).length})
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="form-submissions"
+                          checked={activeFilters.formSubmissions}
+                          onCheckedChange={(checked) => handleFilterChange("formSubmissions", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="form-submissions" className="text-sm enhanced-label">
+                          Form Submissions ({contacts.filter((c) => c.hasFormSubmissions).length})
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="downloads"
+                          checked={activeFilters.downloads}
+                          onCheckedChange={(checked) => handleFilterChange("downloads", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="downloads" className="text-sm enhanced-label">
+                          Downloads ({contacts.filter((c) => c.hasDownloads).length})
+                        </Label>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+
+                  {/* Filter By Fields */}
+                  <Collapsible open={filterByFieldsOpen} onOpenChange={setFilterByFieldsOpen}>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+                      <span className="font-medium text-sm">Filter By Fields</span>
+                      {filterByFieldsOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="pl-4 space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="contact-name"
+                          checked={activeFilters.contactName}
+                          onCheckedChange={(checked) => handleFilterChange("contactName", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="contact-name" className="text-sm enhanced-label">
+                          Contact Name
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="company"
+                          checked={activeFilters.company}
+                          onCheckedChange={(checked) => handleFilterChange("company", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="company" className="text-sm enhanced-label">
+                          Company
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="email"
+                          checked={activeFilters.email}
+                          onCheckedChange={(checked) => handleFilterChange("email", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="email" className="text-sm enhanced-label">
+                          Email
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="phone"
+                          checked={activeFilters.phone}
+                          onCheckedChange={(checked) => handleFilterChange("phone", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="phone" className="text-sm enhanced-label">
+                          Phone
+                        </Label>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+
+                  {/* Filter By Related Modules */}
+                  <Collapsible open={relatedModulesOpen} onOpenChange={setRelatedModulesOpen}>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
+                      <span className="font-medium text-sm">Filter By Related Modules</span>
+                      {relatedModulesOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="pl-4 space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="deals"
+                          checked={activeFilters.deals}
+                          onCheckedChange={(checked) => handleFilterChange("deals", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="deals" className="text-sm enhanced-label">
+                          Has Deals ({contacts.filter((c) => c.hasDeals).length})
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="campaigns"
+                          checked={activeFilters.campaigns}
+                          onCheckedChange={(checked) => handleFilterChange("campaigns", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="campaigns" className="text-sm enhanced-label">
+                          Has Campaigns ({contacts.filter((c) => c.hasCampaigns).length})
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="activities"
+                          checked={activeFilters.activities}
+                          onCheckedChange={(checked) => handleFilterChange("activities", checked)}
+                          className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
+                        />
+                        <Label htmlFor="activities" className="text-sm enhanced-label">
+                          Has Activities ({contacts.filter((c) => c.hasActivities).length})
+                        </Label>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Records per page */}
+            <div className="flex items-center gap-2">
+              <Label htmlFor="records-per-page" className="text-sm whitespace-nowrap">
+                Records per page:
+              </Label>
+              <Select value={recordsPerPage} onValueChange={setRecordsPerPage}>
+                <SelectTrigger className="w-20 enhanced-input">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="enhanced-dropdown">
+                  <SelectItem value="10" className="enhanced-dropdown-item">
+                    10
+                  </SelectItem>
+                  <SelectItem value="25" className="enhanced-dropdown-item">
+                    25
+                  </SelectItem>
+                  <SelectItem value="50" className="enhanced-dropdown-item">
+                    50
+                  </SelectItem>
+                  <SelectItem value="100" className="enhanced-dropdown-item">
+                    100
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
-          {/* Filter Button */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2 relative">
-                <Filter className="h-4 w-4" />
-                Filter
-                {getActiveFilterCount() > 0 && (
-                  <Badge variant="destructive" className="ml-2 h-5 w-5 p-0 text-xs flex items-center justify-center">
-                    {getActiveFilterCount()}
-                  </Badge>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-80 filter-dropdown max-h-[70vh] overflow-y-auto">
-              <div className="p-4 space-y-4">
-                {/* Clear All Filters */}
-                {getActiveFilterCount() > 0 && (
-                  <div className="flex justify-between items-center pb-2 border-b">
-                    <span className="text-sm font-medium">Active Filters ({getActiveFilterCount()})</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={clearAllFilters}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      Clear All
-                    </Button>
-                  </div>
-                )}
+          {/* Right side - Search, Status Filter, and Column Visibility */}
+          <div className="flex items-center gap-4">
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder={`Search ${statusFilter === "all-statuses" ? "all" : statusFilter} contacts...`}
+                className="pl-10 w-80 enhanced-input"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
 
-                {/* System Defined Filters */}
-                <Collapsible open={systemFiltersOpen} onOpenChange={setSystemFiltersOpen}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
-                    <span className="font-medium text-sm">System Defined Filters</span>
-                    {systemFiltersOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="all-contacts"
-                        checked={activeFilters.allContacts}
-                        onCheckedChange={(checked) => handleFilterChange("allContacts", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="all-contacts" className="text-sm enhanced-label">
-                        All Contacts ({contacts.length})
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="my-contacts"
-                        checked={activeFilters.myContacts}
-                        onCheckedChange={(checked) => handleFilterChange("myContacts", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="my-contacts" className="text-sm enhanced-label">
-                        My Contacts ({contacts.filter((c) => c.owner === "me").length})
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="recently-created"
-                        checked={activeFilters.recentlyCreated}
-                        onCheckedChange={(checked) => handleFilterChange("recentlyCreated", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="recently-created" className="text-sm enhanced-label">
-                        Recently Created (
-                        {
-                          contacts.filter((c) => {
-                            const recentDate = new Date()
-                            recentDate.setDate(recentDate.getDate() - 7)
-                            return new Date(c.createdDate) >= recentDate
-                          }).length
-                        }
-                        )
-                      </Label>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
+            {/* Status Filter Dropdown */}
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-40 enhanced-input">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent className="enhanced-dropdown">
+                <SelectItem value="all-statuses" className="enhanced-dropdown-item">
+                  All Statuses ({contacts.length})
+                </SelectItem>
+                <SelectItem value="active" className="enhanced-dropdown-item">
+                  Active ({contacts.filter((c) => c.status === "active").length})
+                </SelectItem>
+                <SelectItem value="prospect" className="enhanced-dropdown-item">
+                  Prospect ({contacts.filter((c) => c.status === "prospect").length})
+                </SelectItem>
+                <SelectItem value="customer" className="enhanced-dropdown-item">
+                  Customer ({contacts.filter((c) => c.status === "customer").length})
+                </SelectItem>
+                <SelectItem value="inactive" className="enhanced-dropdown-item">
+                  Inactive ({contacts.filter((c) => c.status === "inactive").length})
+                </SelectItem>
+              </SelectContent>
+            </Select>
 
-                {/* Website Activity */}
-                <Collapsible open={websiteActivityOpen} onOpenChange={setWebsiteActivityOpen}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
-                    <span className="font-medium text-sm">Website Activity</span>
-                    {websiteActivityOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="page-visits"
-                        checked={activeFilters.pageVisits}
-                        onCheckedChange={(checked) => handleFilterChange("pageVisits", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="page-visits" className="text-sm enhanced-label">
-                        Page Visits ({contacts.filter((c) => c.hasPageVisits).length})
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="form-submissions"
-                        checked={activeFilters.formSubmissions}
-                        onCheckedChange={(checked) => handleFilterChange("formSubmissions", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="form-submissions" className="text-sm enhanced-label">
-                        Form Submissions ({contacts.filter((c) => c.hasFormSubmissions).length})
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="downloads"
-                        checked={activeFilters.downloads}
-                        onCheckedChange={(checked) => handleFilterChange("downloads", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="downloads" className="text-sm enhanced-label">
-                        Downloads ({contacts.filter((c) => c.hasDownloads).length})
-                      </Label>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                {/* Filter By Fields */}
-                <Collapsible open={filterByFieldsOpen} onOpenChange={setFilterByFieldsOpen}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
-                    <span className="font-medium text-sm">Filter By Fields</span>
-                    {filterByFieldsOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="contact-name"
-                        checked={activeFilters.contactName}
-                        onCheckedChange={(checked) => handleFilterChange("contactName", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="contact-name" className="text-sm enhanced-label">
-                        Contact Name
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="company"
-                        checked={activeFilters.company}
-                        onCheckedChange={(checked) => handleFilterChange("company", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="company" className="text-sm enhanced-label">
-                        Company
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="email"
-                        checked={activeFilters.email}
-                        onCheckedChange={(checked) => handleFilterChange("email", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="email" className="text-sm enhanced-label">
-                        Email
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="phone"
-                        checked={activeFilters.phone}
-                        onCheckedChange={(checked) => handleFilterChange("phone", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="phone" className="text-sm enhanced-label">
-                        Phone
-                      </Label>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                {/* Filter By Related Modules */}
-                <Collapsible open={relatedModulesOpen} onOpenChange={setRelatedModulesOpen}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gray-50 rounded">
-                    <span className="font-medium text-sm">Filter By Related Modules</span>
-                    {relatedModulesOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="deals"
-                        checked={activeFilters.deals}
-                        onCheckedChange={(checked) => handleFilterChange("deals", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="deals" className="text-sm enhanced-label">
-                        Has Deals ({contacts.filter((c) => c.hasDeals).length})
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="campaigns"
-                        checked={activeFilters.campaigns}
-                        onCheckedChange={(checked) => handleFilterChange("campaigns", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="campaigns" className="text-sm enhanced-label">
-                        Has Campaigns ({contacts.filter((c) => c.hasCam).length})
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="activities"
-                        checked={activeFilters.activities}
-                        onCheckedChange={(checked) => handleFilterChange("activities", checked)}
-                        className="h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white border-2 border-gray-400 enhanced-checkbox"
-                      />
-                      <Label htmlFor="activities" className="text-sm enhanced-label">
-                        Has Activities ({contacts.filter((c) => c.hasActivities).length})
-                      </Label>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Status Filter Dropdown */}
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="All Statuses" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all-statuses">All Statuses ({contacts.length})</SelectItem>
-              <SelectItem value="active">Active ({contacts.filter((c) => c.status === "active").length})</SelectItem>
-              <SelectItem value="prospect">
-                Prospect ({contacts.filter((c) => c.status === "prospect").length})
-              </SelectItem>
-              <SelectItem value="customer">
-                Customer ({contacts.filter((c) => c.status === "customer").length})
-              </SelectItem>
-              <SelectItem value="inactive">
-                Inactive ({contacts.filter((c) => c.status === "inactive").length})
-              </SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Column Visibility */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <Eye className="h-4 w-4" />
-                Columns
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 enhanced-dropdown">
-              {availableColumns.map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.key}
-                  checked={visibleColumns[column.key]}
-                  onCheckedChange={(checked) => handleColumnVisibilityChange(column.key, checked)}
-                  disabled={column.required}
-                  className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
-                >
-                  {column.label}
-                  {column.required && <span className="text-xs text-gray-500 ml-2">(Required)</span>}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            {/* Column Visibility */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Eye className="h-4 w-4" />
+                  Columns
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 enhanced-dropdown">
+                {availableColumns.map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.key}
+                    checked={visibleColumns[column.key]}
+                    onCheckedChange={(checked) => handleColumnVisibilityChange(column.key, checked)}
+                    disabled={column.required}
+                    className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
+                  >
+                    {column.label}
+                    {column.required && <span className="text-xs text-gray-500 ml-2">(Required)</span>}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         {/* Active Filters Display */}
