@@ -1,7 +1,7 @@
 import axios from "axios"
 import { baseUrl } from "../common/apiSummary"
 const getAccessKey=()=>{
-    const key=localStorage.getItem("access_token")
+   return localStorage.getItem("access_token")
 }
 export const axiosPrivate=axios.create({
     baseURL:baseUrl,
