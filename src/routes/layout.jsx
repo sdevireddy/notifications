@@ -8,6 +8,7 @@ import { Header } from "@/header/Header";
 import { cn } from "../utils/cn";
 import { ToastContainer } from "react-toastify";
 import { useLocation } from "react-router-dom";
+import Breadcrumb from "../components/BreadCrumb";
 
 
 export const ScrollToTop = () => {
@@ -22,7 +23,7 @@ export const ScrollToTop = () => {
 
 const Layout = () => {
     const isDesktopDevice = useMediaQuery("(min-width: 768px)");
-    const [collapsed, setCollapsed] = useState(!isDesktopDevice);
+    const [collapsed, setCollapsed] = useState(true);
     const [activeModule, setActiveModule] = useState("CRM"); // Stores the selected module
 
     const sidebarRef = useRef(null);
@@ -55,7 +56,8 @@ const Layout = () => {
   </div>
 
   {/* Main Content Area */}
-  <div className={`flex-1 flex flex-col px-3 w-full`}>
+  <div className={`flex-1 flex flex-col px-3 w-full gap-2`}>
+
     <ScrollToTop/>
     <Header
       collapsed={collapsed}
@@ -63,6 +65,7 @@ const Layout = () => {
       setActiveModule={setActiveModule}
     />
     <div className="flex-1 overflow-scroll">
+       <Breadcrumb/>
       <Outlet />
       <ToastContainer
         position="top-right"

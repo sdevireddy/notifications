@@ -62,7 +62,7 @@ const FiltersPopUp = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="w-full max-w-3xl bg-white rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+      <div className="w-full max-w-5xl bg-white rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4 sticky top-0 bg-white p-4">
           <h2 className="text-xl font-semibold">Filter Leads</h2>
           <button
@@ -73,7 +73,7 @@ const FiltersPopUp = ({ onClose }) => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-14">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ml-14">
           {Object.entries(textFields).map(([key, value]) => (
             <div key={key} className="flex flex-col ">
               <label className="text-sm capitalize">{key.replace(/([A-Z])/g, ' $1')}</label>
