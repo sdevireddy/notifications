@@ -25,6 +25,7 @@ import {
   Search,
   Filter,
   ChevronRight,
+  Edit
 } from "lucide-react";
 import { Checkbox } from "../../components/layout/ui/checkbox"
 // import {Seperator}  from "../../components/layout/ui/seperator"
@@ -37,6 +38,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "../../components/layout/ui/dropdown-menu"
+import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar"
+
 
 // Initial data (using the 30 samples generated previously for better demonstration)
 const initialDeals = [
@@ -494,7 +497,6 @@ const initialDeals = [
 
 const stageColors = {
   Qualification: "bg-gray-100 text-gray-800",
-  "Needs Analysis": "bg-blue-100 text-blue-800",
   "Value Proposition": "bg-purple-100 text-purple-800",
   "Identify Decision Makers": "bg-indigo-100 text-indigo-800",
   Proposal: "bg-yellow-100 text-yellow-800",
@@ -527,6 +529,60 @@ const [filterLeadSources, setFilterLeadSources] = useState([]);
 const [filterCompanies, setFilterCompanies] = useState([]);
 const [filterProbability, setFilterProbability] = useState([0, 100]);
 const [filterAmount, setFilterAmount] = useState([0, Math.max(...deals.map(d => d.amount))]);
+
+
+const [selectedDeals, setSelectedDeals] = useState([]);
+
+const handleDealSelect = (dealId) => {
+  setSelectedDeals((prev) =>
+    prev.includes(dealId) ? prev.filter((id) => id !== dealId) : [...prev, dealId]
+  );
+};
+
+const handleSelectAll = () => {
+  setSelectedDeals(selectedDeals.length === filteredContacts.length 
+    ? [] 
+    : currentDeals.map((deal) => deal.id));
+};
+const handleDeleteSelected = () => {
+  // Confirm deletion
+  if (!window.confirm(`Delete ${selectedDeals.length} selected deals?`)) return;
+
+  // Perform deletion (simulate or send to backend)
+  setFilteredContacts((prevDeals) =>
+    prevDeals.filter((deal) => !selectedDeals.includes(deal.id))
+  );
+
+  // Clear selection
+  setSelectedDeals([]);
+};
+const handleExportSelected = () => {
+  const selected = filteredContacts.filter((deal) =>
+    selectedDeals.includes(deal.id)
+  );
+
+  if (selected.length === 0) return;
+
+  const headers = Object.keys(selected[0]); // or choose specific fields
+  const csvRows = [
+    headers.join(','), // Header row
+    ...selected.map((deal) =>
+      headers.map((key) => `"${deal[key]}"`).join(',')
+    ),
+  ];
+
+  const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'selected-deals.csv';
+  a.click();
+
+  window.URL.revokeObjectURL(url);
+};
+
+
 
   // Form state
   const [formData, setFormData] = useState({
@@ -691,8 +747,8 @@ useEffect(() => {
   // Pagination logic
   const indexOfLastDeal = currentPage * dealsPerPage;
   const indexOfFirstDeal = indexOfLastDeal - dealsPerPage;
-  const currentDeals = sortedDeals.slice(indexOfFirstDeal, indexOfLastDeal);
-  const totalPages = Math.ceil(sortedDeals.length / dealsPerPage);
+  const currentDeals = filteredContacts.slice(indexOfFirstDeal, indexOfLastDeal);
+  const totalPages = Math.ceil(filteredContacts.length / dealsPerPage);
   const [systemFiltersOpen, setSystemFiltersOpen] = useState(false)
 
   const handleSort = (field) => {
@@ -752,6 +808,9 @@ useEffect(() => {
     });
   };
 
+const handleEdit=()=>{
+
+}
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -764,7 +823,7 @@ useEffect(() => {
   const formatDate = (dateString) => {
     return format(new Date(dateString), "yyyy-MM-dd");
   };
-  const uniqueOwners = useMemo(() => [...new Set(deals.map(d => d.dealOwner))], [deals]);
+const uniqueOwners = useMemo(() => [...new Set(deals.map(d => d.dealOwner))], [deals]);
 const uniqueStages = useMemo(() => [...new Set(deals.map(d => d.stage))], [deals]);
 const uniqueTypes = useMemo(() => [...new Set(deals.map(d => d.type))], [deals]);
 const uniqueLeadSources = useMemo(() => [...new Set(deals.map(d => d.leadSource))], [deals]);
@@ -779,6 +838,10 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
             <h1 className="text-3xl font-bold text-gray-900">Deals</h1>
             <p className="text-gray-600 mt-1">Track and manage your sales opportunities and revenue pipeline</p>
           </div>
+          <div>
+          </div>
+{/* add a new deal div start */}
+<div>
           <Dialog open={isAddDealOpen} onOpenChange={setIsAddDealOpen}>
             <DialogTrigger asChild>
               <Button className="bg-gray-900 hover:bg-gray-800 text-white">
@@ -995,7 +1058,11 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
               </form>
             </DialogContent>
           </Dialog>
+          </div>
+                  {/* add a new deal div end */}
+
         </div>
+
 
         {/* Pipeline Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -1017,6 +1084,8 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
             </Card>
           ))}
         </div>
+
+
         <div className=" items-center justify-between">
           {/* Horizontal Filter Bar */}
       <div className=" flex justify-between bg-white items-start border-b px-6 py-8">
@@ -1031,16 +1100,42 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          {/* pagination */}
+          <div className="flex items-center space-x-2">
+                <Label htmlFor="dealsPerPage" className="text-sm font-medium text-gray-600">
+                  Deals per page:
+                </Label>
+                <Select
+                  value={String(dealsPerPage)}
+                  onValueChange={handleDealsPerPageChange}
+                >
+                  <SelectTrigger className="w-[80px]">
+                    <SelectValue placeholder={dealsPerPage} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value={String(filteredContacts.length)}>All</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
           </div>
-          {/* Filter Button */}
+
+
+{/* Filter Button */}
 <DropdownMenu>
+
   <DropdownMenuTrigger asChild>
     <Button variant="outline" className="gap-2">
       <Filter className="h-4 w-4" />
       Filter
     </Button>
   </DropdownMenuTrigger>
+
   <DropdownMenuContent align="start" className="w-80">
+
     <div className="p-4 space-y-4">
 
 {/* Deal Owner Filter */}
@@ -1173,8 +1268,22 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
   </CollapsibleContent>
 </Collapsible>
 </div>
-</DropdownMenuContent></DropdownMenu>  
+
+</DropdownMenuContent>
+
+</DropdownMenu>  
 </div>
+{/* bulk actions bar */}
+{selectedDeals.length > 0 && (
+  <div className="sticky top-0 z-10 bg-white border-b shadow-sm px-4 py-2">
+    <BulkActionsToolbar
+      selectedCount={selectedDeals.length}
+      onClearSelection={() => setSelectedDeals([])}
+      onDeleteSelected={ handleDeleteSelected} // example
+      onExportSelected={handleExportSelected} // example
+    />
+  </div>
+)}
 
         {/* Active Deals Table */}
         <Card className="shadow-sm">
@@ -1183,11 +1292,30 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
               <h2 className="text-xl font-semibold text-gray-900">Active Deals</h2>
               <p className="text-gray-600 mt-1">Manage your sales opportunities and track progress</p>
             </div>
+            <div>
+      <div>
+      
+
+      </div>
+            </div>
 
             <div className="overflow-x-auto">
               <table className="w-full">
+
                 <thead>
                   <tr className="border-b border-gray-200">
+                    <th>
+                    <div className="col-span-1 items-center border-black">
+  <Checkbox 
+    checked={
+      selectedDeals.length > 0 && 
+      selectedDeals.length === currentDeals.length
+    } 
+    onCheckedChange={handleSelectAll}
+    className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+  />
+</div>
+                    </th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600">
                       <button
                         onClick={() => handleSort("dealName")}
@@ -1293,6 +1421,15 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
                   {filteredContacts.map((deal) => (
                     <tr key={deal.id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-4 px-4">
+                      <div className="">
+  <Checkbox
+    checked={selectedDeals.includes(deal.id)}
+    onCheckedChange={() => handleDealSelect(deal.id)}
+    className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+  />
+</div>
+</td>
+<td>
                         <div>
                           <p className="font-medium text-gray-900">{deal.dealName}</p>
                           <p className="text-sm text-gray-500">{deal.contactName}</p>
@@ -1335,9 +1472,223 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                             <PhoneIcon className="w-4 h-4 text-gray-400 hover:text-gray-600" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <FileTextIcon className="w-4 h-4 text-gray-400 hover:text-gray-600" />
-                          </Button>
+                          <div>
+                          <Dialog open={isAddDealOpen} onOpenChange={setIsAddDealOpen}>
+            <DialogTrigger asChild>
+              <Button className="">
+                <Edit className="" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Edit Deal</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="dealOwner">Deal Owner</Label>
+                    <Select
+                      value={formData.dealOwner}
+                      onValueChange={(value) => setFormData({ ...formData, dealOwner: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select owner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Sarah Johnson">Sarah Johnson</SelectItem>
+                        <SelectItem value="Mike Davis">Mike Davis</SelectItem>
+                        <SelectItem value="Lisa Anderson">Lisa Anderson</SelectItem>
+                        <SelectItem value="John Wilson">John Wilson</SelectItem>
+                        <SelectItem value="David Green">David Green</SelectItem> {/* Added for existing data */}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="dealName">Deal Name</Label>
+                    <Input
+                      id="dealName"
+                      value={formData.dealName}
+                      onChange={(e) => setFormData({ ...formData, dealName: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="accountName">Account Name</Label>
+                    <Input
+                      id="accountName"
+                      value={formData.accountName}
+                      onChange={(e) => setFormData({ ...formData, accountName: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="type">Type</Label>
+                    <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Existing Business">Existing Business</SelectItem>
+                        <SelectItem value="New Business">New Business</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="leadSource">Lead Source</Label>
+                    <Select
+                      value={formData.leadSource}
+                      onValueChange={(value) => setFormData({ ...formData, leadSource: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select lead source" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Advertisement">Advertisement</SelectItem>
+                        <SelectItem value="Cold Call">Cold Call</SelectItem>
+                        <SelectItem value="Employee Referral">Employee Referral</SelectItem>
+                        <SelectItem value="External Referral">External Referral</SelectItem>
+                        <SelectItem value="Online Store">Online Store</SelectItem>
+                        <SelectItem value="Partner">Partner</SelectItem>
+                        <SelectItem value="Public Relations">Public Relations</SelectItem>
+                        <SelectItem value="Sales Email Alias">Sales Email Alias</SelectItem>
+                        <SelectItem value="Seminar Partner">Seminar Partner</SelectItem>
+                        <SelectItem value="Internal Seminar">Internal Seminar</SelectItem>
+                        <SelectItem value="Trade Show">Trade Show</SelectItem>
+                        <SelectItem value="Web Download">Web Download</SelectItem>
+                        <SelectItem value="Web Research">Web Research</SelectItem>
+                        <SelectItem value="Chat">Chat</SelectItem>
+                        <SelectItem value="Referral">Referral</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Existing Client">Existing Client</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Website">Website</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Social Media">Social Media</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Direct Mail">Direct Mail</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Event">Event</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Word of Mouth">Word of Mouth</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Customer Service">Customer Service</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Online Ad">Online Ad</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Consulting">Consulting</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Inbound">Inbound</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Online Demo">Online Demo</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Upsell">Upsell</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Renewal">Renewal</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Cold Email">Cold Email</SelectItem> {/* Added for existing data */}
+                        <SelectItem value="Internal Request">Internal Request</SelectItem> {/* Added for existing data */}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="contactName">Contact Name</Label>
+                    <Input
+                      id="contactName"
+                      value={formData.contactName}
+                      onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="amount">Amount ($)</Label>
+                    <Input
+                      id="amount"
+                      type="number"
+                      value={formData.amount}
+                      onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="closingDate">Closing Date</Label>
+                    <Input
+                      id="closingDate"
+                      type="date"
+                      value={formData.closingDate}
+                      onChange={(e) => setFormData({ ...formData, closingDate: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="stage">Stage</Label>
+                  <Select value={formData.stage} onValueChange={(value) => setFormData({ ...formData, stage: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select stage" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Qualification">Qualification</SelectItem>
+                      <SelectItem value="Needs Analysis">Needs Analysis</SelectItem>
+                      <SelectItem value="Value Proposition">Value Proposition</SelectItem>
+                      <SelectItem value="Identify Decision Makers">Identify Decision Makers</SelectItem>
+                      <SelectItem value="Proposal">Proposal</SelectItem>
+                      <SelectItem value="Negotiation">Negotiation</SelectItem>
+                      <SelectItem value="Closed Won">Closed Won</SelectItem>
+                      <SelectItem value="Closed Lost">Closed Lost</SelectItem>
+                      <SelectItem value="Closed Lost to Competition">Closed Lost to Competition</SelectItem>
+                      <SelectItem value="Discovery">Discovery</SelectItem> {/* Added for existing data */}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="probability">Probability (%): {formData.probability[0]}%</Label>
+                  <Slider
+                    value={formData.probability}
+                    onValueChange={(value) => setFormData({ ...formData, probability: value })}
+                    max={100}
+                    step={5}
+                    className="mt-2"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="expectedRevenue">Expected Revenue</Label>
+                  <Input
+                    id="expectedRevenue"
+                    value={formatCurrency((Number(formData.amount) || 0) * (formData.probability[0] / 100))}
+                    disabled
+                    className="bg-gray-50"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="campaignSource">Campaign Source</Label>
+                  <Input
+                    id="campaignSource"
+                    value={formData.campaignSource}
+                    onChange={(e) => setFormData({ ...formData, campaignSource: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={3}
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-2 pt-4">
+                  <Button type="button" variant="outline" onClick={() => setIsAddDealOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" className="bg-gray-900 hover:bg-gray-800">
+                    Add Deal
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -1347,25 +1698,7 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
               </div>           
             {/* Pagination Controls */}
             <div className="mt-6 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Label htmlFor="dealsPerPage" className="text-sm font-medium text-gray-600">
-                  Deals per page:
-                </Label>
-                <Select
-                  value={String(dealsPerPage)}
-                  onValueChange={handleDealsPerPageChange}
-                >
-                  <SelectTrigger className="w-[80px]">
-                    <SelectValue placeholder={dealsPerPage} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value={sortedDeals.length}>All</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
