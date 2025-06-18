@@ -81,3 +81,11 @@ body {
     min-width: initial;
   }
   
+
+
+  .custom-quill .ql-container {
+  min-height: 100px;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow: scroll;
+}

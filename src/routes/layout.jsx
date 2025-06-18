@@ -9,6 +9,7 @@ import { cn } from "../utils/cn";
 import { ToastContainer } from "react-toastify";
 import { useLocation } from "react-router-dom";
 
+
 export const ScrollToTop = () => {
   const { pathname } = useLocation();
 
@@ -21,7 +22,7 @@ export const ScrollToTop = () => {
 
 const Layout = () => {
     const isDesktopDevice = useMediaQuery("(min-width: 768px)");
-    const [collapsed, setCollapsed] = useState(!isDesktopDevice);
+    const [collapsed, setCollapsed] = useState(true);
     const [activeModule, setActiveModule] = useState("CRM"); // Stores the selected module
 
     const sidebarRef = useRef(null);
@@ -39,18 +40,22 @@ const Layout = () => {
     return (
       <div className="min-h-screen flex bg-slate-100 transition-colors dark:bg-slate-950 w-auto">
   {/* Sidebar */}
+  
   <div className={cn(
-    "transition-all duration-300 sticky overflow-y-auto top-0 h-[100vh] z-10"
-  )}>
+    "transition-all duration-300 sticky top-0 h-[100vh] z-10"
+  )}
+        onMouseEnter={() => isDesktopDevice && setCollapsed(false)}
+        onMouseLeave={() => isDesktopDevice && setCollapsed(true)}>
     <Sidebar
       ref={sidebarRef}
       collapsed={collapsed}
       activeModule={activeModule}
     />
+    {/* <NewSidebar/> */}
   </div>
 
   {/* Main Content Area */}
-  <div className={`flex-1 flex flex-col px-3 `}>
+  <div className={`flex-1 flex flex-col px-3 w-full`}>
     <ScrollToTop/>
     <Header
       collapsed={collapsed}

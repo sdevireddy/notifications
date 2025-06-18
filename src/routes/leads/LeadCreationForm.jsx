@@ -26,6 +26,7 @@ const initialFormState = {
     zip: "",
     country: "",
     description: "",
+    image:null
 };
 
 const LeadCreationForm = () => {
@@ -38,6 +39,12 @@ const LeadCreationForm = () => {
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
+            setFormData((prev) => {
+                return {
+                    ...prev,
+                    image: file,
+                };
+            });
             const reader = new FileReader();
             reader.onloadend = () => setLeadImage(reader.result);
             reader.readAsDataURL(file);
@@ -60,10 +67,14 @@ const LeadCreationForm = () => {
 
     const saveLead = async () => {
         try {
+          const formdata = new FormData();
+          Object.entries(formData).map((el) => {
+              formdata.append(el[0], el[1]);
+          });
             const response = await fetch("http://localhost:8081/api/leads", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...formData, image: leadImage }),
+                headers: { "Content-Type": "multipart/form-data" },
+                body: formdata,
             });
 
             const data = await response.json();
@@ -112,7 +123,10 @@ const LeadCreationForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const success = await saveLead();
+      for (let pair of formdata.entries()) {
+  console.log(pair[0], pair[1]);
+}
+        // const success = await saveLead();
 
         if (success) {
             if (submitActionRef.current === "saveAndNew") {
@@ -140,7 +154,7 @@ const LeadCreationForm = () => {
                 className="rounded-lg bg-white shadow-md"
             >
                 {/* Header */}
-                <div className="flex items-center justify-between border-b p-3   sticky top-0 z-50 bg-white">
+                <div className="flex items-center justify-between border-b p-3    sticky top-0 bg-white">
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => navigate(-1)}
@@ -169,7 +183,7 @@ const LeadCreationForm = () => {
 
                         <h2 className="text-xl font-bold">Create Lead</h2>
                     </div>
-                    <div className="space-x-3">
+                    <div className="grid md:grid-cols-4 sm:grid-cols-2 gap-3 grid-cols-1">
                         <button
                             type="button"
                             className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
@@ -194,7 +208,7 @@ const LeadCreationForm = () => {
 
                         <button
                             type="submit"
-                            className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                            className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover"
                             onClick={() => (submitActionRef.current = "save")}
                         >
                             Save
@@ -234,12 +248,14 @@ const LeadCreationForm = () => {
                         name="mobile"
                         value={formData.mobile}
                         onChange={handleChange}
+                        required
                     />
                     <Input
                         label="Email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
+                        required
                     />
                     <Input
                         label="Secondary Email"
@@ -253,6 +269,7 @@ const LeadCreationForm = () => {
                         value={formData.leadSource}
                         onChange={handleChange}
                         options={["OTHER", "SOCIAL_MEDIA", "WEBSITE", "REFERRAL", "ADVERTISEMENT"]}
+                        required
                     />
                     <Select
                         label="Lead Status"
@@ -260,6 +277,7 @@ const LeadCreationForm = () => {
                         value={formData.leadStatus}
                         onChange={handleChange}
                         options={["New", "Contacted", "Qualified", "Lost"]}
+                        required
                     />
                 </Section>
 
