@@ -3,7 +3,7 @@ import { Input } from '../../components/layout/ui/input';
 import { axiosPrivate } from '../../utils/axios';
 import { apiSummary } from '../../common/apiSummary';
 import { Button } from '../../components/layout/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const Login = () => {
@@ -85,9 +85,9 @@ const Login = () => {
               />
               <p className='inline'>Remember Me</p>
             </label>
-            <a href="#" className="text-sm text-blue-600 hover:underline">
+            <Link to={"/register"} className="text-sm text-blue-600 hover:underline">
               Forgot password?
-            </a>
+            </Link>
           </div>
           <Button
             type="submit"
@@ -95,6 +95,15 @@ const Login = () => {
           >
             LOGIN
           </Button>
+           <p className="py-3 px-2">
+          Don't Have Account ?{" "}
+          <Link
+            to={"/register"}
+            className="text-primary  transition-all ease-in-out duration-300"
+          >
+            Register
+          </Link>
+        </p>
         </form>
       </div>
     </div>
