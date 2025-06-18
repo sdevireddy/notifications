@@ -22,6 +22,11 @@ import CRMSelectionImport from "./routes/import/Import";
 import DataMigrationUpload from "./routes/import/DataMigration";
 import EditLead from "./routes/leads/EditLead";
 import Users from "./routes/users/Users";
+import WorkflowRuleForm from "./routes/workflow/form/WorkflowRuleForm";
+import WorkflowPage from "./routes/workflow/WorkFlow";
+import Login from "./routes/login/Login";
+import Register from "./routes/Register/Register";
+import { Toaster } from "react-hot-toast";
 
 function App() {
     const router = createBrowserRouter([
@@ -80,7 +85,11 @@ function App() {
                 },
                 {
                     path: "workflow",
-                    element: <Workflow />,
+                    element: <WorkflowPage/>,
+                },
+                {
+                    path:"workflow/create",
+                    element:<WorkflowRuleForm/>
                 },
                 {
                     path: "Accounts",
@@ -116,11 +125,20 @@ function App() {
                 },
             ],
         },
+        {
+            path:"login",
+            element:<Login/>
+        },
+        {
+            path:"register",
+            element:<Register/>
+        }
     ]);
 
     return (
         <ThemeProvider storageKey="theme">
             <RouterProvider router={router} />
+            <Toaster/>
         </ThemeProvider>
     );
 }

@@ -322,7 +322,7 @@ export default function LeadPage() {
     };
 
     return (
-        <div className="min-h-screen flex-1 bg-gray-100">
+        <div className="min-h-screen flex-1 bg-white">
             {/* Header */}
             <div className="border-b px-6 py-4">
                 <div className="flex items-center justify-between">
@@ -374,7 +374,7 @@ export default function LeadPage() {
 
             {/* Horizontal Filter Bar */}
             <div className="border-b px-6 py-4">
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-row-reverse items-center justify-between gap-4">
                     <div className="relative max-w-md flex-1">
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                         <Input
@@ -433,12 +433,12 @@ export default function LeadPage() {
             </div>
 
             {/* Main Content */}
-            <div className="p-6">
+            {/* <div className="p-6">
                 <BulkActionsToolbar
                     selectedCount={selectedLeads.length}
                     onClearSelection={() => setSelectedLeads([])}
                 />
-            </div>
+            </div> */}
             {/* <div className="relative overflow-x-auto shadow-md sm:rounded-lg max-w-[90%]">
                 <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
                     <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
@@ -696,11 +696,11 @@ export default function LeadPage() {
                     </tbody>
                 </table>
             </div> */}
-<CardContent className="p-0">
+<CardContent className="py-4">
   <div className="w-full overflow-x-auto">
     <div className="min-w-[1000px]">
       {/* Table Header */}
-      <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-gray-50 border-b text-sm font-medium text-gray-700">
+      <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-gray-100 border-b text-sm font-medium text-gray-700">
         <div className="col-span-1 flex items-center">
           <Checkbox 
             checked={selectedLeads.length > 0 && selectedLeads.length === currentLeads.length} 
