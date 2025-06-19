@@ -3,6 +3,10 @@ export const baseUrl="http://ec2-13-49-44-42.eu-north-1.compute.amazonaws.com:80
 
 
 export const apiSummary={
+    login:{
+        url:"/login",
+        method:"post",
+    },
     createLeads:{
         url:"/leads",
         method:"post"
