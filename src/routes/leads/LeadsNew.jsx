@@ -14,14 +14,26 @@ import "./Leads.css";
 import axios from "axios";
 
 const LeadsNew = () => {
+  const navigate = useNavigate();
+
+  const allColumns = [
+    { key: "name", label: "Name" },
+    { key: "email", label: "Email" },
+    { key: "phone", label: "Phone" },
+    { key: "createdDate", label: "Created" },
+    { key: "updatedDate", label: "Updated" },
+    { key: "leadStatus", label: "Status" },
+    { key: "address", label: "Address" },
+  ];
+
+  const [visibleColumns, setVisibleColumns] = useState(allColumns.map((col) => col.key));
+  const [showColumnSelector, setShowColumnSelector] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [recordsPerPage, setRecordsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" });
-  const navigate = useNavigate();
-
   const [leadsList, setLeadsList] = useState([]);
   const [leads, setLeads] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +46,7 @@ const LeadsNew = () => {
   const fetchLeads = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("http://localhost:8081/api/leads");
+      const response = await axios.get("http://ec2-13-49-44-42.eu-north-1.compute.amazonaws.com:8081/api/leads");
       const data = response.data.map((lead) => ({
         id: lead.id,
         name: `${lead.firstName ?? ""} ${lead.lastName ?? ""}`,
@@ -95,13 +107,11 @@ const LeadsNew = () => {
 
   const sortedLeads = [...leads].sort((a, b) => {
     if (!sortConfig.key) return 0;
-    return sortConfig.direction === "asc"
-      ? a[sortConfig.key] > b[sortConfig.key]
-        ? 1
-        : -1
-      : a[sortConfig.key] < b[sortConfig.key]
-      ? 1
-      : -1;
+    const valA = a[sortConfig.key]?.toString().toLowerCase();
+    const valB = b[sortConfig.key]?.toString().toLowerCase();
+    if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
+    if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+    return 0;
   });
 
   const filteredLeads = sortedLeads.filter((lead) =>
@@ -138,7 +148,7 @@ const LeadsNew = () => {
           }}
         />
 
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 relative">
           <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={toggleFilter}>
             Filters
           </button>
@@ -155,6 +165,32 @@ const LeadsNew = () => {
           >
             Delete
           </button>
+          <button
+            className="bg-gray-500 text-white px-4 py-2 rounded"
+            onClick={() => setShowColumnSelector(!showColumnSelector)}
+          >
+            Columns
+          </button>
+          {showColumnSelector && (
+            <div className="absolute top-full right-0 bg-white border rounded shadow p-4 z-10">
+              {allColumns.map((col) => (
+                <div key={col.key} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={visibleColumns.includes(col.key)}
+                    onChange={() => {
+                      setVisibleColumns((prev) =>
+                        prev.includes(col.key)
+                          ? prev.filter((key) => key !== col.key)
+                          : [...prev, col.key]
+                      );
+                    }}
+                  />
+                  <label>{col.label}</label>
+                </div>
+              ))}
+            </div>
+          )}
           <div>
             <label className="mr-2">Records per page:</label>
             <select
@@ -174,25 +210,29 @@ const LeadsNew = () => {
       </div>
 
       <div className="flex flex-col gap-3">
-        <div className="grid grid-cols-[40px_60px_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] items-center text-sm font-semibold text-gray-700 px-4 text-center">
+        <div className="grid grid-cols-[40px_60px_repeat(auto-fill,_minmax(100px,_1fr))] items-center text-sm font-semibold text-gray-700 px-4 text-center">
           <div className="flex justify-center">
             <input type="checkbox" disabled />
           </div>
-          <div className="text-center"></div>
-          <div>Name</div>
-          <div>Email</div>
-          <div>Phone</div>
-          <div>Created</div>
-          <div>Updated</div>
-          <div>Status</div>
-          <div>Address</div>
+          <div></div>
+          {allColumns
+            .filter((col) => visibleColumns.includes(col.key))
+            .map((col) => (
+              <div
+                key={col.key}
+                onClick={() => sortLeads(col.key)}
+                className="cursor-pointer hover:underline"
+              >
+                {col.label}
+              </div>
+            ))}
           <div className="text-center pr-2">Actions</div>
         </div>
 
         {displayedLeads.map((lead) => (
           <div
             key={lead.id}
-            className="grid grid-cols-[40px_60px_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] items-center bg-white px-4 py-3 rounded-xl shadow-sm border hover:shadow-md transition-all text-sm text-gray-800 text-center"
+            className="grid grid-cols-[40px_60px_repeat(auto-fill,_minmax(100px,_1fr))] items-center bg-white px-4 py-3 rounded-xl shadow-sm border hover:shadow-md transition-all text-sm text-gray-800 text-center"
           >
             <div className="flex justify-center">
               <input
@@ -201,55 +241,43 @@ const LeadsNew = () => {
                 onChange={() => handleCheckboxChange(lead.id)}
               />
             </div>
-
             <div className="flex justify-center">
               <img
-                src={`https://api.dicebear.com/7.x/initials/svg?seed=${lead.name}`}
+                src={`txt`}
                 alt={lead.name}
                 className="w-10 h-10 rounded-full object-cover"
               />
             </div>
-
-            <div className="font-medium break-words whitespace-pre-wrap">{lead.name}</div>
-
-            <div className="flex flex-col items-center break-words whitespace-pre-wrap">
-              {lead.email}
-            </div>
-
-            <div className="flex flex-col items-center break-words whitespace-pre-wrap">{lead.phone}</div>
-
-            <div className="flex flex-col items-center break-words whitespace-pre-wrap">
-              {lead.createdDate}
-            </div>
-
-            <div className="flex flex-col items-center break-words whitespace-pre-wrap">
-              {lead.updatedDate}
-            </div>
-
-            <div className="flex justify-center">
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                  lead.leadStatus === "New"
-                    ? "bg-blue-100 text-blue-700"
-                    : lead.leadStatus === "Contacted"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : lead.leadStatus === "Qualified"
-                    ? "bg-green-100 text-green-700"
-                    : lead.leadStatus === "Lost"
-                    ? "bg-red-100 text-red-700"
-                    : "bg-gray-100 text-gray-700"
-                }`}
-              >
-                {lead.leadStatus}
-              </span>
-            </div>
-
-            <div className="break-words whitespace-pre-wrap">fdssfsafsafsd</div>
+            {visibleColumns.map((key) =>
+              key === "leadStatus" ? (
+                <div key={key} className="flex justify-center">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                      lead.leadStatus === "New"
+                        ? "bg-blue-100 text-blue-700"
+                        : lead.leadStatus === "Contacted"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : lead.leadStatus === "Qualified"
+                        ? "bg-green-100 text-green-700"
+                        : lead.leadStatus === "Lost"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {lead.leadStatus}
+                  </span>
+                </div>
+              ) : (
+                <div key={key} className="break-words whitespace-pre-wrap">
+                  {lead[key]}
+                </div>
+              )
+            )}
             <div className="flex items-center justify-end gap-3 pr-2">
               <FaWhatsapp className="text-green-600 text-lg" />
               <FiMessageSquare className="text-green-500 text-lg" />
-              <Link to={`/ViewLead/${lead.id}`} state={{ lead }}>
-                <FiEye className="text-gray-600 cursor-pointer hover:scale-110 text-lg" />
+              <Link to={`/ViewLead/${lead.id}`} state={{ lead }} className="text-blue-500">
+                <FiEye className="text-gray-600 cursor-pointer" />
               </Link>
               <FiMail className="text-blue-500 text-sm mt-1" />
               <FiEdit className="text-yellow-500 cursor-pointer hover:scale-110 text-lg" />

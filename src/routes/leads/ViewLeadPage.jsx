@@ -1,6 +1,8 @@
+// ViewLeadPage.jsx
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { FaPencilAlt, FaEllipsisV } from "react-icons/fa"; // Icons
+import { FaPencilAlt, FaEllipsisV } from "react-icons/fa";
+import { MdLocationOn, MdContactPhone, MdInfo, MdNotes } from "react-icons/md";
 
 const mockLeads = [
   {
@@ -29,8 +31,11 @@ const mockLeads = [
 ];
 
 const sections = [
-  "Notes", "Cadences", "Attachments", "Products", "Open Activities", "Closed Activities", "Emails", "Campaigns"
+  "Notes", "Cadences", "Attachments", "Products",
+  "Open Activities", "Closed Activities", "Emails", "Campaigns"
 ];
+
+const formatLabel = (label) => label.charAt(0).toUpperCase() + label.slice(1);
 
 const ViewLeadPage = () => {
   const { id } = useParams();
@@ -47,9 +52,7 @@ const ViewLeadPage = () => {
     sections.reduce((acc, section) => ({ ...acc, [section]: true }), {})
   );
 
-  if (!lead) {
-    return <div className="text-center py-8">Lead not found.</div>;
-  }
+  if (!lead) return <div className="text-center py-8">Lead not found.</div>;
 
   const handleEditClick = (field) => {
     setEditableFields({ ...editableFields, [field]: true });
@@ -60,11 +63,15 @@ const ViewLeadPage = () => {
   };
 
   const handleFieldChange = (field, value) => {
-    lead[field] = value; // Update mock data (replace with API call in real-world case)
+    lead[field] = value;
   };
 
   const toggleSection = (section) => {
     setSectionVisibility({ ...sectionVisibility, [section]: !sectionVisibility[section] });
+  };
+
+  const toggleGenericSection = (section) => {
+    setVisibleSections({ ...visibleSections, [section]: !visibleSections[section] });
   };
 
   const renderEditableField = (field, value) => (
@@ -83,7 +90,7 @@ const ViewLeadPage = () => {
           className="w-full p-1 border-b-2 border-blue-500 focus:outline-none text-gray-700"
         />
       ) : (
-        <span className="text-gray-700">{value}</span> // No bold text
+        <span className="text-gray-700">{value || <em className="text-gray-400">Not provided</em>}</span>
       )}
       {hoveredField === field && !editableFields[field] && (
         <FaPencilAlt
@@ -95,8 +102,8 @@ const ViewLeadPage = () => {
   );
 
   return (
-    <div className="p-6 bg-gray-50">
-      {/* Top Section: Lead Image & Actions */}
+    <div className="p-6 bg-gray-100 min-h-screen">
+      {/* Top Lead Header */}
       <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm mb-6">
         <div className="flex items-center space-x-4">
           <img
@@ -104,110 +111,93 @@ const ViewLeadPage = () => {
             alt="Lead"
             className="w-12 h-12 rounded-full"
           />
-          <div className="flex items-center space-x-2">
-            {renderEditableField("leadName", lead.leadInfo.name)}
-          </div>
+          <div>{renderEditableField("leadName", lead.leadInfo.name)}</div>
         </div>
         <div className="flex items-center space-x-3">
           <button className="bg-blue-500 text-white px-4 py-2 rounded">Send Email</button>
           <button className="bg-green-500 text-white px-4 py-2 rounded">Convert</button>
           <button className="bg-gray-500 text-white px-4 py-2 rounded">Edit</button>
-          <FaEllipsisV className="cursor-pointer" />
+          {/* <FaEllipsisV className="cursor-pointer text-gray-600" /> */}
         </div>
       </div>
 
       {/* Contact Information */}
-      <div className="bg-white p-4 rounded-lg shadow-sm mb-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-xl font-semibold text-gray-800">Contact Information</h3>
-          <button className="text-blue-500 text-sm" onClick={() => toggleSection("contact")}>
-            {sectionVisibility.contact ? "Hide" : "Unhide"}
-          </button>
-        </div>
-        {sectionVisibility.contact && (
-          <div className="grid grid-cols-2 gap-4 mt-3">
-            <div>
-              <label className="text-sm text-gray-600">Lead Owner</label>
-              {renderEditableField("leadOwner", lead.leadOwner)}
-            </div>
-            <div>
-              <label className="text-sm text-gray-600">Email</label>
-              {renderEditableField("email", lead.email)}
-            </div>
-            <div>
-              <label className="text-sm text-gray-600">Phone</label>
-              {renderEditableField("phone", lead.phone)}
-            </div>
-            <div>
-              <label className="text-sm text-gray-600">Mobile</label>
-              {renderEditableField("mobile", lead.mobile)}
-            </div>
-          </div>
-        )}
-      </div>
+      <SectionCard
+        title="Contact Information"
+        icon={<MdContactPhone />}
+        visible={sectionVisibility.contact}
+        onToggle={() => toggleSection("contact")}
+      >
+        <FieldGrid data={{
+          leadOwner: lead.leadOwner,
+          email: lead.email,
+          phone: lead.phone,
+          mobile: lead.mobile,
+        }} render={renderEditableField} />
+      </SectionCard>
 
       {/* Lead Information */}
-      <div className="bg-white p-4 rounded-lg shadow-sm mb-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-xl font-semibold text-gray-800">Lead Information</h3>
-          <button className="text-blue-500 text-sm" onClick={() => toggleSection("leadInfo")}>
-            {sectionVisibility.leadInfo ? "Hide" : "Unhide"}
-          </button>
-        </div>
-        {sectionVisibility.leadInfo && (
-          <div className="grid grid-cols-2 gap-4 mt-3">
-            {Object.keys(lead.leadInfo).map((key) => (
-              <div key={key}>
-                <label className="text-sm text-gray-600">
-                  {key.charAt(0).toUpperCase() + key.slice(1)}
-                </label>
-                {renderEditableField(key, lead.leadInfo[key])}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <SectionCard
+        title="Lead Information"
+        icon={<MdInfo />}
+        visible={sectionVisibility.leadInfo}
+        onToggle={() => toggleSection("leadInfo")}
+      >
+        <FieldGrid data={lead.leadInfo} render={renderEditableField} />
+      </SectionCard>
 
       {/* Address Information */}
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <div className="flex justify-between items-center">
-          <h3 className="text-xl font-semibold text-gray-800">Address</h3>
-          <button className="text-blue-500 text-sm" onClick={() => toggleSection("address")}>
-            {sectionVisibility.address ? "Hide" : "Unhide"}
-          </button>
-        </div>
-        {sectionVisibility.address && (
-          <div className="grid grid-cols-2 gap-4 mt-3">
-            {Object.keys(lead.address).map((key) => (
-              <div key={key}>
-                <label className="text-sm text-gray-600">
-                  {key.charAt(0).toUpperCase() + key.slice(1)}
-                </label>
-                {renderEditableField(key, lead.address[key])}
-              </div>
-            ))}
+      <SectionCard
+        title="Address"
+        icon={<MdLocationOn />}
+        visible={sectionVisibility.address}
+        onToggle={() => toggleSection("address")}
+      >
+        <FieldGrid data={lead.address} render={renderEditableField} />
+      </SectionCard>
+
+      {/* Extra Sections */}
+      {sections.map((section) => (
+        <SectionCard
+          key={section}
+          title={section}
+          icon={<MdNotes />}
+          visible={visibleSections[section]}
+          onToggle={() => toggleGenericSection(section)}
+        >
+          <div className="mt-2 p-3 border rounded bg-gray-50 text-sm text-gray-700 italic">
+            {lead[section.toLowerCase()] || `No data available for ${section}`}
           </div>
-        )}
-        
-      </div>
-      <div className="p-6 bg-gray-50">
-     
-      
-      {sections.map(section => (
-        <div key={section} className="bg-white p-4 rounded-lg shadow-sm mb-6">
-          <div className="flex justify-between">
-            <h3 className="text-xl font-semibold">{section}</h3>
-            <button className="text-blue-500" onClick={() => toggleSection(section)}>{visibleSections[section] ? "Hide" : "Unhide"}</button>
-          </div>
-          {visibleSections[section] && (
-            <div className="mt-4 p-2 border rounded">{lead[section.toLowerCase()] || `No data available for ${section}`}</div>
-          )}
-        </div>
+        </SectionCard>
       ))}
     </div>
-    </div>
-    
   );
 };
+
+const SectionCard = ({ title, icon, visible, onToggle, children }) => (
+  <div className="bg-white p-4 rounded-lg shadow-sm mb-6 transition-all duration-300">
+    <div className="flex justify-between items-center mb-3">
+      <div className="flex items-center space-x-2 text-xl text-gray-800 font-semibold">
+        {icon}
+        <span>{title}</span>
+      </div>
+      <button onClick={onToggle} className="text-blue-500 text-sm">
+        {visible ? "Hide" : "Unhide"}
+      </button>
+    </div>
+    {visible && <div className="grid grid-cols-2 gap-4">{children}</div>}
+  </div>
+);
+
+const FieldGrid = ({ data, render }) => (
+  <>
+    {Object.keys(data).map((key) => (
+      <div key={key}>
+        <label className="text-sm text-gray-600 font-semibold">{formatLabel(key)}</label>
+        {render(key, data[key])}
+      </div>
+    ))}
+  </>
+);
 
 export default ViewLeadPage;
