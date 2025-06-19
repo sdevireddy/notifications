@@ -1,3 +1,4 @@
+
 import { Outlet } from "react-router-dom";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { useClickOutside } from "@/hooks/use-click-outside";
@@ -39,27 +40,44 @@ const Layout = () => {
     });
 
     return (
-        <div className="min-h-screen bg-slate-100 transition-colors dark:bg-slate-950">
-            <div
-                className={cn(
-                    "pointer-events-none fixed inset-0 -z-10 bg-black opacity-0 transition-opacity",
-                    !collapsed && "max-md:pointer-events-auto max-md:z-50 max-md:opacity-30",
-                )}
-            />
-            
-            <Sidebar ref={sidebarRef} collapsed={collapsed} activeModule={activeModule} />
-            <div className={cn("transition-[margin] duration-300", collapsed ? "md:ml-[70px]" : "md:ml-[50px]")}>
-                <Header collapsed={collapsed} setCollapsed={setCollapsed} setActiveModule={setActiveModule} />
-                <div className="w-[calc(100%-10px)] ml-[10px]">
-             
-                    <Outlet />
-                    <ToastContainer position="top-right"
-  autoClose={300}
-  theme="colored" // or "dark"
-  hideProgressBar={false} />
-                </div>
-            </div>
-        </div>
+      <div className="min-h-screen flex bg-slate-100 transition-colors dark:bg-slate-950 w-auto">
+  {/* Sidebar */}
+  
+  <div className={cn(
+    "transition-all duration-300 sticky top-0 h-[100vh] z-10"
+  )}
+        onMouseEnter={() => isDesktopDevice && setCollapsed(false)}
+        onMouseLeave={() => isDesktopDevice && setCollapsed(true)}>
+    <Sidebar
+      ref={sidebarRef}
+      collapsed={collapsed}
+      activeModule={activeModule}
+    />
+    {/* <NewSidebar/> */}
+  </div>
+
+  {/* Main Content Area */}
+  <div className={`flex-1 flex flex-col px-3 w-full gap-2`}>
+
+    <ScrollToTop/>
+    <Header
+      collapsed={collapsed}
+      setCollapsed={setCollapsed}
+      setActiveModule={setActiveModule}
+    />
+    <div className="flex-1 overflow-scroll">
+       <Breadcrumb/>
+      <Outlet />
+      <ToastContainer
+        position="top-right"
+        autoClose={300}
+        theme="colored"
+        hideProgressBar={false}
+      />
+    </div>
+  </div>
+</div>
+
     );
 };
 
