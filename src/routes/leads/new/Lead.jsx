@@ -386,12 +386,12 @@ export default function LeadPage() {
                     </div>
 
                     <div className="flex gap-3">
-                          <Button variant="outline"
+                          {/* <Button variant="outline"
                             onClick={() => setFilterModelOpen(true)}
                             className="rounded border px-5 py-1 "
                         >
                             Filter
-                        </Button>
+                        </Button> */}
 
                         {/* <Select defaultValue="all-statuses">
                             <SelectTrigger className="w-40">
@@ -411,7 +411,7 @@ export default function LeadPage() {
                                 htmlFor="records-per-page"
                                 className="text-sm"
                             >
-                                Records per page:
+                                Show
                             </Label>
                             <Select
                                 value={recordsPerPage}
