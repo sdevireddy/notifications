@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Select from "react-select";
-import "./FiltersPopup.css";
+import "./FiltersPopUp.css";
 
 const FiltersPopUp = ({ onClose }) => {
   const [leadOwner, setLeadOwner] = useState([]);

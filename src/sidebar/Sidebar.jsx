@@ -1,40 +1,51 @@
 import { useState, useRef, useEffect, forwardRef } from "react";
 import { NavLink } from "react-router-dom";
 import {
-    Search, Briefcase, Users, User, Building, ArrowLeftCircle,
-    BookOpen, Mail, Megaphone, HelpCircle,
-    Workflow,
-    Settings,
-    UserPlus
+    Search, Briefcase, Users, User, Building, ChevronDown, ChevronRight, ArrowLeftCircle, BookOpen, Mail, Megaphone, HelpCircle
 } from "lucide-react";
 import logoLight from "@/assets/logo-light.svg";
 import logoDark from "@/assets/logo-dark.svg";
 import PropTypes from "prop-types";
 
-
-import "@/sidebar/Sidebar.css";
+import "@/sidebar/sidebar.css";
 import "@/sidebar/sidebar-theme.css";
 import "@/sidebar/sidebar-search.css";
 import "@/sidebar/sidebar-nav.css";
 
-
 export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
     const [search, setSearch] = useState("");
     const [crmExpanded, setCrmExpanded] = useState(true);
+    const [isCollapsed, setIsCollapsed] = useState(collapsed);
     const sidebarRef = useRef(null);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+                setIsCollapsed(true);
+                setSearch("");
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
     return (
-        <div
+        <aside
             ref={sidebarRef}
-            className={`h-full transition-all duration-300 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-gray-700 ${
-                collapsed ? "w-[70px]" : "w-64"
-            }`}
-            onMouseEnter={() => ref?.current?.scrollTo?.({ top: 0 })}
+            className={`sidebar ${isCollapsed ? "collapsed" : ""}`}
+            onMouseEnter={() => setIsCollapsed(false)}
+            onMouseLeave={() => setIsCollapsed(true)}
         >
-            <div className="flex items-center gap-x-3 p-3">
+            {isCollapsed && (
+                <button className="expand-button" onClick={() => setIsCollapsed(false)}>
+                    <ArrowLeftCircle size={24} />
+                </button>
+            )}
+
+            <div className="flex gap-x-3 p-3 items-center">
                 <img src={logoLight} alt="Logo" className="dark:hidden" />
                 <img src={logoDark} alt="Logo" className="hidden dark:block" />
-                {!collapsed && <p className="text-lg font-medium">Logoipsum</p>}
+                {!isCollapsed && <p className="text-lg font-medium">Logoipsum</p>}
             </div>
 
             <div className="p-3">
@@ -45,77 +56,99 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
                         placeholder="Search..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-800 text-sm"
+                        className="sidebar-search-input pl-10"
                     />
                 </div>
             </div>
 
-            <div className="space-y-2 px-3">
+            <div className="sidebar-group">
                 {search === "" && activeModule === "CRM" && (
-                    <>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">CRM</p>
-                        <SidebarLink to="/leads" icon={<User size={20} />} label="Leads" collapsed={collapsed} />
-                        <SidebarLink to="/contacts" icon={<Users size={20} />} label="Contacts" collapsed={collapsed} />
-                        <SidebarLink to="/accounts" icon={<Building size={20} />} label="Accounts" collapsed={collapsed} />
-                        <SidebarLink to="/deals" icon={<Briefcase size={20} />} label="Deals" collapsed={collapsed} />
-                        <SidebarLink to="/workflow" icon={<Workflow size={20}/>} label="Workflow" collapsed={collapsed} />
-                        <SidebarLink to="/settings" icon={<Settings  size={20}/>} label="Settings" collapsed={collapsed} />
-                        <SidebarLink to="/users" icon={<UserPlus size={20}/>} label="Users" collapsed={collapsed} />
-                    </>
+                    <nav>
+                        <p className="sidebar-group-title">CRM</p>
+                        {crmExpanded && (
+                            <div className="ml-5">
+                                <NavLink to="/leads" className="sidebar-nav-link">
+                                    <User size={22} />
+                                    {!isCollapsed && <p>Leads</p>}
+                                </NavLink>
+                                <NavLink to="/contacts" className="sidebar-nav-link">
+                                    <Users size={22} />
+                                    {!isCollapsed && <p>Contacts</p>}
+                                </NavLink>
+                                <NavLink to="/accounts" className="sidebar-nav-link">
+                                    <Building size={22} />
+                                    {!isCollapsed && <p>Accounts</p>}
+                                </NavLink>
+                                <NavLink to="/deals" className="sidebar-nav-link">
+                                    <Briefcase size={22} />
+                                    {!isCollapsed && <p>Deals</p>}
+                                </NavLink>
+                                <NavLink to="/workflow" className="sidebar-nav-link">
+                                    <Briefcase size={22} />
+                                    {!isCollapsed && <p>Workflow</p>}
+                                </NavLink>
+                                <NavLink to="/settings" className="sidebar-nav-link">
+                                    <Briefcase size={22} />
+                                    {!isCollapsed && <p>Settings</p>}
+                                </NavLink>
+                            </div>
+                        )}
+                    </nav>
                 )}
 
                 {search === "" && activeModule === "Books" && (
-                    <>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Books</p>
-                        <SidebarLink to="/library" icon={<BookOpen size={20} />} label="Library" collapsed={collapsed} />
-                    </>
+                    <nav>
+                        <p className="sidebar-group-title">Books</p>
+                        <NavLink to="/library" className="sidebar-nav-link">
+                            <BookOpen size={22} />
+                            {!isCollapsed && <p>Library</p>}
+                        </NavLink>
+                    </nav>
                 )}
 
                 {search === "" && activeModule === "Marketing" && (
-                    <>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Marketing</p>
-                        <SidebarLink to="/campaigns" icon={<Megaphone size={20} />} label="Ad Campaigns" collapsed={collapsed} />
-                    </>
+                    <nav>
+                        <p className="sidebar-group-title">Marketing</p>
+                        <NavLink to="/campaigns" className="sidebar-nav-link">
+                            <Megaphone size={22} />
+                            {!isCollapsed && <p>Ad Campaigns</p>}
+                        </NavLink>
+                    </nav>
                 )}
 
                 {search === "" && activeModule === "Campaigns" && (
-                    <>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Campaigns</p>
-                        <SidebarLink to="/email-campaigns" icon={<Mail size={20} />} label="Email Campaigns" collapsed={collapsed} />
-                    </>
+                    <nav>
+                        <p className="sidebar-group-title">Campaigns</p>
+                        <NavLink to="/email-campaigns" className="sidebar-nav-link">
+                            <Mail size={22} />
+                            {!isCollapsed && <p>Email Campaigns</p>}
+                        </NavLink>
+                    </nav>
                 )}
 
                 {search === "" && activeModule === "People" && (
-                    <>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">People</p>
-                        <SidebarLink to="/users" icon={<Users size={20} />} label="Users" collapsed={collapsed} />
-                    </>
+                    <nav>
+                        <p className="sidebar-group-title">People</p>
+                        <NavLink to="/users" className="sidebar-nav-link">
+                            <Users size={22} />
+                            {!isCollapsed && <p>Users</p>}
+                        </NavLink>
+                    </nav>
                 )}
 
                 {search === "" && activeModule === "TicketDesk" && (
-                    <>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Support</p>
-                        <SidebarLink to="/tickets" icon={<HelpCircle size={20} />} label="Tickets" collapsed={collapsed} />
-                    </>
+                    <nav>
+                        <p className="sidebar-group-title">Support</p>
+                        <NavLink to="/tickets" className="sidebar-nav-link">
+                            <HelpCircle size={22} />
+                            {!isCollapsed && <p>Tickets</p>}
+                        </NavLink>
+                    </nav>
                 )}
             </div>
-        </div>
+        </aside>
     );
 });
-
-const SidebarLink = ({ to, icon, label, collapsed }) => (
-    <NavLink
-        to={to}
-        className={({ isActive }) =>
-            `flex items-center gap-x-3 px-3 py-2 rounded-md text-sm font-medium border border-l-[3px] border-primary border-t-0 border-r-0 border-b-0 ${
-                isActive ? "bg-slate-200 dark:bg-slate-800 text-black dark:text-white" : "text-gray-700 dark:text-gray-300"
-            } hover:bg-slate-100 dark:hover:bg-slate-700`
-        }
-    >
-        {icon}
-        {!collapsed && <span>{label}</span>}
-    </NavLink>
-);
 
 Sidebar.displayName = "Sidebar";
 Sidebar.propTypes = {

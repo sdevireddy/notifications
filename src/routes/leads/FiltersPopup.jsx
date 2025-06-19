@@ -1,125 +1,115 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Select from "react-select";
+import "./FiltersPopUp.css";
 
 const FiltersPopUp = ({ onClose }) => {
-  const initialTextFields = {
-    firstName: "",
-    lastName: "",
-    title: "",
-    email: "",
-    fax: "",
-    mobile: "",
-    website: "",
-    industry: "",
-    noOfEmployees: "",
-    annualRevenue: "",
-    rating: "",
-    skypeId: "",
-    secondaryEmail: "",
-    twitter: "",
-    description: "",
-  };
- useEffect(() => {
-    // Disable background scroll
-    document.body.style.overflow = "hidden";
-
-    // Re-enable scroll on unmount
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, []);
-  const [textFields, setTextFields] = useState(initialTextFields);
-  const [multiSelects, setMultiSelects] = useState({
-    leadOwner: [],
-    company: [],
-    leadStatus: [],
-    country: [],
-    city: [],
-    leadSource: [],
-  });
+  const [leadOwner, setLeadOwner] = useState([]);
+  const [company, setCompany] = useState([]);
+  const [leadStatus, setLeadStatus] = useState([]);
+  const [country, setCountry] = useState([]);
+  const [city, setCity] = useState([]);
+  const [leadSource, setLeadSource] = useState([]);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [title, setTitle] = useState("");
+  const [email, setEmail] = useState("");
+  const [fax, setFax] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [website, setWebsite] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [noOfEmployees, setNoOfEmployees] = useState("");
+  const [annualRevenue, setAnnualRevenue] = useState("");
+  const [rating, setRating] = useState("");
   const [emailOptOut, setEmailOptOut] = useState(false);
-
-  const handleInputChange = (e) => {
-    setTextFields({ ...textFields, [e.target.name]: e.target.value });
-  };
-
-  const handleSelectChange = (field, value) => {
-    setMultiSelects({ ...multiSelects, [field]: value });
-  };
+  const [skypeId, setSkypeId] = useState("");
+  const [secondaryEmail, setSecondaryEmail] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const [description, setDescription] = useState("");
 
   const handleClearAll = () => {
-    setTextFields(initialTextFields);
-    setMultiSelects({
-      leadOwner: [],
-      company: [],
-      leadStatus: [],
-      country: [],
-      city: [],
-      leadSource: [],
-    });
+    setLeadOwner([]);
+    setCompany([]);
+    setLeadStatus([]);
+    setCountry([]);
+    setCity([]);
+    setLeadSource([]);
+    setFirstName("");
+    setLastName("");
+    setTitle("");
+    setEmail("");
+    setFax("");
+    setMobile("");
+    setWebsite("");
+    setIndustry("");
+    setNoOfEmployees("");
+    setAnnualRevenue("");
+    setRating("");
     setEmailOptOut(false);
+    setSkypeId("");
+    setSecondaryEmail("");
+    setTwitter("");
+    setDescription("");
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="w-full max-w-5xl bg-white rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4 sticky top-0 bg-white p-4">
-          <h2 className="text-xl font-semibold">Filter Leads</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-red-500 text-lg"
-          >
-            ✕
-          </button>
+    <div className="filter-popup">
+      <div className="filter-header">
+        <h2 className="filter-title">Filter Leads</h2>
+        <button className="close-btn" onClick={onClose}>X</button>
+      </div>
+      <div className="filter-body">
+        <div className="filter-row">
+          <label>First Name</label>
+          <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+          <label>Last Name</label>
+          <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+          <label>Title</label>
+          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ml-14">
-          {Object.entries(textFields).map(([key, value]) => (
-            <div key={key} className="flex flex-col ">
-              <label className="text-sm capitalize">{key.replace(/([A-Z])/g, ' $1')}</label>
-              <input
-                type="text"
-                name={key}
-                value={value}
-                onChange={handleInputChange}
-                className="border rounded-md p-2"
-              />
-            </div>
-          ))}
-
-          {Object.entries(multiSelects).map(([key, value]) => (
-            <div key={key} className="flex flex-col">
-              <label className="text-sm capitalize">{key.replace(/([A-Z])/g, ' $1')}</label>
-              <Select
-                isMulti
-                options={[]}
-                value={value}
-                onChange={(val) => handleSelectChange(key, val)}
-              />
-            </div>
-          ))}
-
-          <div className="flex items-center gap-2 col-span-full mt-2">
-            <input
-              type="checkbox"
-              checked={emailOptOut}
-              onChange={(e) => setEmailOptOut(e.target.checked)}
-            />
-            <label>Email Opt-Out</label>
-          </div>
+        <div className="filter-row">
+          <label>Email</label>
+          <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <label>Fax</label>
+          <input type="text" value={fax} onChange={(e) => setFax(e.target.value)} />
+          <label>Mobile</label>
+          <input type="text" value={mobile} onChange={(e) => setMobile(e.target.value)} />
         </div>
-
-        <div className="flex justify-end gap-3 p-3 sticky bottom-0 bg-white border border-t-gray-300">
-          <button
-            onClick={handleClearAll}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md"
-          >
-            Clear All
-          </button>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
-            Search
-          </button>
+        <div className="filter-row">
+          <label>Website</label>
+          <input type="text" value={website} onChange={(e) => setWebsite(e.target.value)} />
+          <label>Industry</label>
+          <input type="text" value={industry} onChange={(e) => setIndustry(e.target.value)} />
+          <label>No. of Employees</label>
+          <input type="text" value={noOfEmployees} onChange={(e) => setNoOfEmployees(e.target.value)} />
         </div>
+        <div className="filter-row">
+          <label>Annual Revenue</label>
+          <input type="text" value={annualRevenue} onChange={(e) => setAnnualRevenue(e.target.value)} />
+          <label>Rating</label>
+          <input type="text" value={rating} onChange={(e) => setRating(e.target.value)} />
+          <label>Skype ID</label>
+          <input type="text" value={skypeId} onChange={(e) => setSkypeId(e.target.value)} />
+        </div>
+        <div className="filter-row">
+          <label>Lead Owner</label>
+          <Select options={[]} isMulti value={leadOwner} onChange={setLeadOwner} />
+          <label>Company</label>
+          <Select options={[]} isMulti value={company} onChange={setCompany} />
+          <label>Lead Status</label>
+          <Select options={[]} isMulti value={leadStatus} onChange={setLeadStatus} />
+        </div>
+        <div className="filter-row">
+          <label>Country</label>
+          <Select options={[]} isMulti value={country} onChange={setCountry} />
+          <label>City</label>
+          <Select options={[]} isMulti value={city} onChange={setCity} />
+          <label>Lead Source</label>
+          <Select options={[]} isMulti value={leadSource} onChange={setLeadSource} />
+        </div>
+      </div>
+      <div className="filter-footer">
+        <button className="clear-all-btn" onClick={handleClearAll}>Clear All</button>
+        <button className="search-btn">Search</button>
       </div>
     </div>
   );
