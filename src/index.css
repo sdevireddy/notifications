@@ -34,28 +34,30 @@
 
 /* Enhanced dialog overlay for better contrast */
 .dialog-overlay {
-  background-color: rgba(0, 0, 0, 0.3) !important;
-  backdrop-filter: none !important;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
   position: fixed;
   inset: 0;
   z-index: 50;
 }
 
 .dialog-content {
-  background-color: white !important;
-  border: 2px solid #d1d5db !important;
-  border-radius: 1rem !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
+  background-color: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 95%;
-  max-width: 96rem;
-  max-height: 90vh;
+  max-width: 32rem;
+  max-height: 85vh;
   overflow-y: auto;
   z-index: 60;
 }
+
 
 /* Enhanced form visibility */
 .form-section {
@@ -116,11 +118,11 @@
   color: #1e40af !important;
 }
 
-/* Filter dropdown enhancement - removed blue border */
+
 .filter-dropdown {
   background-color: white !important;
-  border: 2px solid #d1d5db !important;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
+  border: 2px solid #3b82f6 !important;
+  box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.3), 0 10px 10px -5px rgba(59, 130, 246, 0.1) !important;
   border-radius: 0.75rem !important;
   z-index: 60 !important;
 }
@@ -167,6 +169,7 @@
   transition: background-color 0.15s ease-in-out;
 }
 
+
 /* Enhanced textarea styling */
 .enhanced-textarea {
   background-color: white !important;
@@ -192,3 +195,4 @@
   background-color: #3b82f6 !important;
   border-color: #3b82f6 !important;
 }
+
