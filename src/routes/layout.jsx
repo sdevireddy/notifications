@@ -3,15 +3,27 @@ import { useMediaQuery } from "@uidotdev/usehooks";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { useEffect, useRef, useState } from "react";
 
-import { Sidebar } from "@/sidebar/Sidebar";
+import {    Sidebar } from "@/sidebar/Sidebar";
 import { Header } from "@/header/Header";
-import { cn } from "@/utils/cn";
-import { ToastContainer } from 'react-toastify';
+import { cn } from "../utils/cn";
+import { ToastContainer } from "react-toastify";
+import { useLocation } from "react-router-dom";
+import Breadcrumb from "../components/BreadCrumb";
 
+
+export const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [pathname]);
+
+  return null;
+};
 
 const Layout = () => {
     const isDesktopDevice = useMediaQuery("(min-width: 768px)");
-    const [collapsed, setCollapsed] = useState(!isDesktopDevice);
+    const [collapsed, setCollapsed] = useState(true);
     const [activeModule, setActiveModule] = useState("CRM"); // Stores the selected module
 
     const sidebarRef = useRef(null);

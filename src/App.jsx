@@ -7,91 +7,73 @@ import DashboardPage from "@/routes/dashboard/page";
 import Leads from "@/routes/leads/Leads";
 import LeadsNew from "@/routes/leads/LeadsNew";
 import Contacts from "@/routes/contact/Contacts";
-import Deals from "@/routes/deals/Deals";
+import DealsPage from "@/routes/deals/Deals";
 import Accounts from "@/routes/accounts/Accounts";
 import NewLead from "@/routes/leads/LeadCreationForm";
 import ViewLead from "@/routes/leads/ViewLeadPage";
 import Workflow from "@/routes/workflow/ReactFlowComponent";
-import "./App.css"
-import 'react-toastify/dist/ReactToastify.css'; 
-
-
+import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
+import Contacts1 from "./routes/contact/Contacts1";
+import LeadPage from "./routes/leads/new/Lead";
+import LeadCreationForm from "./routes/leads/LeadCreationForm";
+import ViewLeadPage from "./routes/leads/ViewLeadPage";
+import CRMSelectionImport from "./routes/import/Import";
+import DataMigrationUpload from "./routes/import/DataMigration";
+import EditLead from "./routes/leads/EditLead";
+import Users from "./routes/users/Users";
+import WorkflowRuleForm from "./routes/workflow/form/WorkflowRuleForm";
+import WorkflowPage from "./routes/workflow/WorkFlow";
+import Login from "./routes/login/Login";
+import Register from "./routes/Register/Register";
+import { Toaster } from "react-hot-toast";
+import ProtectedRoute from "./routes/ProtectedRoutes";
 
 function App() {
-    const router = createBrowserRouter([
-        {
-            path: "/",
-            element: <Layout />,
-            children: [
-                {
-                    index: true,
-                    element: <DashboardPage />,
-                },
-                {
-                    path: "analytics",
-                    element: <h1 className="title">Analytics</h1>,
-                },
-                {
-                    path: "reports",
-                    element: <h1 className="title">Reports</h1>,
-                },
-                {
-                    path: "Leads",
-                    element: <LeadsNew/>,
-                },
-                {
-                    path: "Contacts",
-                    element: <Contacts/>,
-                },
-                {
-                    path: "Deals",
-                    element: <Deals/>,
-                },
-                {
-                    path: "workflow",
-                    element: <Workflow/>,
-                },
-                {
-                    path: "Accounts",
-                    element: <Accounts/>,
-                },
-                {
-                    path: "LeadCreationForm",
-                    element: <NewLead/>,
-                },
-                {
-                    path: "ViewLead/:id",
-                    element: <ViewLead/>,
-                },
-                {
-                    path: "verified-customers",
-                    element: <h1 className="title">Verified Customers</h1>,
-                },
-                {
-                    path: "products",
-                    element: <h1 className="title">Products</h1>,
-                },
-                {
-                    path: "new-product",
-                    element: <h1 className="title">New Product</h1>,
-                },
-                {
-                    path: "inventory",
-                    element: <h1 className="title">Inventory</h1>,
-                },
-                {
-                    path: "settings",
-                    element: <h1 className="title">Settings</h1>,
-                },
-               
-            ],
-        },
-    ]);
+  const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <Layout />,
+        children: [
+          { index: true, element: <DashboardPage /> },
+          { path: "leads", element: <LeadPage /> },
+          { path: "leads/create", element: <LeadCreationForm /> },
+          { path: "leads/profile/:id", element: <ViewLeadPage /> },
+          { path: "leads/edit/:id", element: <EditLead /> },
+          { path: "users", element: <Users /> },
+          { path: "Contacts", element: <Contacts1 /> },
+          { path: "Deals", element: <DealsPage /> },
+          { path: "workflow", element: <WorkflowPage /> },
+          { path: "workflow/create", element: <WorkflowRuleForm /> },
+          { path: "Accounts", element: <Accounts /> },
+          { path: "import/:source", element: <CRMSelectionImport /> },
+          { path: "import/:source/migration", element: <DataMigrationUpload /> },
+          { path: "verified-customers", element: <h1>Verified Customers</h1> },
+          { path: "products", element: <h1>Products</h1> },
+          { path: "new-product", element: <h1>New Product</h1> },
+          { path: "inventory", element: <h1>Inventory</h1> },
+          { path: "settings", element: <h1>Settings</h1> }
+        ],
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  }
+]);
 
     return (
         <ThemeProvider storageKey="theme">
             <RouterProvider router={router} />
-       
+            <Toaster/>
         </ThemeProvider>
     );
 }
