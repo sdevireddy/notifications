@@ -1,5 +1,5 @@
 "use client";
-
+import { LuFilter } from "react-icons/lu";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,160 +44,23 @@ import FiltersPopUp from "../FiltersPopup";
 import useFetchData from "../../../hooks/useFetchData";
 import { apiSummary } from "../../../common/apiSummary";
 
-// Sample contact data
-const contacts = [
-    {
-        id: 1,
-        name: "John Smith",
-        company: "Acme Corp",
-        jobTitle: "CEO",
-        email: "john.smith@acme.com",
-        phone: "+1 (555) 123-4567",
-        status: "active",
-        tags: ["VIP", "Decision Maker"],
-        lastContactDate: "2024-01-15",
-        lastContactType: "Email",
-        lastActivity: "2 days ago",
-    },
-    {
-        id: 2,
-        name: "Sarah Johnson",
-        company: "TechStart Inc",
-        jobTitle: "CTO",
-        email: "sarah.j@techstart.io",
-        phone: "+1 (555) 987-6543",
-        status: "prospect",
-        tags: ["Technical", "Startup"],
-        lastContactDate: "2024-01-12",
-        lastContactType: "Call",
-        lastActivity: "1 week ago",
-    },
-    {
-        id: 3,
-        name: "Mike Davis",
-        company: "Global Solutions",
-        jobTitle: "VP Sales",
-        email: "mike.davis@global.com",
-        phone: "+1 (555) 456-7890",
-        status: "customer",
-        tags: ["Enterprise", "Long-term"],
-        lastContactDate: "2024-01-10",
-        lastContactType: "Meeting",
-        lastActivity: "3 weeks ago",
-    },
-    {
-        id: 4,
-        name: "Emily Chen",
-        company: "InnovateX",
-        jobTitle: "Marketing Director",
-        email: "emily.chen@innovatex.com",
-        phone: "+1 (555) 234-5678",
-        status: "active",
-        tags: ["Influencer", "Partner"],
-        lastContactDate: "2024-01-18",
-        lastContactType: "Email",
-        lastActivity: "1 day ago",
-    },
-    {
-        id: 5,
-        name: "Robert Kim",
-        company: "DataSystems",
-        jobTitle: "Product Manager",
-        email: "robert.kim@datasystems.io",
-        phone: "+1 (555) 876-5432",
-        status: "prospect",
-        tags: ["Technical", "Evaluation"],
-        lastContactDate: "2024-01-14",
-        lastContactType: "Call",
-        lastActivity: "4 days ago",
-    },
-    {
-        id: 6,
-        name: "Lisa Wong",
-        company: "CloudTech",
-        jobTitle: "CFO",
-        email: "lisa.wong@cloudtech.com",
-        phone: "+1 (555) 345-6789",
-        status: "customer",
-        tags: ["Enterprise", "Renewal"],
-        lastContactDate: "2024-01-05",
-        lastContactType: "Meeting",
-        lastActivity: "2 weeks ago",
-    },
-    {
-        id: 7,
-        name: "Lisa Wong1",
-        company: "CloudTech11",
-        jobTitle: "CFO1",
-        email: "lisa.wong@cloudtech.com",
-        phone: "+1 (555) 345-6789",
-        status: "customer",
-        tags: ["Enterprise", "Renewal"],
-        lastContactDate: "2024-01-05",
-        lastContactType: "Meeting",
-        lastActivity: "2 weeks ago",
-    },
-    {
-        id: 8,
-        name: "Lisa Wong2",
-        company: "CloudTech2",
-        jobTitle: "CFO2",
-        email: "lisa.wong@cloudtech.com",
-        phone: "+1 (555) 345-6789",
-        status: "customer",
-        tags: ["Enterprise", "Renewal"],
-        lastContactDate: "2024-01-05",
-        lastContactType: "Meeting",
-        lastActivity: "2 weeks ago",
-    },
-    {
-        id: 9,
-        name: "Lisa Wong3",
-        company: "CloudTech3",
-        jobTitle: "CFO3",
-        email: "lisa.wong@cloudtech.com",
-        phone: "+1 (555) 345-6789",
-        status: "customer",
-        tags: ["Enterprise", "Renewal"],
-        lastContactDate: "2024-01-05",
-        lastContactType: "Meeting",
-        lastActivity: "2 weeks ago",
-    },
-    {
-        id: 10,
-        name: "Lisa Wong4",
-        company: "CloudTech4",
-        jobTitle: "CFO",
-        email: "lisa.wong@cloudtech.com",
-        phone: "+1 (555) 345-6789",
-        status: "customer",
-        tags: ["Enterprise", "Renewal"],
-        lastContactDate: "2024-01-05",
-        lastContactType: "Meeting",
-        lastActivity: "2 weeks ago",
-    },
-    {
-        id: 11,
-        name: "Lisa Wong5",
-        company: "CloudTech5",
-        jobTitle: "CEO",
-        email: "lisa.wong@cloudtech.com",
-        phone: "+1 (555) 345-6789",
-        status: "customer",
-        tags: ["Enterprise", "Renewal"],
-        lastContactDate: "2024-01-05",
-        lastContactType: "Meeting",
-        lastActivity: "2 weeks ago",
-    },
-];
-
 export default function LeadPage() {
     const [leads, setLeads] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [recordsPerPage, setRecordsPerPage] = useState("25");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [selectMultipleLead, setSelectMultipleLead] = useState([]);
+    const [selectSingleLead, setSelectSingleLead] = useState([]);
+    const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
+    const [filteredLeads, setFilteredLeads] = useState([]);
+    const [totalRecord, setTotalRecords] = useState(0);
+    const [emailModel, setEmailModel] = useState(false);
+    const [isMassEmail, setIsMassEmail] = useState(false);
+    const [filterModelOpen, setFilterModelOpen] = useState(false);
+    const navigate = useNavigate();
+
     const leadsData = {
         totalRecords: 2,
-        pageSize: 10,
-        currentPage: 0,
-        totalPages: 1,
         data: [
             {
                 id: 1,
@@ -207,632 +70,279 @@ export default function LeadPage() {
                 lastName: "Smith",
                 title: "Marketing Manager",
                 email: "jane.smith@ab.com",
-                fax: "123-456-7890",
                 mobile: "+91-9876543210",
-                website: "tt",
-                leadSource: "OTHER",
                 leadStatus: "New",
-                industry: "Technology",
-                noOfEmployees: 150,
-                annualRevenue: 1200000.5,
-                rating: "Hot",
-                emailOptOut: false,
-                skypeId: "jane.smith.skype",
-                secondaryEmail: "jane.smith.alt@abc.com",
-                twitter: "@janesmith",
-                description: "Interested in premium product plan",
-                converted: false,
             },
             {
                 id: 2,
                 leadOwner: "sales_user1",
                 company: "Tech Innovations Pvt Ltd",
-                firstName: "praveen",
+                firstName: "Praveen",
                 lastName: "Smith",
                 title: "Marketing Manager",
                 email: "jane.smith@example.com",
-                fax: "123-456-7890",
                 mobile: "+91-9876543210",
-                website: "https://techinnovations.com",
-                leadSource: "OTHER",
                 leadStatus: "New",
-                industry: "Technology",
-                noOfEmployees: 150,
-                annualRevenue: 1200000.5,
-                rating: "Hot",
-                emailOptOut: false,
-                skypeId: "jane.smith.skype",
-                secondaryEmail: "jane.smith.alt@example.com",
-                twitter: "@janesmith",
-                description: "Interested in premium product plan",
-                converted: false,
             },
         ],
     };
-    const [filterModelOpen, setFilterModelOpen] = useState(false);
-    const [selectedLeads, setSelectedLeads] = useState([]);
-    const [selectSingleLead, setSelectSingleLead] = useState([]);
-    const [selectMultipleLead, setSelectMultipleLead] = useState([]);
-    const [recordsPerPage, setRecordsPerPage] = useState("25");
-    const [totalRecord, setTotalRecords] = useState(0);
-    const [selectedContact, setSelectedContact] = useState(null);
-    const [isContactDetailsOpen, setIsContactDetailsOpen] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [currentPage, setCurrentPage] = useState(1);
-    const [filteredLeads, setFilteredLeads] = useState([]);
-    const [emailModel, setEmailModel] = useState(false);
-    const [isMassEmail, setIsMassEmail] = useState(false);
-    const navigate = useNavigate();
-    const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-    useEffect(() => {
-        setFilteredLeads(leadsData?.data);
-        setLeads(leadsData?.data);
-        setCurrentPage(leadsData?.currentPage);
-        setTotalRecords(leadsData?.totalRecords);
-    }, []);
-    useEffect(() => {
-        if (!searchTerm) {
-            //   setFilteredContacts(contacts)
-        } else {
-            const term = searchTerm.toLowerCase();
-            setFilteredLeads(
-                leads.filter(
-                    (lead) =>
-                        lead.firstName.toLowerCase().includes(term) ||
-                        lead.company.toLowerCase().includes(term) ||
-                        lead.email.toLowerCase().includes(term) ||
-                        lead.mobile.toLowerCase().includes(term),
-                ),
-            );
-        }
-        setCurrentPage(1); // Reset to first page when search changes
-    }, [searchTerm]);
 
-    // Pagination calculation
+    useEffect(() => {
+        setLeads(leadsData.data);
+        setFilteredLeads(leadsData.data);
+        setTotalRecords(leadsData.totalRecords);
+        setCurrentPage(1);
+    }, []);
+
+    useEffect(() => {
+        const term = searchTerm.toLowerCase();
+        setFilteredLeads(
+            leads.filter(
+                (lead) =>
+                    lead.firstName.toLowerCase().includes(term) ||
+                    lead.company.toLowerCase().includes(term) ||
+                    lead.email.toLowerCase().includes(term) ||
+                    lead.mobile.toLowerCase().includes(term),
+            ),
+        );
+        setCurrentPage(1);
+    }, [searchTerm,leads]);
+
     const recordsPerPageValue = parseInt(recordsPerPage);
     const indexOfLastRecord = currentPage * recordsPerPageValue;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPageValue;
     const totalPages = Math.ceil(totalRecord / recordsPerPageValue);
 
     const handleContactSelect = (lead) => {
-        setSelectedLeads((prev) => (prev.includes(lead.id) ? prev.filter((id) => id !== lead.id) : [...prev, lead.id]));
         setSelectMultipleLead((prev) => (prev.some((item) => item.id === lead.id) ? prev.filter((item) => item.id !== lead.id) : [...prev, lead]));
     };
-    const sortedLeads = useMemo(() => {
-        if (!sortConfig.key) return filteredLeads;
-
-        return [...filteredLeads].sort((a, b) => {
-            const aVal = a[sortConfig.key]?.toString().toLowerCase() || "";
-            const bVal = b[sortConfig.key]?.toString().toLowerCase() || "";
-            if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
-            if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
-            return 0;
-        });
-    }, [filteredLeads, sortConfig]);
-
-    const currentLeads = sortedLeads.slice(indexOfFirstRecord, indexOfLastRecord);
 
     const handleSelectAll = () => {
-        setSelectedLeads(selectedLeads.length === currentLeads.length ? [] : currentLeads.map((lead) => lead.id));
-        setSelectMultipleLead(selectedLeads.length === currentLeads.length ? [] : currentLeads.map((lead) => lead));
+        setSelectMultipleLead(selectMultipleLead.length === leadsData.data.length ? [] : leadsData.data);
     };
+
     const handleSort = (key) => {
-        console.log("sorting");
         setSortConfig((prev) => (prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }));
     };
 
-    return (
-        <div className="min-h-screen flex-1 bg-white">
-            {/* Header */}
-            <div className="border-b px-6 py-4">
-                <div className="flex items-center justify-between">
+    const currentLeads = filteredLeads
+
+    const columns = useMemo(
+        () => [
+            {
+                id: "select",
+                header: ({ table }) => (
+                    <Checkbox
+                        checked={table.getIsAllRowsSelected()}
+                        onCheckedChange={(value) => {
+                            table.toggleAllRowsSelected(!!value);
+                            handleSelectAll();
+                        }}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <Checkbox
+                        checked={row.getIsSelected()}
+                        onCheckedChange={(value) => {
+                            row.toggleSelected(!!value);
+                            let lead = row.original;
+                            handleContactSelect(lead);
+                        }}
+                    />
+                ),
+            },
+            {
+                accessorKey: "firstName",
+                header: "Name",
+                cell: ({ row }) => {
+                    const lead = row.original;
+                    return (
+                        <div className="flex items-center gap-2">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
+                                <User className="h-4 w-4 text-gray-500" />
+                            </div>
+                            <div>{lead.firstName + " " + lead.lastName}</div>
+                        </div>
+                    );
+                },
+            },
+            {
+                accessorKey: "email",
+                header: "Email",
+            },
+            {
+                accessorKey: "mobile",
+                header: "Phone",
+            },
+            {
+                accessorKey: "company",
+                header: "Company",
+                cell: ({ row }) => (
                     <div>
-                        <h1 className="text-2xl font-semibold text-gray-900">Leads</h1>
-                        <p className="mt-1 text-sm text-gray-600">Manage and organize your leads database</p>
+                        <div>{row.original.company}</div>
+                        <div className="text-xs text-gray-500">{row.original.title}</div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <DropdownMenu className={"bg-blue-200"}>
+                ),
+            },
+            {
+                accessorKey: "leadOwner",
+                header: "Owner",
+            },
+            {
+                accessorKey: "leadStatus",
+                header: "Status",
+            },
+            {
+                id: "actions",
+                header: "Actions",
+                cell: ({ row }) => (
+                    <div className="flex items-center justify-center gap-1">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            onClick={() => {
+                                setSelectSingleLead([row.original]);
+                                setEmailModel(true);
+                            }}
+                        >
+                            <Mail className="h-4 w-4 text-gray-600" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                        >
+                            <Phone className="h-4 w-4 text-gray-600" />
+                        </Button>
+                        <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="outline">
-                                    Actions <ChevronDown className="ml-2 h-4 w-4" />
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0"
+                                >
+                                    <MoreVertical className="h-4 w-4 text-gray-600" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                                align="end"
-                                className="w-56"
-                            >
-                                <DropdownMenuItem>Mass Update</DropdownMenuItem>
-                                <DropdownMenuItem>Mass Delete</DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        setIsMassEmail(true);
-                                    }}
-                                >
-                                    Mass Send Email
-                                </DropdownMenuItem>
-                                {/* dropdown items */}
-                                <DropdownMenuItem onClick={() => navigate("/import/leads")}>
-                                    <Download className="mr-2 h-4 w-4" />
-                                    Import Leads Data
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem>
+                                    <User className="mr-2 h-4 w-4" />
+                                    View Profile
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>
-                                    <Download className="mr-2 h-4 w-4" />
-                                    Export Leads Data
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Trash2 className="mr-2 h-4 w-4 text-red-600" />
+                                    Delete
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <Button
-                            className={" text-white bg-buttonprimary hover:bg-buttonprimary-hover"}
-                            onClick={() => navigate("/leads/create")}
-                        >
-                            <Plus className="mr-2 h-4 w-4" />
-                            Create Lead
-                        </Button>
                     </div>
+                ),
+            },
+        ],
+        [],
+    );
+
+    return (
+        <div className="min-h-screen flex-1 bg-white">
+            <div className="flex items-center justify-between border-b px-6 py-4">
+                <div className="flex items-center gap-4">
+                    <h1 className="text-2xl font-semibold text-gray-900">Leads</h1>
+                    <Breadcrumb />
+                </div>
+                <div className="flex items-center gap-3">
+                    <div onClick={() => setFilterModelOpen(true)}>
+                        <Tooltip text={"Filter"}>
+                            <LuFilter />
+                        </Tooltip>
+                    </div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">
+                                Actions <ChevronDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setIsMassEmail(true)}>
+                                {" "}
+                                <Send className="mr-2 h-4 w-4" />
+                                Mass Send Email{" "}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
+                                <Users className="mr-2 h-4 w-4" />
+                                Mass Transfer Leads
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
+                                <Edit className="mr-2 h-4 w-4" />
+                                Update Multiple Leads
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete Selected
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
+                                <Tag className="mr-2 h-4 w-4" />
+                                Tag Leads
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button
+                        onClick={() => navigate("/leads/create")}
+                        className="bg-buttonprimary text-white hover:bg-buttonprimary-hover"
+                    >
+                        <Plus className="mr-2 h-4 w-4" /> Create Lead
+                    </Button>
                 </div>
             </div>
 
-            {/* Horizontal Filter Bar */}
-            <div className="border-b px-6 py-4">
-                <div className="flex flex-row-reverse items-center justify-between gap-4">
-                    <div className="relative max-w-md flex-1">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-                        <Input
-                            placeholder="Search leads..."
-                            className="pl-10"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="flex gap-3">
-                          {/* <Button variant="outline"
-                            onClick={() => setFilterModelOpen(true)}
-                            className="rounded border px-5 py-1 "
-                        >
-                            Filter
-                        </Button> */}
-
-                        {/* <Select defaultValue="all-statuses">
-                            <SelectTrigger className="w-40">
-                                <SelectValue placeholder="All Statuses" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all-statuses">All Statuses</SelectItem>
-                                <SelectItem value="active">Active</SelectItem>
-                                <SelectItem value="prospect">Prospect</SelectItem>
-                                <SelectItem value="customer">Customer</SelectItem>
-                                <SelectItem value="inactive">Inactive</SelectItem>
-                            </SelectContent>
-                        </Select> */}
-
-                        <div className="flex items-center gap-2">
-                            <Label
-                                htmlFor="records-per-page"
-                                className="text-sm"
-                            >
-                                Show
-                            </Label>
-                            <Select
-                                value={recordsPerPage}
-                                onValueChange={setRecordsPerPage}
-                            >
-                                <SelectTrigger className="w-20">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="10">10</SelectItem>
-                                    <SelectItem value="25">25</SelectItem>
-                                    <SelectItem value="50">50</SelectItem>
-                                    <SelectItem value="100">100</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
+            <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-4">
+                <div className="relative w-full max-w-md">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <Input
+                        placeholder="Search leads..."
+                        className="pl-10"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <div className="flex items-center gap-2">
+                    <Label
+                        htmlFor="records-per-page"
+                        className="text-sm"
+                    >
+                        Show
+                    </Label>
+                    <Select
+                        value={recordsPerPage}
+                        onValueChange={setRecordsPerPage}
+                    >
+                        <SelectTrigger className="w-20">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {[10, 25, 50, 100].map((num) => (
+                                <SelectItem
+                                    key={num}
+                                    value={String(num)}
+                                >
+                                    {num}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
 
-            {/* Main Content */}
-            {/* <div className="p-6">
-                <BulkActionsToolbar
-                    selectedCount={selectedLeads.length}
-                    onClearSelection={() => setSelectedLeads([])}
-                />
-            </div> */}
-            {/* <div className="relative overflow-x-auto shadow-md sm:rounded-lg max-w-[90%]">
-                <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                    <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                            <th
-                                scope="col"
-                                className="px-6 py-3"
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={selectedLeads.length > 0 && selectedLeads.length === currentLeads.length}
-                                    onChange={handleSelectAll}
-                                    className="accent-blue-600"
-                                />
-                            </th>
-                           
-                            <th
-                                scope="col"
-                                className="px-6 py-3 cursor-pointer"
-                                onClick={()=>handleSort("firstName")}
-                                
-                            >
-                                        <p className="flex items-center gap-3">
-                                Name
-                                            {sortConfig.key === "firstName" &&
-                                                (sortConfig.direction === "asc" ? (
-                                                    <ArrowUp className="h-4 w-4" />
-                                                ) : (
-                                                    <ArrowDown className="h-4 w-4" />
-                                                ))}
-                                        </p>
-                            </th>
-                             <th
-                                scope="col"
-                                className="px-6 py-3 cursor-pointer"
-                                onClick={()=>handleSort("firstName")}
-                                
-                            >
-                                        <p className="flex items-center gap-3">
-                                Phone
-                                            {sortConfig.key === "firstName" &&
-                                                (sortConfig.direction === "asc" ? (
-                                                    <ArrowUp className="h-4 w-4" />
-                                                ) : (
-                                                    <ArrowDown className="h-4 w-4" />
-                                                ))}
-                                        </p>
-                            </th>
-                             <th
-                                scope="col"
-                                className="px-6 py-3 cursor-pointer"
-                                onClick={()=>handleSort("firstName")}
-                                
-                            >
-                                        <p className="flex items-center gap-3">
-                                Phone
-                                            {sortConfig.key === "firstName" &&
-                                                (sortConfig.direction === "asc" ? (
-                                                    <ArrowUp className="h-4 w-4" />
-                                                ) : (
-                                                    <ArrowDown className="h-4 w-4" />
-                                                ))}
-                                        </p>
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 cursor-pointer"
-                                onClick={()=>handleSort("company")}
-                            >
-                                        <p className="flex items-center gap-3">
-                                Company
-                                            {sortConfig.key === "company" &&
-                                                (sortConfig.direction === "asc" ? (
-                                                    <ArrowUp className="h-4 w-4" />
-                                                ) : (
-                                                    <ArrowDown className="h-4 w-4" />
-                                                ))}
-                                        </p>
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 cursor-pointer"
-                                onClick={()=>handleSort("status")}
-                            >
-                                        <p className="flex items-center gap-3">
-                                Status
-                                            {sortConfig.key === "status" &&
-                                                (sortConfig.direction === "asc" ? (
-                                                    <ArrowUp className="h-4 w-4" />
-                                                ) : (
-                                                    <ArrowDown className="h-4 w-4" />
-                                                ))}
-                                        </p>
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 cursor-pointer"
-                                onClick={()=>handleSort("owner")}
-                            >
-                                        <p className="flex items-center gap-3">
-                                Owner
-                                            {sortConfig.key === "owner" &&
-                                                (sortConfig.direction === "asc" ? (
-                                                    <ArrowUp className="h-4 w-4" />
-                                                ) : (
-                                                    <ArrowDown className="h-4 w-4" />
-                                                ))}
-                                        </p>
-                            </th>
-                            <th
-                                scope="col"
-                              className="px-6 py-3 cursor-pointer"
-                                onClick={()=>handleSort("source")}
-                            >
-                                        <p className="flex items-center gap-3">
-                                Source
-                                            {sortConfig.key === "source" &&
-                                                (sortConfig.direction === "asc" ? (
-                                                    <ArrowUp className="h-4 w-4" />
-                                                ) : (
-                                                    <ArrowDown className="h-4 w-4" />
-                                                ))}
-                                        </p>
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left"
-                            >
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentLeads?.map((lead) => (
-                            <tr
-                                key={lead.id}
-                                className={`border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600 ${
-                                    selectedLeads.includes(lead.id) ? "bg-blue-50" : ""
-                                }`}
-                            >
-                                <td className="px-6 py-4">
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedLeads.includes(lead.id)}
-                                        onChange={() => handleContactSelect(lead)}
-                                        className="accent-blue-600"
-                                    />
-                                </td>
-                                <th
-                                    scope="row"
-                                    className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
-                                >
-                                    {lead.firstName} {lead.lastName}
-                                    <div className="text-sm text-gray-500">{lead.email}</div>
-                                    <div className="text-sm text-gray-400">{lead.mobile}</div>
-                                </th>
-                                 <th
-                                    scope="row"
-                                    className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
-                                >
-                                   
-                                    <div className="text-sm text-gray-500">{lead.email}</div>
-                                  
-                                </th>
-                                 <th
-                                    scope="row"
-                                    className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
-                                >
-                                    <div className="text-sm text-gray-400">{lead.mobile}</div>
-                                </th>
-                                <td className="px-6 py-4">
-                                    <div>{lead.company}</div>
-                                    <div className="text-sm text-gray-400">{lead.title}</div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className="rounded-full bg-blue-100 px-2 py-1 text-sm font-medium text-blue-800">{lead.leadStatus}</span>
-                                </td>
-                                <td className="px-6 py-4">{lead.leadOwner}</td>
-                                <td className="px-6 py-4">{lead.leadSource}</td>
-                                <td className="px-6 py-4 text-right">
-                                     <div className="flex justify-center gap-1">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="h-8 w-8 p-0"
-                                                    onClick={() => {
-                                                        setEmailModel(true);
-                                                        setSelectSingleLead((prev) => [lead]);
-                                                    }}
-                                                >
-                                                    <Mail className="h-4 w-4 text-gray-600" />
-                                                </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="h-8 w-8 p-0"
-                                                >
-                                                    <Phone className="h-4 w-4 text-gray-600" />
-                                                </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="h-8 w-8 p-0"
-                                                >
-                                                    <Edit
-                                                        className="h-4 w-4 text-gray-600"
-                                                        onClick={() => {
-                                                            navigate(`/leads/edit/${lead.id}`, {
-                                                                state: lead,
-                                                            });
-                                                        }}
-                                                    />
-                                                </Button>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="h-8 w-8 p-0"
-                                                        >
-                                                            <MoreVertical className="h-4 w-4 text-gray-600" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem
-                                                            onClick={() => {
-                                                                setSelectedContact(lead);
-                                                                setIsContactDetailsOpen(true);
-                                                            }}
-                                                        >
-                                                            <User className="mr-2 h-4 w-4" /> View Profile
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem>
-                                                            <Edit className="mr-2 h-4 w-4" /> Edit Contact
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem>
-                                                            <Mail className="mr-2 h-4 w-4" /> Send Email
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem>
-                                                            <Phone className="mr-2 h-4 w-4" /> Call Contact
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem>
-                                                            <Tag className="mr-2 h-4 w-4" /> Add Tags
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuSeparator />
-                                                        <DropdownMenuItem className="text-red-600">
-                                                            <Trash2 className="mr-2 h-4 w-4" /> Delete Contact
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </div>
-                                                                    </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div> */}
-<CardContent className="py-4">
-  <div className="w-full overflow-x-auto">
-    <div className="min-w-[1000px]">
-      {/* Table Header */}
-      <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-gray-100 border-b text-sm font-medium text-gray-700">
-        <div className="col-span-1 flex items-center">
-          <Checkbox 
-            checked={selectedLeads.length > 0 && selectedLeads.length === currentLeads.length} 
-            onCheckedChange={handleSelectAll}
-            className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
-          />
-        </div>
-        <div className="col-span-2 cursor-pointer" onClick={() => handleSort("firstName")}>
-          <p className="flex items-center gap-2">Name
-            {sortConfig.key === "firstName" && (sortConfig.direction === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />)}
-          </p>
-        </div>
-        <div className="col-span-2 cursor-pointer" onClick={() => handleSort("email")}>
-          <p className="flex items-center gap-2">Email
-            {sortConfig.key === "email" && (sortConfig.direction === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />)}
-          </p>
-        </div>
-        <div className="col-span-2 cursor-pointer" onClick={() => handleSort("mobile")}>
-          <p className="flex items-center gap-2">Phone
-            {sortConfig.key === "mobile" && (sortConfig.direction === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />)}
-          </p>
-        </div>
-        <div className="col-span-2 cursor-pointer" onClick={() => handleSort("company")}>
-          <p className="flex items-center gap-2">Company
-            {sortConfig.key === "company" && (sortConfig.direction === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />)}
-          </p>
-        </div> <div className="col-span-1 cursor-pointer" onClick={() => handleSort("leadOwner")}>
-          <p className="flex items-center gap-2">Owner
-            {sortConfig.key === "leadOwner" && (sortConfig.direction === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />)}
-          </p>
-        </div>
-        <div className="col-span-1 cursor-pointer" onClick={() => handleSort("leadStatus")}>
-          <p className="flex items-center gap-2">Status
-            {sortConfig.key === "leadStatus" && (sortConfig.direction === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />)}
-          </p>
-        </div>
-        <div className="col-span-1 text-center">Actions</div>
-      </div>
+            <Table
+                columns={columns}
+                data={currentLeads}
+            />
 
-      {/* Table Body */}
-      <div className="divide-y bg-white">
-        {currentLeads.map((lead) => (
-          <div
-            key={lead.id}
-            className={`grid grid-cols-12 gap-4 px-4 py-3 text-sm transition-colors ${
-              selectedLeads.includes(lead.id) ? 'bg-blue-50' : 'hover:bg-gray-50'
-            }`}
-          >
-            <div className="col-span-1 flex items-center">
-              <Checkbox
-                checked={selectedLeads.includes(lead.id)}
-                onCheckedChange={() => handleContactSelect(lead)}
-                className="data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
-              />
-            </div>
-
-            <div className="col-span-2 flex items-center gap-2">
-              <div className="w-9 h-9 bg-gray-200 rounded-full flex items-center justify-center">
-                <User className="h-4 w-4 text-gray-500" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">{lead.firstName + " " + lead.lastName}</h3>
-              </div>
-            </div>
-
-            <div className="col-span-2">
-              <p className="text-gray-900 font-medium truncate">{lead.email}</p>
-            </div>
-
-            <div className="col-span-2">
-              <p className="text-gray-900 font-medium">{lead.mobile}</p>
-            </div>
-
-            <div className="col-span-2">
-              <p className="text-gray-900 font-medium">{lead.company}</p>
-              <p className="text-gray-500 text-xs">{lead.title}</p>
-            </div>
-             <div className="col-span-1">
-              <p className="text-gray-900 font-medium truncate">{lead.leadOwner}</p>
-            </div>
-            <div className="col-span-1 flex items-center">
-              <Badge
-                variant={lead.status === "active" ? "default" : lead.status === "prospect" ? "secondary" : "outline"}
-                className={
-                  lead.status === "active"
-                    ? "bg-green-100 text-green-800"
-                    : lead.status === "prospect"
-                    ? "bg-blue-100 text-blue-800"
-                    : "bg-purple-100 text-purple-800"
-                }
-              >
-                {lead.leadStatus}
-              </Badge>
-            </div>
-
-            <div className="col-span-1 flex items-center justify-center gap-1">
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <Mail className="h-4 w-4 text-gray-600" />
-              </Button>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <Phone className="h-4 w-4 text-gray-600" />
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <MoreVertical className="h-4 w-4 text-gray-600" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem className="data-[highlighted]:bg-blue-100">
-                    <User className="mr-2 h-4 w-4" />
-                    View Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="data-[highlighted]:bg-blue-100">
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="data-[highlighted]:bg-blue-100">
-                    <Trash2 className="mr-2 h-4 w-4 text-red-600" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-</CardContent>
-
-            {/* Pagination */}
             <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-4">
                 <div className="text-sm text-gray-600">
                     Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredLeads.length)} of {filteredLeads.length} results
@@ -846,7 +356,7 @@ export default function LeadPage() {
                     >
                         Previous
                     </Button>
-                    <span className="rounded-md border bg-white px-3 py-1 text-sm">
+                    <span className="rounded border bg-white px-3 py-1 text-sm">
                         Page {currentPage} of {totalPages}
                     </span>
                     <Button
@@ -860,11 +370,9 @@ export default function LeadPage() {
                 </div>
             </div>
 
-            {/* Modals */}
             {filterModelOpen && <FiltersPopUp onClose={() => setFilterModelOpen(false)} />}
             {emailModel && (
                 <Model>
-                    {" "}
                     <EmailComposer
                         onClose={() => setEmailModel(false)}
                         selectedLeads={selectSingleLead}
@@ -873,7 +381,6 @@ export default function LeadPage() {
             )}
             {isMassEmail && (
                 <Model>
-                    {" "}
                     <EmailComposer
                         onClose={() => setIsMassEmail(false)}
                         selectedLeads={selectMultipleLead}
@@ -1080,6 +587,9 @@ export default function LeadPage() {
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Model from "../../../components/Model";
+import Breadcrumb from "../../../components/BreadCrumb";
+import Tooltip from "../../../components/ToolTip";
+import Table from "../../../components/Table";
 
 export const EmailComposer = ({ onClose, selectedLeads }) => {
     const [subject, setSubject] = useState("");
