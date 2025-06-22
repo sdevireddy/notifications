@@ -8,7 +8,6 @@ import { Header } from "@/header/Header";
 import { cn } from "../utils/cn";
 import { ToastContainer } from "react-toastify";
 import { useLocation } from "react-router-dom";
-import Breadcrumb from "../components/BreadCrumb";
 
 
 export const ScrollToTop = () => {
@@ -65,7 +64,6 @@ const Layout = () => {
       setActiveModule={setActiveModule}
     />
     <div className="flex-1 overflow-scroll">
-       <Breadcrumb/>
       <Outlet />
       <ToastContainer
         position="top-right"
