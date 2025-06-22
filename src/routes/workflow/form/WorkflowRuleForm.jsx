@@ -1,117 +1,190 @@
 
-import React, { useState } from "react";
-import { Button } from "../../../components/layout/ui/button";
 
-const WorkflowRuleForm = () => {
-  const [rule, setRule] = useState({
-    name: "",
-    trigger: "onCreate",
-    conditionField: "",
-    conditionOperator: "equals",
-    conditionValue: "",
-    actionType: "sendEmail",
-    actionDetail: "",
-  });
+// WorkflowBuilder.tsx
+import React, { useState, useCallback } from 'react';
+import ReactFlow, {
+  Background,
+  Controls,
+  MiniMap,
+  addEdge,
+  useNodesState,
+  useEdgesState,
+} from 'reactflow';
+import 'reactflow/dist/style.css';
 
-  const handleChange = (e) => {
-    setRule({ ...rule, [e.target.name]: e.target.value });
+let idCounter = 100;
+
+const initialNodes = [
+  {
+    id: 'name',
+    data: { label: '🔵 Name: Welcome Flow', type: 'name' },
+    position: { x: 50, y: 50 },
+    type: 'input',
+  },
+  {
+    id: 'source',
+    data: { label: '🔵 Source: New Lead', type: 'source' },
+    position: { x: 50, y: 150 },
+  },
+  {
+    id: 'when',
+    data: { label: '🔸 When: Status = New', type: 'when' },
+    position: { x: 50, y: 250 },
+  },
+  {
+    id: 'delay',
+    data: { label: '⏱️ Delay: 2 Days', type: 'delay', delay: 2 },
+    position: { x: 50, y: 350 },
+  },
+  {
+    id: 'action',
+    data: { label: '✅ Action: Send Email', type: 'action', actionType: 'email' },
+    position: { x: 50, y: 450 },
+    type: 'output',
+  },
+];
+
+const initialEdges = [
+  { id: 'e1', source: 'source', target: 'when' },
+  { id: 'e2', source: 'when', target: 'delay' },
+  { id: 'e3', source: 'delay', target: 'action' },
+];
+
+export default function WorkflowSkeleton() {
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  const onConnect = useCallback(
+    (connection) => setEdges((eds) => addEdge(connection, eds)),
+    [setEdges]
+  );
+
+  const addNode = (type) => {
+    const newId = `node-${idCounter++}`;
+    const newNode = {
+      id: newId,
+      data: { label: `New ${type}`, type },
+      position: { x: Math.random() * 600, y: Math.random() * 400 },
+    };
+    setNodes((nds) => [...nds, newNode]);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Workflow Rule:", rule);
-    // send to backend API here
+  const deleteNode = (id) => {
+    setNodes((nds) => nds.filter((n) => n.id !== id));
+    setEdges((eds) => eds.filter((e) => e.source !== id && e.target !== id));
+  };
+
+  const handleSubmit = () => {
+    const data = {
+      name: '',
+      source: '',
+      when: [],
+      delay: [],
+      action: [],
+    };
+
+    nodes.forEach((node) => {
+  const type = node.data.type;
+  const label = typeof node.data.label === 'string' ? node.data.label : '';
+
+  if (type === 'name') data.name = label.replace(/^🔵 Name:\s*/, '');
+  if (type === 'source') data.source = label.replace(/^🔵 Source:\s*/, '');
+  if (type === 'when') data.when.push(label.replace(/^🔸 When:\s*/, ''));
+  if (type === 'delay') data.delay.push(label.replace(/^⏱️ Delay:\s*/, ''));
+  if (type === 'action') data.action.push(label.replace(/^✅ Action:\s*/, ''));
+});
+
+    console.log('Workflow JSON:', JSON.stringify(data, null, 2));
+    alert('Workflow submitted — check console!');
   };
 
   return (
-      <form
-          onSubmit={handleSubmit}
-          className="mx-auto w-full space-y-4 rounded-xl bg-white p-6 shadow"
-      >
-          <div className="flex justify-between">
-              <h2 className="text-xl font-semibold text-gray-700">Create Workflow Rule</h2>
-              <Button className={"bg-buttonprimary hover:bg-buttonprimary-hover text-white px-7"}>Save</Button>
-          </div>
+    <div>
+      <div className="flex gap-4 p-2">
+        <button onClick={() => addNode('when')} className="bg-blue-600 text-white px-4 py-1 rounded">+ When</button>
+        <button onClick={() => addNode('delay')} className="bg-yellow-600 text-white px-4 py-1 rounded">+ Delay</button>
+        <button onClick={() => addNode('action')} className="bg-green-600 text-white px-4 py-1 rounded">+ Action</button>
+        <button onClick={handleSubmit} className="bg-black text-white px-4 py-1 rounded">Submit</button>
+      </div>
 
-          <input
-              name="name"
-              value={rule.name}
-              onChange={handleChange}
-              className="w-full rounded border px-3 py-2"
-              placeholder="Rule Name"
-              required
-          />
+      <div style={{ height: '80vh', width: '100%' }}>
+        <ReactFlow
+          nodes={nodes.map((node) => ({
+            ...node,
+            data: {
+              ...node.data,
+              label: (
+                <div
+                  className="flex items-center gap-2 bg-white p-2 rounded shadow border"
+                  style={{ width: 280 }}
+                >
+                  {node.data.type === 'source' || node.data.type === 'action' || node.data.type === 'when' ? (
+                    <select
+                      className="flex-1 border rounded px-2 py-1 text-sm w-full"
+                      value={node.data.label}
+                      onChange={(e) => {
+                        const label = e.target.value;
+                        setNodes((nds) =>
+                          nds.map((n) => (n.id === node.id ? { ...n, data: { ...n.data, label } } : n))
+                        );
+                      }}
+                    >
+                      {node.data.type === 'source' && (
+                        <>
+                          <option>🔵 Source: New Lead</option>
+                          <option>🔵 Source: Contact Created</option>
+                          <option>🔵 Source: Form Submitted</option>
+                        </>
+                      )}
+                      {node.data.type === 'action' && (
+                        <>
+                          <option>✅ Action: Send Email</option>
+                          <option>✅ Action: Assign Sales Rep</option>
+                          <option>✅ Action: Create Task</option>
+                        </>
+                      )}
+                      {node.data.type === 'when' && (
+                        <>
+                          <option>🔸 When: Status = New</option>
+                          <option>🔸 When: Country = US</option>
+                          <option>🔸 When: Email Verified</option>
+                        </>
+                      )}
+                    </select>
+                  ) : (
+                    <input
+                      className="flex-1 border rounded px-2 py-1 text-sm w-full"
+                      value={node.data.label}
+                      onChange={(e) => {
+                        const label = e.target.value;
+                        setNodes((nds) =>
+                          nds.map((n) => (n.id === node.id ? { ...n, data: { ...n.data, label } } : n))
+                        );
+                      }}
+                    />
+                  )}
 
-          <div>
-              <label className="mb-1 block text-sm text-gray-600">Trigger</label>
-              <select
-                  name="trigger"
-                  value={rule.trigger}
-                  onChange={handleChange}
-                  className="w-full rounded border px-3 py-2"
-              >
-                  <option value="onCreate">On Create</option>
-                  <option value="onUpdate">On Update</option>
-                  <option value="onCreateOrUpdate">On Create or Update</option>
-              </select>
-          </div>
-
-          <div>
-              <label className="mb-1 block text-sm text-gray-600">Condition</label>
-              <div className="flex gap-2">
-                  <input
-                      name="conditionField"
-                      value={rule.conditionField}
-                      onChange={handleChange}
-                      placeholder="Field (e.g. status)"
-                      className="flex-1 rounded border px-3 py-2"
-                      required
-                  />
-                  <select
-                      name="conditionOperator"
-                      value={rule.conditionOperator}
-                      onChange={handleChange}
-                      className="rounded border px-3 py-2"
+                  <button
+                    onClick={() => deleteNode(node.id)}
+                    className="text-red-600 text-xs"
                   >
-                      <option value="equals">Equals</option>
-                      <option value="not_equals">Not Equals</option>
-                      <option value="contains">Contains</option>
-                  </select>
-                  <input
-                      name="conditionValue"
-                      value={rule.conditionValue}
-                      onChange={handleChange}
-                      placeholder="Value"
-                      className="flex-1 rounded border px-3 py-2"
-                      required
-                  />
-              </div>
-          </div>
-
-          <div>
-              <label className="mb-1 block text-sm text-gray-600">Action</label>
-              <select
-                  name="actionType"
-                  value={rule.actionType}
-                  onChange={handleChange}
-                  className="w-full rounded border px-3 py-2"
-              >
-                  <option value="sendEmail">Send Email</option>
-                  <option value="updateField">Update Field</option>
-                  <option value="assignOwner">Assign Owner</option>
-              </select>
-          </div>
-
-          <input
-              name="actionDetail"
-              value={rule.actionDetail}
-              onChange={handleChange}
-              placeholder="Email Template / Field Name / Owner Name"
-              className="w-full rounded border px-3 py-2"
-              required
-          />
-      </form>
+                    🗑
+                  </button>
+                </div>
+              ),
+            },
+          }))}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          fitView
+        >
+          <Background />
+          <Controls />
+          <MiniMap />
+        </ReactFlow>
+      </div>
+    </div>
   );
-};
-
-export default WorkflowRuleForm;
+}
