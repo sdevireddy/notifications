@@ -183,24 +183,17 @@ const LeadCreationForm = () => {
 
                         <h2 className="text-xl font-bold">Create Lead</h2>
                     </div>
-                    <div className="grid md:grid-cols-4 sm:grid-cols-2 gap-3 grid-cols-1">
+                    <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-3 grid-cols-1">
                         <button
                             type="button"
-                            className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                            className="rounded  px-4 py-2  hover:bg-gray-100 border border-primary transition-all ease-in-out duration-200 shadow-md"
                             onClick={resetForm}
                         >
                             Reset
                         </button>
                         <button
                             type="submit"
-                            className="rounded bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600"
-                            onClick={convertLead}
-                        >
-                            Convert
-                        </button>
-                        <button
-                            type="submit"
-                            className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                            className="rounded  px-4 py-2 hover:bg-gray-100 border border-primary transition-all ease-in-out duration-200 shadow-md"
                             onClick={() => (submitActionRef.current = "saveAndNew")}
                         >
                             Save And New
@@ -208,7 +201,7 @@ const LeadCreationForm = () => {
 
                         <button
                             type="submit"
-                            className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover"
+                            className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover shadow-sm"
                             onClick={() => (submitActionRef.current = "save")}
                         >
                             Save
@@ -426,7 +419,7 @@ const Input = ({ label, name, type = "text", value, onChange, required = false, 
             value={value}
             onChange={onChange}
             required={required}
-            className="w-full rounded border border-gray-300 p-2"
+            className="w-full rounded border-blue-400 p-2 border-[1px]"
         />
     </div>
 );
@@ -445,7 +438,7 @@ const Select = ({ label, name, value, onChange, options = [], required = false }
             value={value}
             onChange={onChange}
             required={required}
-            className="w-full rounded border border-gray-300 p-2"
+            className="w-full rounded border-[1px] border-blue-400 p-2"
         >
             <option value="">Select {label}</option>
             {options.map((opt) => (
