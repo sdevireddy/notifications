@@ -1,3 +1,4 @@
+
 import { Outlet } from "react-router-dom";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { useClickOutside } from "@/hooks/use-click-outside";
@@ -8,6 +9,7 @@ import { Header } from "@/header/Header";
 import { cn } from "../utils/cn";
 import { ToastContainer } from "react-toastify";
 import { useLocation } from "react-router-dom";
+import Breadcrumb from "../components/BreadCrumb";
 
 
 export const ScrollToTop = () => {
@@ -55,7 +57,8 @@ const Layout = () => {
   </div>
 
   {/* Main Content Area */}
-  <div className={`flex-1 flex flex-col px-3 w-full`}>
+  <div className={`flex-1 flex flex-col px-3 w-full gap-2`}>
+
     <ScrollToTop/>
     <Header
       collapsed={collapsed}
@@ -63,6 +66,7 @@ const Layout = () => {
       setActiveModule={setActiveModule}
     />
     <div className="flex-1 overflow-scroll">
+       <Breadcrumb/>
       <Outlet />
       <ToastContainer
         position="top-right"
