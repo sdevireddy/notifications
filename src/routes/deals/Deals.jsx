@@ -533,6 +533,27 @@ const [filterAmount, setFilterAmount] = useState([0, Math.max(...deals.map(d => 
 
 const [selectedDeals, setSelectedDeals] = useState([]);
 
+const availableDealColumns = [
+  { key: "dealName", label: "Deal", required: true },
+  { key: "accountName", label: "Company", required: false },
+  { key: "amount", label: "Value", required: false },
+  { key: "stage", label: "Stage", required: false },
+  { key: "probability", label: "Probability", required: false },
+  { key: "closingDate", label: "Close Date", required: false },
+  { key: "dealOwner", label: "Owner", required: false },
+  { key: "actions", label: "Actions", required: true },
+];
+
+const [visibleDealColumns, setVisibleDealColumns] = useState(
+  Object.fromEntries(availableDealColumns.map((col) => [col.key, true]))
+);
+
+
+const handleDealColumnVisibilityChange = (columnKey, checked) => {
+  setVisibleDealColumns((prev) => ({ ...prev, [columnKey]: checked }));
+};
+
+
 const handleDealSelect = (dealId) => {
   setSelectedDeals((prev) =>
     prev.includes(dealId) ? prev.filter((id) => id !== dealId) : [...prev, dealId]
@@ -1123,6 +1144,35 @@ const uniqueCompanies = useMemo(() => [...new Set(deals.map(d => d.accountName))
 
           </div>
 
+<div>
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="outline" className="gap-2">
+      <Eye className="h-4 w-4" />
+      Columns
+    </Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="end" className="w-48 enhanced-dropdown">
+    {availableDealColumns.map((column) => (
+      <DropdownMenuCheckboxItem
+        key={column.key}
+        checked={visibleDealColumns[column.key]}
+        onCheckedChange={(checked) =>
+          handleDealColumnVisibilityChange(column.key, checked)
+        }
+        disabled={column.required}
+        className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
+      >
+        {column.label}
+        {column.required && (
+          <span className="text-xs text-gray-500 ml-2">(Required)</span>
+        )}
+      </DropdownMenuCheckboxItem>
+    ))}
+  </DropdownMenuContent>
+</DropdownMenu>
+
+</div>
 
 {/* Filter Button */}
 <DropdownMenu>
