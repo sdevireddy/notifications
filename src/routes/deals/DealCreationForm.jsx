@@ -158,7 +158,7 @@ const DealCreationForm = () => {
 
                         <h2 className="text-xl font-bold">Create Deal</h2>
                     </div>
-                    <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-3 grid-cols-1">
+                    <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-3 grid-cols-1 text-sm">
                         <button
                             type="button"
                             className="rounded  px-4 py-2  hover:bg-gray-100 border border-primary transition-all ease-in-out duration-200 shadow-md"

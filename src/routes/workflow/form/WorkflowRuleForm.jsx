@@ -1,190 +1,177 @@
+"use client";
+import { useState } from "react";
 
+export default function WorkflowAutomation() {
+  const [when, setWhen] = useState("");
+  const [conditionGroups, setConditionGroups] = useState([
+    [{ id: "1", field: "", operator: "", value: "" }],
+  ]);
+  const [actionGroups, setActionGroups] = useState([
+    [{ id: "1", type: "instant", name: "Email Notification" }],
+  ]);
+  const [activeTabs, setActiveTabs] = useState(["instant"]);
 
-// WorkflowBuilder.tsx
-import React, { useState, useCallback } from 'react';
-import ReactFlow, {
-  Background,
-  Controls,
-  MiniMap,
-  addEdge,
-  useNodesState,
-  useEdgesState,
-} from 'reactflow';
-import 'reactflow/dist/style.css';
+  const fieldOptions = ["Amount", "Probability (%)", "Deal Stage", "Deal Owner", "Company", "Contact"];
+  const operatorOptions = ["=", "!=", ">", ">=", "<", "<=", "contains", "does not contain"];
+  const actionOptions = ["Email Notification", "Big Deal Alert", "Send Slack Message"];
 
-let idCounter = 100;
-
-const initialNodes = [
-  {
-    id: 'name',
-    data: { label: '🔵 Name: Welcome Flow', type: 'name' },
-    position: { x: 50, y: 50 },
-    type: 'input',
-  },
-  {
-    id: 'source',
-    data: { label: '🔵 Source: New Lead', type: 'source' },
-    position: { x: 50, y: 150 },
-  },
-  {
-    id: 'when',
-    data: { label: '🔸 When: Status = New', type: 'when' },
-    position: { x: 50, y: 250 },
-  },
-  {
-    id: 'delay',
-    data: { label: '⏱️ Delay: 2 Days', type: 'delay', delay: 2 },
-    position: { x: 50, y: 350 },
-  },
-  {
-    id: 'action',
-    data: { label: '✅ Action: Send Email', type: 'action', actionType: 'email' },
-    position: { x: 50, y: 450 },
-    type: 'output',
-  },
-];
-
-const initialEdges = [
-  { id: 'e1', source: 'source', target: 'when' },
-  { id: 'e2', source: 'when', target: 'delay' },
-  { id: 'e3', source: 'delay', target: 'action' },
-];
-
-export default function WorkflowSkeleton() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
-  const onConnect = useCallback(
-    (connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges]
-  );
-
-  const addNode = (type) => {
-    const newId = `node-${idCounter++}`;
-    const newNode = {
-      id: newId,
-      data: { label: `New ${type}`, type },
-      position: { x: Math.random() * 600, y: Math.random() * 400 },
-    };
-    setNodes((nds) => [...nds, newNode]);
+  const updateCondition = (groupIndex, conditionId, key, value) => {
+    const newGroups = [...conditionGroups];
+    newGroups[groupIndex] = newGroups[groupIndex].map((cond) =>
+      cond.id === conditionId ? { ...cond, [key]: value } : cond
+    );
+    setConditionGroups(newGroups);
   };
 
-  const deleteNode = (id) => {
-    setNodes((nds) => nds.filter((n) => n.id !== id));
-    setEdges((eds) => eds.filter((e) => e.source !== id && e.target !== id));
+  const addCondition = (groupIndex) => {
+    const newGroups = [...conditionGroups];
+    const newId = (newGroups[groupIndex].length + 1).toString();
+    newGroups[groupIndex].push({ id: newId, field: "", operator: "", value: "" });
+    setConditionGroups(newGroups);
   };
+
+  const removeCondition = (groupIndex, conditionId) => {
+    const newGroups = [...conditionGroups];
+    newGroups[groupIndex] = newGroups[groupIndex].filter((cond) => cond.id !== conditionId);
+    setConditionGroups(newGroups);
+  };
+
+  const addConditionGroup = () => {
+    setConditionGroups((prev) => [...prev, [{ id: "1", field: "", operator: "", value: "" }]]);
+    setActionGroups((prev) => [...prev, []]);
+    setActiveTabs((prev) => [...prev, "instant"]);
+  };
+
+  const removeConditionGroup = (groupIndex) => {
+    const newCond = [...conditionGroups];
+    const newActs = [...actionGroups];
+    const newTabs = [...activeTabs];
+    newCond.splice(groupIndex, 1);
+    newActs.splice(groupIndex, 1);
+    newTabs.splice(groupIndex, 1);
+    setConditionGroups(newCond);
+    setActionGroups(newActs);
+    setActiveTabs(newTabs);
+  };
+
+  const addAction = (groupIndex) => {
+    const newActs = [...actionGroups];
+    const newId = (newActs[groupIndex].length + 1).toString();
+    newActs[groupIndex].push({ id: newId, type: activeTabs[groupIndex], name: "Email Notification" });
+    setActionGroups(newActs);
+  };
+
+  const updateAction = (groupIndex, actionId, newName) => {
+    const newActs = [...actionGroups];
+    newActs[groupIndex] = newActs[groupIndex].map((a) => a.id === actionId ? { ...a, name: newName } : a);
+    setActionGroups(newActs);
+  };
+
+  const removeAction = (groupIndex, actionId) => {
+    const newActs = [...actionGroups];
+    newActs[groupIndex] = newActs[groupIndex].filter((a) => a.id !== actionId);
+    setActionGroups(newActs);
+  };
+
+  const getFilteredActions = (groupIndex) =>
+    actionGroups[groupIndex]?.filter((a) => a.type === activeTabs[groupIndex]) || [];
 
   const handleSubmit = () => {
-    const data = {
-      name: '',
-      source: '',
-      when: [],
-      delay: [],
-      action: [],
+    const result = {
+      when,
+      conditionGroups,
+      actionGroups,
     };
-
-    nodes.forEach((node) => {
-  const type = node.data.type;
-  const label = typeof node.data.label === 'string' ? node.data.label : '';
-
-  if (type === 'name') data.name = label.replace(/^🔵 Name:\s*/, '');
-  if (type === 'source') data.source = label.replace(/^🔵 Source:\s*/, '');
-  if (type === 'when') data.when.push(label.replace(/^🔸 When:\s*/, ''));
-  if (type === 'delay') data.delay.push(label.replace(/^⏱️ Delay:\s*/, ''));
-  if (type === 'action') data.action.push(label.replace(/^✅ Action:\s*/, ''));
-});
-
-    console.log('Workflow JSON:', JSON.stringify(data, null, 2));
-    alert('Workflow submitted — check console!');
+    console.log("Workflow Submitted:", result);
   };
 
   return (
-    <div>
-      <div className="flex gap-4 p-2">
-        <button onClick={() => addNode('when')} className="bg-blue-600 text-white px-4 py-1 rounded">+ When</button>
-        <button onClick={() => addNode('delay')} className="bg-yellow-600 text-white px-4 py-1 rounded">+ Delay</button>
-        <button onClick={() => addNode('action')} className="bg-green-600 text-white px-4 py-1 rounded">+ Action</button>
-        <button onClick={handleSubmit} className="bg-black text-white px-4 py-1 rounded">Submit</button>
+    <div className="px-10 py-6 bg-gray-50 min-h-screen space-y-10">
+      {/* WHEN */}
+      <div className="flex gap-4">
+        <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">WHEN</div>
+        <div className="flex-1 flex gap-6 items-center bg-white shadow p-4 rounded text-sm text-gray-600">
+          <p>This rule will be executed when</p>
+          <select value={when} onChange={(e) => setWhen(e.target.value)} className="border p-1 rounded">
+            <option value="">Select</option>
+            <option value="create">Create</option>
+            <option value="edit">Edit</option>
+            <option value="createoredit">Create or Edit</option>
+            <option value="delete">Delete</option>
+          </select>
+        </div>
       </div>
 
-      <div style={{ height: '80vh', width: '100%' }}>
-        <ReactFlow
-          nodes={nodes.map((node) => ({
-            ...node,
-            data: {
-              ...node.data,
-              label: (
-                <div
-                  className="flex items-center gap-2 bg-white p-2 rounded shadow border"
-                  style={{ width: 280 }}
-                >
-                  {node.data.type === 'source' || node.data.type === 'action' || node.data.type === 'when' ? (
-                    <select
-                      className="flex-1 border rounded px-2 py-1 text-sm w-full"
-                      value={node.data.label}
-                      onChange={(e) => {
-                        const label = e.target.value;
-                        setNodes((nds) =>
-                          nds.map((n) => (n.id === node.id ? { ...n, data: { ...n.data, label } } : n))
-                        );
-                      }}
-                    >
-                      {node.data.type === 'source' && (
-                        <>
-                          <option>🔵 Source: New Lead</option>
-                          <option>🔵 Source: Contact Created</option>
-                          <option>🔵 Source: Form Submitted</option>
-                        </>
-                      )}
-                      {node.data.type === 'action' && (
-                        <>
-                          <option>✅ Action: Send Email</option>
-                          <option>✅ Action: Assign Sales Rep</option>
-                          <option>✅ Action: Create Task</option>
-                        </>
-                      )}
-                      {node.data.type === 'when' && (
-                        <>
-                          <option>🔸 When: Status = New</option>
-                          <option>🔸 When: Country = US</option>
-                          <option>🔸 When: Email Verified</option>
-                        </>
-                      )}
-                    </select>
-                  ) : (
-                    <input
-                      className="flex-1 border rounded px-2 py-1 text-sm w-full"
-                      value={node.data.label}
-                      onChange={(e) => {
-                        const label = e.target.value;
-                        setNodes((nds) =>
-                          nds.map((n) => (n.id === node.id ? { ...n, data: { ...n.data, label } } : n))
-                        );
-                      }}
-                    />
-                  )}
-
-                  <button
-                    onClick={() => deleteNode(node.id)}
-                    className="text-red-600 text-xs"
-                  >
-                    🗑
-                  </button>
+      {when && conditionGroups.map((group, groupIndex) => (
+        <div key={groupIndex}>
+          {/* CONDITION GROUP */}
+          <div className="flex gap-7 relative">
+            <div className="flex flex-col items-center">
+              <div className="relative">
+                <div className="w-20 h-20 bg-blue-600 transform rotate-45 flex items-center justify-center">
+                  <span className="text-white text-xs font-semibold transform -rotate-45 text-center">CONDITION<br />{groupIndex + 1}</span>
                 </div>
-              ),
-            },
-          }))}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          fitView
-        >
-          <Background />
-          <Controls />
-          <MiniMap />
-        </ReactFlow>
-      </div>
+                {groupIndex > 0 && (
+                  <button onClick={() => removeConditionGroup(groupIndex)} className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-6 h-6">×</button>
+                )}
+              </div>
+            </div>
+
+            <div className="flex-1 bg-white shadow p-4 rounded space-y-4">
+              {group.map((cond) => (
+                <div key={cond.id} className="flex items-center gap-2 text-sm">
+                  <span className="text-gray-400 w-4">{cond.id}</span>
+                  <select value={cond.field} onChange={(e) => updateCondition(groupIndex, cond.id, "field", e.target.value)} className="border rounded p-1 w-40">
+                    <option value="">Select Field</option>
+                    {fieldOptions.map((f) => <option key={f} value={f}>{f}</option>)}
+                  </select>
+                  <select value={cond.operator} onChange={(e) => updateCondition(groupIndex, cond.id, "operator", e.target.value)} className="border rounded p-1 w-20">
+                    {operatorOptions.map((op) => <option key={op} value={op}>{op}</option>)}
+                  </select>
+                  <input value={cond.value} onChange={(e) => updateCondition(groupIndex, cond.id, "value", e.target.value)} className="border rounded p-1 w-24" type="text" />
+                  {group.length > 1 && (
+                    <button onClick={() => removeCondition(groupIndex, cond.id)} className="text-red-500 font-bold text-lg">×</button>
+                  )}
+                </div>
+              ))}
+              <div className="flex justify-between items-center border-t pt-2">
+                <span className="text-xs text-gray-500">Pattern: <code className="bg-gray-100 px-2 py-1 rounded">(Group {groupIndex + 1})</code></span>
+                <button onClick={() => addCondition(groupIndex)} className="text-blue-600 text-sm">+ Add Condition</button>
+              </div>
+            </div>
+          </div>
+
+          {/* ACTIONS */}
+          <div className="flex gap-4 ml-24 py-4">
+            <div className="w-0.5 h-8 bg-blue-400"></div>
+            <div className="flex-1 space-y-4">
+              <div className="flex gap-4">
+                <div className={`cursor-pointer p-4 rounded shadow border ${activeTabs[groupIndex] === "instant" ? "ring-2 ring-blue-500" : ""}`} onClick={() => setActiveTabs(tabs => tabs.map((t, i) => i === groupIndex ? "instant" : t))}>⚡ Instant Actions</div>
+                <div className={`cursor-pointer p-4 rounded border border-dashed ${activeTabs[groupIndex] === "scheduled" ? "ring-2 ring-blue-500" : ""}`} onClick={() => setActiveTabs(tabs => tabs.map((t, i) => i === groupIndex ? "scheduled" : t))}>⏱️ Scheduled Actions</div>
+              </div>
+
+              <div className="bg-white p-4 rounded shadow space-y-2">
+                {getFilteredActions(groupIndex).map((action) => (
+                  <div key={action.id} className="flex justify-between items-center bg-gray-50 p-2 rounded">
+                    <select value={action.name} onChange={(e) => updateAction(groupIndex, action.id, e.target.value)} className="border p-1 rounded">
+                      {actionOptions.map((name) => <option key={name} value={name}>{name}</option>)}
+                    </select>
+                    <button onClick={() => removeAction(groupIndex, action.id)} className="text-red-500 font-bold text-lg">×</button>
+                  </div>
+                ))}
+                <button onClick={() => addAction(groupIndex)} className="w-full text-left text-blue-600 text-sm">+ Add Action</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {when && (
+        <div className="flex justify-between mt-4">
+          <button className="px-4 py-2 bg-gray-200 rounded" onClick={addConditionGroup}>+ Add Condition Group</button>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handleSubmit}>Submit Rule</button>
+        </div>
+      )}
     </div>
   );
 }

@@ -285,7 +285,7 @@ const currentContacts=filteredLeads
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <Button
-                        onClick={() => navigate("/leads/create")}
+                        onClick={() => navigate("/accounts/create")}
                         className="bg-buttonprimary text-white hover:bg-buttonprimary-hover"
                     >
                         <Plus className="mr-2 h-4 w-4" /> Create Account

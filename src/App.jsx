@@ -30,6 +30,8 @@ import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./routes/ProtectedRoutes";
 import WorkflowBuilder from "./routes/workflow/form/WorkflowRuleForm";
 import DealCreationForm from "./routes/deals/DealCreationForm";
+import ContactCreationForm from "./routes/contact/ContactCreationForm";
+import AccountCreationForm from "./routes/accounts/AccountCreationForm";
 
 function App() {
   const router = createBrowserRouter([
@@ -47,11 +49,13 @@ function App() {
           { path: "leads/edit/:id", element: <EditLead /> },
           { path: "users", element: <Users /> },
           { path: "Contacts", element: <Contacts1 /> },
+          { path: "Contacts/create", element: <ContactCreationForm /> },
           { path: "Deals", element: <DealsPage /> },
            { path: "Deals/create", element: <DealCreationForm /> },
           { path: "workflow", element: <WorkflowPage /> },
           { path: "workflow/create", element: <WorkflowBuilder /> },
           { path: "Accounts", element: <Accounts /> },
+          { path: "Accounts/create", element: <AccountCreationForm /> },
           { path: "import/:source", element: <CRMSelectionImport /> },
           { path: "import/:source/migration", element: <DataMigrationUpload /> },
           { path: "verified-customers", element: <h1>Verified Customers</h1> },
