@@ -29,6 +29,7 @@ import Register from "./routes/Register/Register";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./routes/ProtectedRoutes";
 import WorkflowBuilder from "./routes/workflow/form/WorkflowRuleForm";
+import DealCreationForm from "./routes/deals/DealCreationForm";
 
 function App() {
   const router = createBrowserRouter([
@@ -47,6 +48,7 @@ function App() {
           { path: "users", element: <Users /> },
           { path: "Contacts", element: <Contacts1 /> },
           { path: "Deals", element: <DealsPage /> },
+           { path: "Deals/create", element: <DealCreationForm /> },
           { path: "workflow", element: <WorkflowPage /> },
           { path: "workflow/create", element: <WorkflowBuilder /> },
           { path: "Accounts", element: <Accounts /> },
