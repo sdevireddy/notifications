@@ -24,5 +24,9 @@ export const apiSummary={
     url: `/leads/${id}`,
     method: "get",
   }),
+  deleteLead:{
+    url:"leads/delete",
+    method:"delete"
+  }
 
 }

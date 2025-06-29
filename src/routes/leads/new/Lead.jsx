@@ -48,6 +48,7 @@ import Breadcrumb from "../../../components/BreadCrumb";
 import Tooltip from "../../../components/ToolTip";
 import Table from "../../../components/Table";
 import { EmailComposer } from "../../../components/shared/EmailComposer";
+import { axiosPrivate } from "../../../utils/axios";
 export default function LeadPage() {
     const [leads, setLeads] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -63,54 +64,32 @@ export default function LeadPage() {
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
 
-    const leadsData = {
-        totalRecords: 2,
-        data: [
-            {
-                id: 1,
-                leadOwner: "sales_user1",
-                company: "Tech Innovations Pvt Ltd",
-                firstName: "Jane",
-                lastName: "Smith",
-                title: "Marketing Manager",
-                email: "jane.smith@ab.com",
-                mobile: "+91-9876543210",
-                leadStatus: "New",
-            },
-            {
-                id: 2,
-                leadOwner: "sales_user1",
-                company: "Tech Innovations Pvt Ltd",
-                firstName: "Praveen",
-                lastName: "Smith",
-                title: "Marketing Manager",
-                email: "jane.smith@example.com",
-                mobile: "+91-9876543210",
-                leadStatus: "New",
-            },
-        ],
-    };
+    const [leadsData,refresh,setRefresh] = useFetchData(apiSummary.getLeads)
 
     useEffect(() => {
-        setLeads(leadsData.data);
-        setFilteredLeads(leadsData.data);
+        setLeads(leadsData.data || []);
+        setFilteredLeads(leadsData.data || []);
         setTotalRecords(leadsData.totalRecords);
         setCurrentPage(1);
-    }, []);
+    }, [leadsData]);
 
     useEffect(() => {
-        const term = searchTerm.toLowerCase();
-        setFilteredLeads(
-            leads.filter(
-                (lead) =>
-                    lead.firstName.toLowerCase().includes(term) ||
-                    lead.company.toLowerCase().includes(term) ||
-                    lead.email.toLowerCase().includes(term) ||
-                    lead.mobile.toLowerCase().includes(term),
-            ),
-        );
-        setCurrentPage(1);
-    }, [searchTerm,leads]);
+        const handleFilter=()=>{
+            if(leads.length==0) return;
+            const term = searchTerm.toLowerCase();
+            setFilteredLeads(
+                leads.filter(
+                    (lead) =>
+                        lead.firstName.toLowerCase().includes(term) ||
+                        lead.company.toLowerCase().includes(term) ||
+                        lead.email.toLowerCase().includes(term) ||
+                        lead.mobile.toLowerCase().includes(term),
+                ),
+            );
+            setCurrentPage(1);
+        }
+        handleFilter()
+    }, [searchTerm]);
 
     const recordsPerPageValue = parseInt(recordsPerPage);
     const indexOfLastRecord = currentPage * recordsPerPageValue;
@@ -250,7 +229,24 @@ export default function LeadPage() {
         ],
         [],
     );
-
+const handleDelete=async()=>{
+    if(selectMultipleLead.length<=0)
+    {
+        return
+    }
+    try {
+        const ids=selectMultipleLead.map((lead)=>lead.id)
+        const resp=await axiosPrivate({
+            ...apiSummary.deleteLead,
+            data:{
+                deleteIds:ids
+            }
+        })
+        setRefresh(!refresh)
+    } catch (error) {
+        console.log(error)
+    }
+}
     return (
         <div className="min-h-screen flex-1 bg-white">
             <div className="flex items-center justify-between border-b px-6 py-4">
@@ -284,7 +280,7 @@ export default function LeadPage() {
                                 <Edit className="mr-2 h-4 w-4" />
                                 Update Multiple Leads
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
+                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900" onClick={handleDelete}>
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Delete Selected
                             </DropdownMenuItem>
