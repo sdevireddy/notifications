@@ -3,12 +3,19 @@ import { axiosPrivate } from '../utils/axios'
 
 const useFetchData = (urldata) => {
     const [data,setData]=useState([])
+    const [refresh,setRefresh]=useState(true)
     const fetchData=async()=>{
         try {
             const resp=await axiosPrivate({
                 ...urldata
             })
-            console.log(resp.data)
+           if(resp?.data?.length>0)
+           {
+            setData(resp?.data)
+           }
+           else{
+            setData([])
+           }
         } catch (error) {
             console.log(error)
         }
@@ -16,7 +23,7 @@ const useFetchData = (urldata) => {
     useEffect(()=>{
         fetchData()
     },[])
-  return data;
+  return [data,refresh.setRefresh];
 }
 
 export default useFetchData

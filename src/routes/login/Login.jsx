@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
     rememberMe: false
   });
@@ -54,8 +54,8 @@ const Login = () => {
             <label className="block text-sm font-medium">Email</label>
             <Input
               type="text"
-              name="username"
-              value={formData.username}
+              name="email"
+              value={formData.email}
               onChange={handleChange}
               className="w-full mt-1 px-3 py-2 border rounded"
               placeholder="Enter your email"

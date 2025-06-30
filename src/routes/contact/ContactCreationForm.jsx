@@ -8,6 +8,7 @@ const ContactCreationForm = () => {
   const [contactImage, setContactImage] = useState(null);
   const [formData, setFormData] = useState({
     // Basic Information
+    contactOwner:"",
     firstName: "",
     lastName: "",
     mobile: "",
@@ -81,32 +82,30 @@ const ContactCreationForm = () => {
             </div>
             <h2 className="text-xl font-bold">Create Contact</h2>
           </div>
-          <div className="space-x-3">
-            <button
-              type="button"
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-            >
-              Convert
-            </button>
-            <button
-              type="button"
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              Save And New
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Save
-            </button>
-          </div>
+         <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-3 grid-cols-1 text-sm">
+                        <button
+                            type="button"
+                            className="rounded  px-4 py-2  hover:bg-gray-100 border border-primary transition-all ease-in-out duration-200 shadow-md"
+                    
+                        >
+                            Reset
+                        </button>
+                        <button
+                            type="submit"
+                            className="rounded  px-4 py-2 hover:bg-gray-100 border border-primary transition-all ease-in-out duration-200 shadow-md"
+                            onClick={() => (submitActionRef.current = "saveAndNew")}
+                        >
+                            Save And New
+                        </button>
+
+                        <button
+                            type="submit"
+                            className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover shadow-sm"
+                            onClick={() => (submitActionRef.current = "save")}
+                        >
+                            Save
+                        </button>
+                    </div>
         </div>
         <input
           type="file"
@@ -117,261 +116,249 @@ const ContactCreationForm = () => {
         />
 
         {/* Rest of your form sections go here */}
-        <div className="p-4 space-y-2">
-          {/* Basic Information Section */}
-          <div className="border p-4 rounded mb-4">
-            <h3 className="text-lg font-semibold border-b pb-1 mb-4 flex items-center gap-2">
-              <FiUser className="text-blue-500" /> Basic Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* First Name */}
-              <div>
-                <label className="block text-gray-700">
-                  First Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
+        {/* Basic Info Section */}
+                      <Section
+                          title="Basic Information"
+                          icon={<FiUser />}
+                      >
+                        <Select
+                              label="Contact Owner"
+                              name="contactOwner"
+                              value={formData.contactOwner}
+                              onChange={handleChange}
+                              options={["praveen", "vikram", "kalyan", ]}
+                              required
+                          />
+                          <Input
+                              label="First Name"
+                              name="firstName"
+                              value={formData.firstName}
+                              onChange={handleChange}
+                              required
+                          />
+                          <Input
+                              label="Last Name"
+                              name="lastName"
+                              value={formData.lastName}
+                              onChange={handleChange}
+                              required
+                          />
+                          <Input
+                              label="Mobile"
+                              name="mobile"
+                              value={formData.mobile}
+                              onChange={handleChange}
+                              required
+                          />
+                          <Input
+                              label="Email"
+                              name="email"
+                              value={formData.email}
+                              onChange={handleChange}
+                              required
+                          />
+                          <Input
+                              label="Secondary Email"
+                              name="secondaryEmail"
+                              value={formData.secondaryEmail}
+                              onChange={handleChange}
+                          />
+                          <Select
+                              label="Lead Source"
+                              name="leadSource"
+                              value={formData.leadSource}
+                              onChange={handleChange}
+                              options={["OTHER", "SOCIAL_MEDIA", "WEBSITE", "REFERRAL", "ADVERTISEMENT"]}
+                              required
+                          />
+                          <Select
+                              label="Lead Status"
+                              name="leadStatus"
+                              value={formData.leadStatus}
+                              onChange={handleChange}
+                              options={["New", "Contacted", "Qualified", "Lost"]}
+                              required
+                          />
+                      </Section>
+      
+                      {/* Company Info Section */}
+                      <Section
+                          title="Company Information"
+                          icon={<FiBriefcase />}
+                      >
+                          <Input
+                              label="Company"
+                              name="company"
+                              value={formData.company}
+                              onChange={handleChange}
+                          />
+                          <Input
+                              label="Title"
+                              name="title"
+                              value={formData.title}
+                              onChange={handleChange}
+                          />
+                          <Input
+                              label="Website"
+                              name="website"
+                              value={formData.website}
+                              onChange={handleChange}
+                          />
+                          <Input
+                              label="Industry"
+                              name="industry"
+                              value={formData.industry}
+                              onChange={handleChange}
+                          />
+                          <Input
+                              label="No. of Employees"
+                              name="noOfEmployees"
+                              value={formData.noOfEmployees}
+                              onChange={handleChange}
+                          />
+                          <Input
+                              label="Annual Revenue"
+                              name="annualRevenue"
+                              value={formData.annualRevenue}
+                              onChange={handleChange}
+                          />
+                          <Select
+                              label="Rating"
+                              name="rating"
+                              value={formData.rating}
+                              onChange={handleChange}
+                              options={["Hot", "Warm", "Cold"]}
+                          />
+                      </Section>
+      
+                      {/* Address Info Section */}
+                      <Section
+                          title="Address Information"
+                          icon={<FiMapPin />}
+                      >
+                          <Input
+                              label="Address Line 1"
+                              name="addressLine1"
+                              value={formData.addressLine1}
+                              onChange={handleChange}
+                          />
+                          <Input
+                              label="Address Line 2"
+                              name="addressLine2"
+                              value={formData.addressLine2}
+                              onChange={handleChange}
+                          />
+                          <Input
+                              label="City"
+                              name="city"
+                              value={formData.city}
+                              onChange={handleChange}
+                          />
+                          <Input
+                              label="State"
+                              name="state"
+                              value={formData.state}
+                              onChange={handleChange}
+                          />
+                          <Input
+                              label="ZIP"
+                              name="zip"
+                              value={formData.zip}
+                              onChange={handleChange}
+                          />
+                          <Input
+                              label="Country"
+                              name="country"
+                              value={formData.country}
+                              onChange={handleChange}
+                          />
+                      </Section>
+      
+                      {/* Description Section */}
+                      <Section
+                          title="Description"
+                          icon={<FiMail />}
+                      >
+                          <div className="col-span-full">
+                              <label
+                                  htmlFor="description"
+                                  className="block text-gray-700"
+                              >
+                                  Description
+                              </label>
+                              <textarea
+                                  id="description"
+                                  name="description"
+                                  rows="4"
+                                  value={formData.description}
+                                  onChange={handleChange}
+                                  className="w-full rounded border border-gray-300 p-2"
+                              ></textarea>
+                          </div>
+                      </Section>
+                  </form>
               </div>
-              {/* Last Name */}
-              <div>
-                <label className="block text-gray-700">
-                  Last Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Phone */}
-              <div>
-                <label className="block text-gray-700">
-                  Phone <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="mobile"
-                  value={formData.mobile}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Email */}
-              <div>
-                <label className="block text-gray-700">
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Secondary Email */}
-              <div>
-                <label className="block text-gray-700">Secondary Email</label>
-                <input
-                  type="email"
-                  name="secondaryEmail"
-                  value={formData.secondaryEmail}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Contact Source Dropdown */}
-              <div>
-                <label className="block text-gray-700">
-                  Contact Source <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="contactSource"
-                  value={formData.contactSource}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                >
-                  <option value="">Select Source</option>
-                  <option value="Referral">Referral</option>
-                  <option value="Website">Website</option>
-                  <option value="Advertisement">Advertisement</option>
-                </select>
-              </div>
-              {/* Contact Status Dropdown */}
-              <div>
-                <label className="block text-gray-700">Contact Status</label>
-                <select
-                  name="contactStatus"
-                  value={formData.contactStatus}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                >
-                  <option value="">Select Status</option>
-                  <option value="New">New</option>
-                  <option value="Contacted">Contacted</option>
-                  <option value="Follow Up">Follow Up</option>
-                  <option value="Lost">Lost</option>
-                </select>
-              </div>
-            </div>
+          );
+      };
+      
+      // Reusable components
+      const Section = ({ title, icon, children }) => (
+          <div className="mb-4 rounded border p-4">
+              <h3 className="mb-4 flex items-center gap-2 border-b pb-1 text-lg font-semibold">
+                  {icon} {title}
+              </h3>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">{children}</div>
           </div>
-
-          {/* Company Information Section */}
-          <div className="border p-4 rounded mb-4">
-            <h3 className="text-lg font-semibold border-b pb-1 mb-4 flex items-center gap-2">
-              <FiBriefcase className="text-purple-500" /> Company Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Company */}
-              <div className="md:col-span-3">
-                <label className="block text-gray-700">Company</label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Job Title */}
-              <div>
-                <label className="block text-gray-700">Job Title</label>
-                <input
-                  type="text"
-                  name="jobTitle"
-                  value={formData.jobTitle}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-            </div>
+      );
+      
+      const Input = ({ label, name, type = "text", value, onChange, required = false, className = "" }) => (
+          <div className={className}>
+              <label
+                  htmlFor={name}
+                  className="block text-gray-700"
+              >
+                  {label} {required && <span className="text-red-500">*</span>}
+              </label>
+              <input
+                  id={name}
+                  name={name}
+                  type={type}
+                  value={value}
+                  onChange={onChange}
+                  required={required}
+                  className="w-full rounded border-blue-400 p-2 border-[1px]"
+              />
           </div>
-
-          {/* Contact Information (Address) Section */}
-          <div className="border p-4 rounded mb-4">
-            <h3 className="text-lg font-semibold border-b pb-1 mb-4 flex items-center gap-2">
-              <FiMapPin className="text-green-500" /> Contact Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Address Line 1 */}
-              <div className="md:col-span-3">
-                <label className="block text-gray-700">
-                  Address Line 1 <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="addressLine1"
-                  value={formData.addressLine1}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Address Line 2 */}
-              <div className="md:col-span-3">
-                <label className="block text-gray-700">Address Line 2</label>
-                <input
-                  type="text"
-                  name="addressLine2"
-                  value={formData.addressLine2}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* City */}
-              <div>
-                <label className="block text-gray-700">
-                  City <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* State */}
-              <div>
-                <label className="block text-gray-700">
-                  State <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="state"
-                  value={formData.state}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Zip Code */}
-              <div>
-                <label className="block text-gray-700">
-                  Zip Code <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="zip"
-                  value={formData.zip}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Country */}
-              <div>
-                <label className="block text-gray-700">
-                  Country <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                >
-                  <option value="">Select Country</option>
-                  <option value="United States">United States</option>
-                  <option value="Canada">Canada</option>
-                  <option value="United Kingdom">United Kingdom</option>
-                  <option value="Australia">Australia</option>
-                </select>
-              </div>
-            </div>
+      );
+      
+      const Select = ({ label, name, value, onChange, options = [], required = false }) => (
+          <div>
+              <label
+                  htmlFor={name}
+                  className="block text-gray-700"
+              >
+                  {label} {required && <span className="text-red-500">*</span>}
+              </label>
+              <select
+                  id={name}
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  required={required}
+                  className="w-full rounded border-[1px] border-blue-400 p-2"
+              >
+                  <option value="">Select {label}</option>
+                  {options.map((opt) => (
+                      <option
+                          key={opt}
+                          value={opt}
+                      >
+                          {opt}
+                      </option>
+                  ))}
+              </select>
           </div>
-
-          {/* Description Section */}
-          <div className="border p-4 rounded mb-4">
-            <h3 className="text-lg font-semibold border-b pb-1 mb-4 flex items-center gap-2">
-              <FiMail className="text-gray-500" /> Description
-            </h3>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows="4"
-              className="w-full p-2 border border-gray-300 rounded"
-              placeholder="Enter any additional details about the contact..."
-            ></textarea>
-          </div>
-        </div>
-      </form>
-    </div>
-  );
-};
+      );
+      
 
 export default ContactCreationForm;
