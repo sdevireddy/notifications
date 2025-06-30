@@ -39,10 +39,10 @@ import {
 import { ContactDetailsModal } from "@/components/contact-details-modal";
 import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar";
 import { Link, useNavigate } from "react-router-dom";
-import Breadcrumb from "../../components/BreadCrumb";
 import Tooltip from "../../components/ToolTip";
 import Table from "../../components/Table";
 import { EmailComposer } from "../../components/shared/EmailComposer";
+import Breadcrumb from "../../components/BreadCrumb";
 export default function ContactPage() {
     const [leads, setLeads] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
