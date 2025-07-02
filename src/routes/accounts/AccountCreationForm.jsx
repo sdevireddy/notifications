@@ -1,20 +1,27 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiCamera, FiUser, FiMail, FiBriefcase, FiMapPin, FiArrowLeft } from "react-icons/fi";
 
 
-const ContactCreationForm = () => {
+const AccountCreationForm = () => {
   const navigate = useNavigate();
-  const [contactImage, setContactImage] = useState(null);
+  const [accountImage,setAccountImage] = useState(null);
   const [formData, setFormData] = useState({
     // Basic Information
-    firstName: "",
-    lastName: "",
-    mobile: "",
-    email: "",
-    secondaryEmail: "",
-    contactSource: "",
-    contactStatus: "",
+    accoutImage:"",
+    accountOwner:"",
+    accountName: "",
+    parentAccount: "",
+    accountNumber: "",
+    accountType: "",
+    industry: "",
+    annualRevenue:"",
+    rating:"",
+    phone:"",
+    fax:"",
+    website:"",
+    employees:"",
+    sicCode:"",
     // Company Information
     company: "",
     jobTitle: "",
@@ -29,349 +36,396 @@ const ContactCreationForm = () => {
     description: "",
   });
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setContactImage(reader.result);
-      reader.readAsDataURL(file);
-    }
+   const submitActionRef = useRef("save");
+  
+      const handleImageChange = (event) => {
+          const file = event.target.files[0];
+          if (file) {
+              setFormData((prev) => {
+                  return {
+                      ...prev,
+                      accountImage: file,
+                  };
+              });
+              const reader = new FileReader();
+              reader.onloadend = () => setAccountImage(reader.result);
+              reader.readAsDataURL(file);
+          }
+      };
+  
+      const handleChange = (e) => {
+          const { name, value } = e.target;
+          setFormData((prev) => ({
+              ...prev,
+              [name]: value,
+          }));
+      };
+  
+      const resetForm = () => {
+          setFormData(initialFormState);
+          setAccountImage(null);
+          //toast.info("Form reset to default values");
+      };
+  
+      const saveLead = async () => {
+          try {
+            const formdata = new FormData();
+            Object.entries(formData).map((el) => {
+                formdata.append(el[0], el[1]);
+            });
+              const response = await fetch("http://localhost:8081/api/leads", {
+                  method: "POST",
+                  headers: { "Content-Type": "multipart/form-data" },
+                  body: formdata,
+              });
+  
+              const data = await response.json();
+  
+              if (!response.ok) {
+                  throw new Error("Failed to save lead");
+              }
+  
+              toast.success("Lead saved successfully!");
+              console.log("Lead Saved:", data);
+              return true;
+          } catch (error) {
+              toast.error(error.message || "Failed to save lead. Please try again.");
+              console.error("Error saving lead:", error);
+              return false;
+          }
+      };
+  
+      const convertLead = async () => {
+          try {
+              const response = await fetch("/api/leads/convert", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ ...formData }),
+              });
+              const data = await response.json();
+              console.log("Lead Converted:", data);
+          } catch (error) {
+              console.error("Error converting lead:", error);
+          }
+      };
+  
+      const cancelLead = async () => {
+          try {
+              await fetch("http://localhost:8080/api/leads/cancel", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ action: "cancelled", lead: formData }),
+              });
+          } catch (error) {
+              console.error("Cancel API error:", error);
+          } finally {
+              navigate(-1);
+          }
+      };
+  
+      const handleSubmit = async (e) => {
+          e.preventDefault();
+        for (let pair of formdata.entries()) {
+    console.log(pair[0], pair[1]);
+  }
+          // const success = await saveLead();
+  
+          if (success) {
+              if (submitActionRef.current === "saveAndNew") {
+                  resetForm();
+              } else if (submitActionRef.current === "save") {
+                  resetForm();
+                  navigate("/leads");
+              }
+          }
+      };
+  
+      const handleSaveAndNew = async () => {
+          const success = await saveLead();
+          if (success) {
+              setFormData(initialFormState);
+              setLeadImage(null);
+              toast.success("Lead saved. You can add a new one now!");
+          }
+      };
+  
+      return (
+          <div className=" w-[calc(100%-10px)] text-sm">
+              <form
+                  onSubmit={handleSubmit}
+                  className="rounded-lg bg-white shadow-md"
+              >
+                  {/* Header */}
+                  <div className="flex items-center justify-between border-b p-3    sticky top-0 bg-white">
+                      <div className="flex items-center gap-3">
+                          <button
+                              onClick={() => navigate(-1)}
+                              type="button"
+                              className="rounded p-2 hover:bg-gray-200"
+                          >
+                              <FiArrowLeft size={20} />
+                          </button>
+  
+                          {/* Lead Image Upload */}
+                          <div
+                              title="Click to upload image"
+                              className="relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-full bg-gray-200"
+                              onClick={() => document.getElementById("lead-image-input").click()}
+                          >
+                              {accountImage ? (
+                                  <img
+                                      src={accountImage}
+                                      alt="Account"
+                                      className="h-full w-full rounded-full object-cover"
+                                  />
+                              ) : (
+                                  <FiCamera className="text-2xl text-gray-500" />
+                              )}
+                          </div>
+  
+                          <h2 className="text-xl font-bold">Create Account</h2>
+                      </div>
+                      <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-3 grid-cols-1 text-sm">
+                          <button
+                              type="button"
+                              className="rounded  px-4 py-2  hover:bg-gray-100 border border-primary transition-all ease-in-out duration-200 shadow-md"
+                              onClick={resetForm}
+                          >
+                              Reset
+                          </button>
+                          <button
+                              type="submit"
+                              className="rounded  px-4 py-2 hover:bg-gray-100 border border-primary transition-all ease-in-out duration-200 shadow-md"
+                              onClick={() => (submitActionRef.current = "saveAndNew")}
+                          >
+                              Save And New
+                          </button>
+  
+                          <button
+                              type="submit"
+                              className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover shadow-sm"
+                              onClick={() => (submitActionRef.current = "save")}
+                          >
+                              Save
+                          </button>
+                      </div>
+                  </div>
+  
+                  <input
+                      type="file"
+                      id="lead-image-input"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageChange}
+                  />
+  
+                  {/* Basic Info Section */}
+                  <Section
+                      title="Basic Information"
+                      icon={<FiUser />}
+                  >
+                      <Select
+                                label="Account Owner"
+                                name="accountOwner"
+                                value={formData.accountOwner}
+                                onChange={handleChange}
+                                options={["praveen", "vikram", "kalyan", ]}
+                                required
+                            />
+                      <Input
+                          label="Account Name"
+                          name="accountName"
+                          value={formData.accountName}
+                          onChange={handleChange}
+                          required
+                      />
+                      <Input
+                          label="Parent Account"
+                          name="accountName"
+                          value={formData.parentAccount}
+                          onChange={handleChange}
+                          required
+                      />
+                      <Input
+                          label="Account Number"
+                          name="accountNumber"
+                          value={formData.accountNumber}
+                          onChange={handleChange}
+                          required
+                      />
+                      <Input
+                          label="Annual Revenue"
+                          name="annualRevenue"
+                          value={formData.annualRevenue}
+                          onChange={handleChange}
+                          required
+                      />
+                      <Input
+                          label="Rating"
+                          name="rating"
+                          value={formData.rating}
+                          onChange={handleChange}
+                      />
+                      <Input
+                          label="Phone"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                      />
+                      <Input
+                          label="Fax"
+                          name="fax"
+                          value={formData.fax}
+                          onChange={handleChange}
+                      />
+                       <Input
+                          label="Website"
+                          name="website"
+                          value={formData.website}
+                          onChange={handleChange}
+                      />
+                      <Input
+                          label="Employees"
+                          name="employees"
+                          value={formData.employees}
+                          onChange={handleChange}
+                      />
+                       <Input
+                          label="SIC Code"
+                          name="sicCode"
+                          value={formData.sicCode}
+                          onChange={handleChange}
+                      />
+                  </Section>
+  
+               
+  
+                  {/* Address Info Section */}
+                  <Section
+                      title="Address Information"
+                      icon={<FiMapPin />}
+                  >
+                      <Input
+                          label="Address Line 1"
+                          name="addressLine1"
+                          value={formData.addressLine1}
+                          onChange={handleChange}
+                      />
+                      <Input
+                          label="Address Line 2"
+                          name="addressLine2"
+                          value={formData.addressLine2}
+                          onChange={handleChange}
+                      />
+                      <Input
+                          label="City"
+                          name="city"
+                          value={formData.city}
+                          onChange={handleChange}
+                      />
+                      <Input
+                          label="State"
+                          name="state"
+                          value={formData.state}
+                          onChange={handleChange}
+                      />
+                      <Input
+                          label="ZIP"
+                          name="zip"
+                          value={formData.zip}
+                          onChange={handleChange}
+                      />
+                      <Input
+                          label="Country"
+                          name="country"
+                          value={formData.country}
+                          onChange={handleChange}
+                      />
+                  </Section>
+  
+                  {/* Description Section */}
+                  <Section
+                      title="Description"
+                      icon={<FiMail />}
+                  >
+                      <div className="col-span-full">
+                          <label
+                              htmlFor="description"
+                              className="block text-gray-700"
+                          >
+                              Description
+                          </label>
+                          <textarea
+                              id="description"
+                              name="description"
+                              rows="4"
+                              value={formData.description}
+                              onChange={handleChange}
+                              className="w-full rounded border border-gray-300 p-2"
+                          ></textarea>
+                      </div>
+                  </Section>
+              </form>
+          </div>
+      );
   };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitted", formData);
-    // Handle form submission here
-  };
-
-  return (
-    <div className="container mx-auto">
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md">
-        {/* Header with Left Arrow Button, Contact Image, "Create Contact" text and action buttons */}
-        <div className="flex items-center justify-between border-b p-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate(-1)}
-              type="button"
-              className="p-2 rounded hover:bg-gray-200"
-            >
-              <FiArrowLeft size={20} />
-            </button>
-            <div
-              className="relative w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"
-              onClick={() => document.getElementById("contact-image-input").click()}
-            >
-              {contactImage ? (
-                <img
-                  src={contactImage}
-                  alt="Contact"
-                  className="w-full h-full object-cover rounded-full"
-                />
-              ) : (
-                <FiCamera className="text-2xl text-gray-500" />
-              )}
-            </div>
-            <h2 className="text-xl font-bold">Create Contact</h2>
-          </div>
-          <div className="space-x-3">
-            <button
-              type="button"
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-            >
-              Convert
-            </button>
-            <button
-              type="button"
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              Save And New
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-        <input
-          type="file"
-          id="contact-image-input"
-          accept="image/*"
-          className="hidden"
-          onChange={handleImageChange}
-        />
-
-        {/* Rest of your form sections go here */}
-        <div className="p-4 space-y-2">
-          {/* Basic Information Section */}
-          <div className="border p-4 rounded mb-4">
-            <h3 className="text-lg font-semibold border-b pb-1 mb-4 flex items-center gap-2">
-              <FiUser className="text-blue-500" /> Basic Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* First Name */}
-              <div>
-                <label className="block text-gray-700">
-                  First Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Last Name */}
-              <div>
-                <label className="block text-gray-700">
-                  Last Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Phone */}
-              <div>
-                <label className="block text-gray-700">
-                  Phone <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="mobile"
-                  value={formData.mobile}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Email */}
-              <div>
-                <label className="block text-gray-700">
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Secondary Email */}
-              <div>
-                <label className="block text-gray-700">Secondary Email</label>
-                <input
-                  type="email"
-                  name="secondaryEmail"
-                  value={formData.secondaryEmail}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Contact Source Dropdown */}
-              <div>
-                <label className="block text-gray-700">
-                  Contact Source <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="contactSource"
-                  value={formData.contactSource}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                >
-                  <option value="">Select Source</option>
-                  <option value="Referral">Referral</option>
-                  <option value="Website">Website</option>
-                  <option value="Advertisement">Advertisement</option>
-                </select>
-              </div>
-              {/* Contact Status Dropdown */}
-              <div>
-                <label className="block text-gray-700">Contact Status</label>
-                <select
-                  name="contactStatus"
-                  value={formData.contactStatus}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                >
-                  <option value="">Select Status</option>
-                  <option value="New">New</option>
-                  <option value="Contacted">Contacted</option>
-                  <option value="Follow Up">Follow Up</option>
-                  <option value="Lost">Lost</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Company Information Section */}
-          <div className="border p-4 rounded mb-4">
-            <h3 className="text-lg font-semibold border-b pb-1 mb-4 flex items-center gap-2">
-              <FiBriefcase className="text-purple-500" /> Company Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Company */}
-              <div className="md:col-span-3">
-                <label className="block text-gray-700">Company</label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Job Title */}
-              <div>
-                <label className="block text-gray-700">Job Title</label>
-                <input
-                  type="text"
-                  name="jobTitle"
-                  value={formData.jobTitle}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Information (Address) Section */}
-          <div className="border p-4 rounded mb-4">
-            <h3 className="text-lg font-semibold border-b pb-1 mb-4 flex items-center gap-2">
-              <FiMapPin className="text-green-500" /> Contact Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Address Line 1 */}
-              <div className="md:col-span-3">
-                <label className="block text-gray-700">
-                  Address Line 1 <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="addressLine1"
-                  value={formData.addressLine1}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Address Line 2 */}
-              <div className="md:col-span-3">
-                <label className="block text-gray-700">Address Line 2</label>
-                <input
-                  type="text"
-                  name="addressLine2"
-                  value={formData.addressLine2}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* City */}
-              <div>
-                <label className="block text-gray-700">
-                  City <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* State */}
-              <div>
-                <label className="block text-gray-700">
-                  State <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="state"
-                  value={formData.state}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Zip Code */}
-              <div>
-                <label className="block text-gray-700">
-                  Zip Code <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="zip"
-                  value={formData.zip}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              {/* Country */}
-              <div>
-                <label className="block text-gray-700">
-                  Country <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-2 border border-gray-300 rounded"
-                >
-                  <option value="">Select Country</option>
-                  <option value="United States">United States</option>
-                  <option value="Canada">Canada</option>
-                  <option value="United Kingdom">United Kingdom</option>
-                  <option value="Australia">Australia</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Description Section */}
-          <div className="border p-4 rounded mb-4">
-            <h3 className="text-lg font-semibold border-b pb-1 mb-4 flex items-center gap-2">
-              <FiMail className="text-gray-500" /> Description
-            </h3>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows="4"
-              className="w-full p-2 border border-gray-300 rounded"
-              placeholder="Enter any additional details about the contact..."
-            ></textarea>
-          </div>
-        </div>
-      </form>
-    </div>
+  
+  // Reusable components
+  const Section = ({ title, icon, children }) => (
+      <div className="mb-4 rounded border p-4">
+          <h3 className="mb-4 flex items-center gap-2 border-b pb-1 text-lg font-semibold">
+              {icon} {title}
+          </h3>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">{children}</div>
+      </div>
   );
-};
-
-export default ContactCreationForm;
+  
+  const Input = ({ label, name, type = "text", value, onChange, required = false, className = "" }) => (
+      <div className={className}>
+          <label
+              htmlFor={name}
+              className="block text-gray-700"
+          >
+              {label} {required && <span className="text-red-500">*</span>}
+          </label>
+          <input
+              id={name}
+              name={name}
+              type={type}
+              value={value}
+              onChange={onChange}
+              required={required}
+              className="w-full rounded border-blue-400 p-2 border-[1px]"
+          />
+      </div>
+  );
+  
+  const Select = ({ label, name, value, onChange, options = [], required = false }) => (
+      <div>
+          <label
+              htmlFor={name}
+              className="block text-gray-700"
+          >
+              {label} {required && <span className="text-red-500">*</span>}
+          </label>
+          <select
+              id={name}
+              name={name}
+              value={value}
+              onChange={onChange}
+              required={required}
+              className="w-full rounded border-[1px] border-blue-400 p-2"
+          >
+              <option value="">Select {label}</option>
+              {options.map((opt) => (
+                  <option
+                      key={opt}
+                      value={opt}
+                  >
+                      {opt}
+                  </option>
+              ))}
+          </select>
+      </div>
+  );
+export default AccountCreationForm;
