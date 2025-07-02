@@ -31,7 +31,7 @@ useEffect(() => {
   };
 }, []);
     return (
-        <header className="z-10 flex h-[60px] items-center justify-between bg-white px-4 shadow-md transition-colors dark:bg-slate-900 sticky top-0">
+        <header className="z-10 flex h-[60px] items-center justify-between bg-white px-4 shadow-md transition-colors dark:bg-slate-900 sticky top-0 border-b-2 border-gray-300">
             <div className="flex items-center gap-x-3">
                 <button className="btn-ghost size-10" onClick={() => setCollapsed(!collapsed)}>
                     <ChevronsLeft className={collapsed ? "rotate-180" : ""} />
