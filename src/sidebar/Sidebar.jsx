@@ -46,7 +46,7 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
                         placeholder="Search..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-3 py-2 rounded-md border text-white  border-gray-300 dark:border-gray-700 bg-blue-800 dark:bg-slate-800 text-sm"
+                        className="w-full pl-10 pr-3 py-2 rounded-md border text-gray-300  border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-slate-800 text-sm"
                     />
                 </div>
             </div>
@@ -109,7 +109,7 @@ const SidebarLink = ({ to, icon, label, collapsed }) => (
         to={to}
         className={({ isActive }) =>
             `flex items-center gap-x-3 px-3 py-2 rounded-md text-sm font-medium ${
-                isActive ? "bg-gray-50 text-black border-primary" : "  text-white"
+                isActive ? "bg-gray-50 text-primary border-primary shadow-md" : "  text-white"
             } hover:bg-slate-300 dark:hover:bg-slate-700 hover:text-black`
         }
     >
