@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
-import Breadcrumb from "../../../components/BreadCrumb";
+import BreadCrumb from "../../../components/BreadCrump";
 
 export default function WorkflowAutomation() {
   const [when, setWhen] = useState("");
+  const [module,setModule]=useState("")
   const [conditionGroups, setConditionGroups] = useState([
     [{ id: "1", field: "", operator: "", value: "" }],
   ]);
@@ -90,10 +91,29 @@ export default function WorkflowAutomation() {
     <div className="px-10 py-6 bg-gray-50 min-h-screen space-y-10">
        <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-semibold text-gray-900">Create WorkFlow</h1>
-                    <Breadcrumb />
+                    <BreadCrumb />
                 </div>
+                  <div className="flex gap-4">
+                    <div className="flex items-start">
+
+        <div className="w-20 px-6 py-2 bg-blue-600  flex items-center rounded justify-center p-0 text-white font-semibold">Select</div>
+                    </div>
+        <div className="flex-1 flex gap-6 items-center bg-white shadow p-4 rounded text-sm text-gray-600">
+          <p>Select the Module</p>
+          <select value={module} onChange={(e) => setModule(e.target.value)} className="border p-1 rounded">
+            <option value="">Select</option>
+            <option value="create">Lead</option>
+            <option value="edit">Contact</option>
+            <option value="createoredit">Deal</option>
+            <option value="delete">Account</option>
+          </select>
+        </div>
+      </div>
       <div className="flex gap-4">
-        <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">WHEN</div>
+       <div className="flex items-start">
+
+        <div className="w-20 px-6 py-2 bg-blue-600  flex items-center rounded justify-center p-0 text-white font-semibold">When</div>
+                    </div>
         <div className="flex-1 flex gap-6 items-center bg-white shadow p-4 rounded text-sm text-gray-600">
           <p>This rule will be executed when</p>
           <select value={when} onChange={(e) => setWhen(e.target.value)} className="border p-1 rounded">
@@ -112,8 +132,8 @@ export default function WorkflowAutomation() {
           <div className="flex gap-7 relative">
             <div className="flex flex-col items-center">
               <div className="relative">
-                <div className="w-20 h-20 bg-blue-600 transform rotate-45 flex items-center justify-center">
-                  <span className="text-white text-xs font-semibold transform -rotate-45 text-center">CONDITION<br />{groupIndex + 1}</span>
+                <div className="w-20 py-2 px-6 bg-blue-600 transform flex items-center justify-center rounded">
+                  <span className="text-white text-xs font-semibold  text-center">CONDITION<br />{groupIndex + 1}</span>
                 </div>
                 {groupIndex > 0 && (
                   <button onClick={() => removeConditionGroup(groupIndex)} className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-6 h-6">×</button>
