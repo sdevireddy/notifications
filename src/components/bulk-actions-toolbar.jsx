@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Users, Edit, Trash2, Tag, Send, Download, X } from "lucide-react"
 
-export function BulkActionsToolbar({ selectedCount, onClearSelection }) {
+export function BulkActionsToolbar({ selectedCount, onClearSelection,onDeleteSelected,onExportSelected }) {
   if (selectedCount === 0) return null
 
   return (
@@ -64,12 +64,12 @@ export function BulkActionsToolbar({ selectedCount, onClearSelection }) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={onExportSelected}>
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
 
-          <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+          <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700" onClick={onDeleteSelected}>
             <Trash2 className="mr-2 h-4 w-4" />
             Delete
           </Button>

@@ -1,36 +1,25 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiCamera, FiUser, FiMail, FiBriefcase, FiMapPin, FiArrowLeft } from "react-icons/fi";
-import "./LeadCreationForm.css";
+import "../leads/LeadCreationForm.css";
 import { toast } from "react-toastify";
 
 const initialFormState = {
-    leadOwner:"",
-    firstName: "",
-    lastName: "",
-    mobile: "",
-    email: "",
-    secondaryEmail: "",
-    leadSource: "",
-    leadStatus: "",
-    company: "",
-    title: "",
-    website: "",
-    industry: "",
-    noOfEmployees: "",
-    annualRevenue: "",
-    rating: "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    state: "",
-    zip: "",
-    country: "",
-    description: "",
-    image:null
+    dealOwner:"",
+    dealName:"",
+    accountName:"",
+    type:"",
+    leadSource:"",
+    contactName:"",
+    ammount:"",
+    closedate:"",
+    stage:"",
+    probability:"",
+    campaignSource:"",
+    description:""
 };
 
-const LeadCreationForm = () => {
+const DealCreationForm = () => {
     const navigate = useNavigate();
     const [leadImage, setLeadImage] = useState(null);
     const [formData, setFormData] = useState(initialFormState);
@@ -165,24 +154,9 @@ const LeadCreationForm = () => {
                             <FiArrowLeft size={20} />
                         </button>
 
-                        {/* Lead Image Upload */}
-                        <div
-                            title="Click to upload image"
-                            className="relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-full bg-gray-200"
-                            onClick={() => document.getElementById("lead-image-input").click()}
-                        >
-                            {leadImage ? (
-                                <img
-                                    src={leadImage}
-                                    alt="Lead"
-                                    className="h-full w-full rounded-full object-cover"
-                                />
-                            ) : (
-                                <FiCamera className="text-2xl text-gray-500" />
-                            )}
-                        </div>
+                       
 
-                        <h2 className="text-xl font-bold">Create Lead</h2>
+                        <h2 className="text-xl font-bold">Create Deal</h2>
                     </div>
                     <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-3 grid-cols-1 text-sm">
                         <button
@@ -210,13 +184,6 @@ const LeadCreationForm = () => {
                     </div>
                 </div>
 
-                <input
-                    type="file"
-                    id="lead-image-input"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                />
 
                 {/* Basic Info Section */}
                 <Section
@@ -224,155 +191,84 @@ const LeadCreationForm = () => {
                     icon={<FiUser />}
                 >
                     <Select
-                              label="Lead Owner"
-                              name="leadOwner"
-                              value={formData.leadOwner}
-                              onChange={handleChange}
-                              options={["praveen", "vikram", "kalyan", ]}
-                              required
-                          />
+                        label="Deal Owner"
+                        name="delaOwner"
+                        value={formData.dealOwner}
+                        onChange={handleChange}
+                        options={["praveen", "sivasenkar", "vikram", "kalyan"]}
+                        required
+                    />
                     <Input
-                        label="First Name"
-                        name="firstName"
-                        value={formData.firstName}
+                        label="Deal Name"
+                        name="dealName"
+                        value={formData.dealName}
                         onChange={handleChange}
                         required
                     />
                     <Input
-                        label="Last Name"
-                        name="lastName"
-                        value={formData.lastName}
+                        label="Account Name"
+                        name="accountName"
+                        value={formData.accountName}
                         onChange={handleChange}
                         required
                     />
                     <Input
-                        label="Mobile"
-                        name="mobile"
-                        value={formData.mobile}
+                        label="Type"
+                        name="type"
+                        value={formData.type}
                         onChange={handleChange}
                         required
-                    />
-                    <Input
-                        label="Email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                    />
-                    <Input
-                        label="Secondary Email"
-                        name="secondaryEmail"
-                        value={formData.secondaryEmail}
-                        onChange={handleChange}
                     />
                     <Select
                         label="Lead Source"
                         name="leadSource"
                         value={formData.leadSource}
                         onChange={handleChange}
-                        options={["OTHER", "SOCIAL_MEDIA", "WEBSITE", "REFERRAL", "ADVERTISEMENT"]}
+                        options={["praveen", "sivasenkar", "vikram", "kalyan"]}
+                        required
+                    />
+                     <Input
+                        label="Contact Name"
+                        name="contactName"
+                        value={formData.contactName}
+                        onChange={handleChange}
+                        required
+                    />
+                    <Input
+                        label="Amount"
+                        name="amount"
+                        value={formData.ammount}
+                        onChange={handleChange}
+                        required
+                    />
+                    <Input
+                        label="Closing Date"
+                        name="closedate"
+                        value={formData.closedate}
+                        onChange={handleChange}
                         required
                     />
                     <Select
-                        label="Lead Status"
-                        name="leadStatus"
-                        value={formData.leadStatus}
+                        label="Stage"
+                        name="stage"
+                        value={formData.stage}
                         onChange={handleChange}
                         options={["New", "Contacted", "Qualified", "Lost"]}
                         required
                     />
-                </Section>
-
-                {/* Company Info Section */}
-                <Section
-                    title="Company Information"
-                    icon={<FiBriefcase />}
-                >
                     <Input
-                        label="Company"
-                        name="company"
-                        value={formData.company}
+                        label="Probability"
+                        name="probability"
+                        value={formData.probability}
                         onChange={handleChange}
+                        required
                     />
-                    <Input
-                        label="Title"
-                        name="title"
-                        value={formData.title}
+                     <Input
+                        label="Campaign Source"
+                        name="campaignSource"
+                        value={formData.campaignSource}
                         onChange={handleChange}
-                    />
-                    <Input
-                        label="Website"
-                        name="website"
-                        value={formData.website}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        label="Industry"
-                        name="industry"
-                        value={formData.industry}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        label="No. of Employees"
-                        name="noOfEmployees"
-                        value={formData.noOfEmployees}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        label="Annual Revenue"
-                        name="annualRevenue"
-                        value={formData.annualRevenue}
-                        onChange={handleChange}
-                    />
-                    <Select
-                        label="Rating"
-                        name="rating"
-                        value={formData.rating}
-                        onChange={handleChange}
-                        options={["Hot", "Warm", "Cold"]}
-                    />
-                </Section>
-
-                {/* Address Info Section */}
-                <Section
-                    title="Address Information"
-                    icon={<FiMapPin />}
-                >
-                    <Input
-                        label="Address Line 1"
-                        name="addressLine1"
-                        value={formData.addressLine1}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        label="Address Line 2"
-                        name="addressLine2"
-                        value={formData.addressLine2}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        label="City"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        label="State"
-                        name="state"
-                        value={formData.state}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        label="ZIP"
-                        name="zip"
-                        value={formData.zip}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        label="Country"
-                        name="country"
-                        value={formData.country}
-                        onChange={handleChange}
+                        required
                     />
                 </Section>
 
@@ -462,4 +358,4 @@ const Select = ({ label, name, value, onChange, options = [], required = false }
     </div>
 );
 
-export default LeadCreationForm;
+export default DealCreationForm;

@@ -27,113 +27,55 @@ import WorkflowPage from "./routes/workflow/WorkFlow";
 import Login from "./routes/login/Login";
 import Register from "./routes/Register/Register";
 import { Toaster } from "react-hot-toast";
+import ProtectedRoute from "./routes/ProtectedRoutes";
+import WorkflowBuilder from "./routes/workflow/form/WorkflowRuleForm";
+import DealCreationForm from "./routes/deals/DealCreationForm";
+import ContactCreationForm from "./routes/contact/ContactCreationForm";
+import AccountCreationForm from "./routes/accounts/AccountCreationForm";
 
 function App() {
-    const router = createBrowserRouter([
-        {
-            path: "/",
-            element: <Layout />,
-            children: [
-                {
-                    index: true,
-                    element: <DashboardPage />,
-                },
-                {
-                    path: "analytics",
-                    element: <h1 className="title">Analytics</h1>,
-                },
-                {
-                    path: "reports",
-                    element: <h1 className="title">Reports</h1>,
-                },
-                {
-                    path: "leads",
-                    element: <LeadPage />,
-                },
-                {
-                    path: "leads/create",
-                    element: <LeadCreationForm />,
-                },
-                {
-                    path: "leads/profile/:id",
-                    element: <ViewLeadPage />,
-                },
-                {
-                    path: "leads/edit/:id",
-                    element: <EditLead />,
-                },
-                {
-                    path: "users",
-                    element: <Users />,
-                },
-                {
-                    path: "import/:source",
-                    element: <CRMSelectionImport />,
-                },
-                {
-                    path: "import/:source/migration",
-                    element: <DataMigrationUpload />,
-                },
-                {
-                    path: "Contacts",
-                    /* element: <Contacts/>, */
-                    element: <Contacts1 />,
-                },
-                {
-                    path: "Deals",
-                    element: <DealsPage />,
-                },
-                {
-                    path: "workflow",
-                    element: <WorkflowPage/>,
-                },
-                {
-                    path:"workflow/create",
-                    element:<WorkflowRuleForm/>
-                },
-                {
-                    path: "Accounts",
-                    element: <Accounts />,
-                },
-                {
-                    path: "LeadCreationForm",
-                    element: <NewLead />,
-                },
-                {
-                    path: "ViewLead/:id",
-                    element: <ViewLead />,
-                },
-                {
-                    path: "verified-customers",
-                    element: <h1 className="title">Verified Customers</h1>,
-                },
-                {
-                    path: "products",
-                    element: <h1 className="title">Products</h1>,
-                },
-                {
-                    path: "new-product",
-                    element: <h1 className="title">New Product</h1>,
-                },
-                {
-                    path: "inventory",
-                    element: <h1 className="title">Inventory</h1>,
-                },
-                {
-                    path: "settings",
-                    element: <h1 className="title">Settings</h1>,
-                },
-            ],
-        },
-        {
-            path:"login",
-            element:<Login/>
-        },
-        {
-            path:"register",
-            element:<Register/>
-        }
-    ]);
+  const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <Layout />,
+        children: [
+          { index: true, element: <DashboardPage /> },
+          { path: "leads", element: <LeadPage /> },
+          { path: "leads/create", element: <LeadCreationForm /> },
+          { path: "leads/profile/:id", element: <ViewLeadPage /> },
+          { path: "leads/edit/:id", element: <EditLead /> },
+          { path: "users", element: <Users /> },
+          { path: "Contacts", element: <Contacts1 /> },
+          { path: "Contacts/create", element: <ContactCreationForm /> },
+          { path: "Deals", element: <DealsPage /> },
+           { path: "Deals/create", element: <DealCreationForm /> },
+          { path: "workflow", element: <WorkflowPage /> },
+          { path: "workflow/create", element: <WorkflowBuilder /> },
+          { path: "Accounts", element: <Accounts /> },
+          { path: "Accounts/create", element: <AccountCreationForm /> },
+          { path: "import/:source", element: <CRMSelectionImport /> },
+          { path: "import/:source/migration", element: <DataMigrationUpload /> },
+          { path: "verified-customers", element: <h1>Verified Customers</h1> },
+          { path: "products", element: <h1>Products</h1> },
+          { path: "new-product", element: <h1>New Product</h1> },
+          { path: "inventory", element: <h1>Inventory</h1> },
+          { path: "settings", element: <h1>Settings</h1> }
+        ],
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  }
+]);
 
     return (
         <ThemeProvider storageKey="theme">

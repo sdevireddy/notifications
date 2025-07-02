@@ -26,26 +26,27 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
     return (
         <div
             ref={sidebarRef}
-            className={`h-full transition-all duration-300 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-gray-700 ${
+            className={`h-full transition-all duration-300 bg-blue-900 dark:bg-slate-900 border-r border-gray-200 dark:border-gray-700 ${
                 collapsed ? "w-[70px]" : "w-64"
             }`}
             onMouseEnter={() => ref?.current?.scrollTo?.({ top: 0 })}
         >
-            <div className="flex items-center gap-x-3 p-3">
-                <img src={logoLight} alt="Logo" className="dark:hidden" />
-                <img src={logoDark} alt="Logo" className="hidden dark:block" />
-                {!collapsed && <p className="text-lg font-medium">Logoipsum</p>}
+            <div className="flex items-center gap-x-3 px-6 py-3">
+               
+                <img src={logoDark} alt="Logo" className="" />
+                {!collapsed && <p className="text-lg font-medium text-white">Logoipsum</p>}
             </div>
 
             <div className="p-3">
                 <div className="relative">
-                    <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+                    <Search className="absolute left-4 top-2.5 text-white" size={18} />
+                    
                     <input
                         type="text"
                         placeholder="Search..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-800 text-sm"
+                        className="w-full pl-10 pr-3 py-2 rounded-md border text-white  border-gray-300 dark:border-gray-700 bg-blue-800 dark:bg-slate-800 text-sm"
                     />
                 </div>
             </div>
@@ -53,7 +54,7 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
             <div className="space-y-2 px-3">
                 {search === "" && activeModule === "CRM" && (
                     <>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">CRM</p>
+                        <p className="text-xs font-semibold text-gray-50 dark:text-gray-400 ml-2">CRM</p>
                         <SidebarLink to="/leads" icon={<User size={20} />} label="Leads" collapsed={collapsed} />
                         <SidebarLink to="/contacts" icon={<Users size={20} />} label="Contacts" collapsed={collapsed} />
                         <SidebarLink to="/accounts" icon={<Building size={20} />} label="Accounts" collapsed={collapsed} />
@@ -107,9 +108,9 @@ const SidebarLink = ({ to, icon, label, collapsed }) => (
     <NavLink
         to={to}
         className={({ isActive }) =>
-            `flex items-center gap-x-3 px-3 py-2 rounded-md text-sm font-medium border border-l-[3px] border-primary border-t-0 border-r-0 border-b-0 ${
-                isActive ? "bg-slate-200 dark:bg-slate-800 text-black dark:text-white" : "text-gray-700 dark:text-gray-300"
-            } hover:bg-slate-100 dark:hover:bg-slate-700`
+            `flex items-center gap-x-3 px-3 py-2 rounded-md text-sm font-medium ${
+                isActive ? "bg-gray-50 text-black border-primary" : "  text-white"
+            } hover:bg-slate-300 dark:hover:bg-slate-700 hover:text-black`
         }
     >
         {icon}

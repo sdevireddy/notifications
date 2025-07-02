@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Input } from '../../components/layout/ui/input';
+import { apiSummary } from '../../common/apiSummary';
+import toast from 'react-hot-toast';
+import { axiosPrivate } from '../../utils/axios';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -21,9 +24,22 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+
+  const handleSubmit =async(e) => {
     e.preventDefault();
-    console.log('Registration Data:', formData);
+    try {
+        const resp=await axiosPrivate({
+            ...apiSummary.register,
+            data:formData
+        })
+        console.log('Registration Data:', formData);
+        localStorage.setItem("access_token",resp?.data?.access_token)
+        toast.success("Login Successfull")
+        navigate("/")
+    } catch (error) {
+        toast.error("Somthing Went Wrong,Try Again")
+        console.log(error)
+    }
   };
 
   return (
