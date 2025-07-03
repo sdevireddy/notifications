@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ChevronDown, Download, Plus, Search } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../components/ui/dropdown-menu";
 import { Button } from "../../components/layout/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Input } from "../../components/layout/ui/input";
 import { CardContent } from "../../components/layout/ui/card";
+import Table from "../../components/Table";
+import { Checkbox } from "@radix-ui/react-checkbox";
+import BreadCrumb from "../../components/BreadCrump";
 
 const modules = [
   "All Modules", "Leads", "Contacts", "Accounts", "Deals", "Tasks", "Meetings"
@@ -29,10 +32,59 @@ export default function WorkflowPage() {
   const filteredRules = selectedModule === "All Modules"
     ? rules
     : rules.filter((rule) => rule.module === selectedModule);
-
+ const columns = useMemo(
+        () => [
+            {
+                accessorKey: "name",
+                header: "Name",
+                cell: ({ row }) => {
+                    const rule = row.original;
+                    return (
+                        <div className="flex items-center gap-2">
+      
+                            <div>{rule.name}</div>
+                        </div>
+                    );
+                },
+            },
+            {
+                accessorKey: "module",
+                header: "Module",
+            },
+            {
+                accessorKey: "action",
+                header: "Action",
+            },
+             {
+                accessorKey: "actionsCount",
+                header: "Count",
+            },
+             {
+                accessorKey: "modifiedOn",
+                header: "Modified On",
+            },
+            {
+                accessorKey: "company",
+                header: "Company",
+                cell: ({ row }) => (
+                    <div>
+                       <input type="checkbox" checked={row.original.status}/>
+                    </div>
+                ),
+            }
+          
+        ],
+        [],
+    );
   return (
-      <div className="h-full w-full rounded bg-gray-100 p-6 shadow-md">
-          <div className="mb-4 flex items-center justify-between gap-4">
+      <div className="h-full w-full rounded bg-white shadow-md">
+         <div className="flex items-center justify-between border-b px-6 py-4">
+                <div className="flex items-center gap-4">
+                    <h1 className="text-2xl font-semibold text-gray-900">WorkFlow</h1>
+                    <BreadCrumb />
+                </div>
+            </div>
+          <div className="mb-4 flex items-center justify-between gap-4 px-6 py-3">
              <div className="border-b w-full">
               
                     <div className="relative max-w-md ">
@@ -74,83 +126,10 @@ export default function WorkflowPage() {
               </Button>
             </div>
           </div>
-
-        <CardContent className="p-0">
-  <div className="w-full overflow-x-auto">
-    <div className="min-w-[900px]">
-      {/* Table Header */}
-      <div className="grid grid-cols-10 gap-4 px-4 py-2 bg-gray-50 border-b text-sm font-medium text-gray-700">
-        <div className="col-span-2 cursor-pointer" onClick={() => handleSort("firstName")}>
-          <p className="flex items-center gap-2">Rule Name
-           
-          </p>
-        </div>
-        <div className="col-span-2 cursor-pointer" onClick={() => handleSort("email")}>
-          <p className="flex items-center gap-2">Module
-           
-          </p>
-        </div>
-        <div className="col-span-2 cursor-pointer" onClick={() => handleSort("mobile")}>
-          <p className="flex items-center gap-2">Excuted On
-           
-          </p>
-        </div>
-        <div className="col-span-1 cursor-pointer" onClick={() => handleSort("company")}>
-          <p className="flex items-center gap-2">Actions
-           
-          </p>
-        </div> <div className="col-span-2 cursor-pointer" onClick={() => handleSort("leadOwner")}>
-          <p className="flex items-center gap-2">Modified On
-           
-          </p>
-        </div>
-        <div className="col-span-1 cursor-pointer" onClick={() => handleSort("leadStatus")}>
-          <p className="flex items-center gap-2">Status
-          </p>
-        </div>
-      </div>
-
-      {/* Table Body */}
-      <div className="divide-y bg-white">
-        {rules.map((rule) => (
-          <div
-            key={rule.id}
-            className={`grid grid-cols-10 gap-4 px-4 py-3 text-sm transition-colors `}
-          >
-
-            <div className="col-span-2 flex items-center gap-2">
-
-              <div>
-                <h3 className="font-semibold text-gray-900">{rule.name}</h3>
-              </div>
-            </div>
-
-            <div className="col-span-2">
-              <p className="text-gray-900 font-medium truncate">{rule.module}</p>
-            </div>
-
-            <div className="col-span-2">
-              <p className="text-gray-900 font-medium">{rule.action}</p>
-            </div>
-
-            <div className="col-span-1">
-              <p className="text-gray-900 font-medium">{rule.actionsCount}</p>
-             
-            </div>
-             <div className="col-span-2">
-              <p className="text-gray-900 font-medium truncate">{rule.modifiedOn}</p>
-            </div>
-            <div className="col-span-1 flex items-start">
-                <input type="checkbox" checked={rule.status} />
-            </div>
-
-        
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-</CardContent>
+           <Table
+     columns={columns}
+     data={rules}
+     />
       </div>
   );
 }
