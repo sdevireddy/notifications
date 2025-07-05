@@ -55,7 +55,7 @@ const Layout = () => {
   </div>
 
   {/* Main Content Area */}
-  <div className={`flex-1 flex flex-col px-3 w-full gap-1`}>
+  <div className={`flex-1 flex flex-col px-2 w-full `}>
 
     <ScrollToTop/>
     <Header
@@ -63,7 +63,7 @@ const Layout = () => {
       setCollapsed={setCollapsed}
       setActiveModule={setActiveModule}
     />
-    <div className="flex-1 overflow-scroll">
+    <div className="flex-1">
       <Outlet />
       <ToastContainer
         position="top-right"

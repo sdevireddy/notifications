@@ -32,50 +32,70 @@ import WorkflowBuilder from "./routes/workflow/form/WorkflowRuleForm";
 import DealCreationForm from "./routes/deals/DealCreationForm";
 import ContactCreationForm from "./routes/contact/ContactCreationForm";
 import AccountCreationForm from "./routes/accounts/AccountCreationForm";
+import Employee from "./routes/HR/employee/Employee";
+import Attendance from "./routes/HR/attendance/Attendance";
+import Payroll from "./routes/HR/payroll/Payroll";
+import Recruitment from "./routes/HR/recruitments/Recruitment";
+import Leave from "./routes/HR/leave/Leave";
+import HrDashboard from "./routes/HR/HrDashboard";
+import Performance from "./routes/HR/performance/Performance";
 
 function App() {
   const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <ProtectedRoute />,
-    children: [
       {
-        element: <Layout />,
-        children: [
-          { index: true, element: <DashboardPage /> },
-          { path: "leads", element: <LeadPage /> },
-          { path: "leads/create", element: <LeadCreationForm /> },
-          { path: "leads/profile/:id", element: <ViewLeadPage /> },
-          { path: "leads/edit/:id", element: <EditLead /> },
-          { path: "users", element: <Users /> },
-          { path: "Contacts", element: <Contacts1 /> },
-          { path: "Contacts/create", element: <ContactCreationForm /> },
-          { path: "Deals", element: <DealsPage /> },
-           { path: "Deals/create", element: <DealCreationForm /> },
-          { path: "workflow", element: <WorkflowPage /> },
-          { path: "workflow/create", element: <WorkflowBuilder /> },
-          { path: "Accounts", element: <Accounts /> },
-          { path: "Accounts/create", element: <AccountCreationForm /> },
-          { path: "import/:source", element: <CRMSelectionImport /> },
-          { path: "import/:source/migration", element: <DataMigrationUpload /> },
-          { path: "verified-customers", element: <h1>Verified Customers</h1> },
-          { path: "products", element: <h1>Products</h1> },
-          { path: "new-product", element: <h1>New Product</h1> },
-          { path: "inventory", element: <h1>Inventory</h1> },
-          { path: "settings", element: <h1>Settings</h1> }
-        ],
+          path: "/",
+          element: <ProtectedRoute />,
+          children: [
+              {
+                  element: <Layout />,
+                  children: [
+                      { index: true, element: <DashboardPage /> },
+                      { path: "leads", element: <LeadPage /> },
+                      { path: "leads/create", element: <LeadCreationForm /> },
+                      { path: "leads/profile/:id", element: <ViewLeadPage /> },
+                      { path: "leads/edit/:id", element: <EditLead /> },
+                      { path: "users", element: <Users /> },
+                      { path: "Contacts", element: <Contacts1 /> },
+                      { path: "Contacts/create", element: <ContactCreationForm /> },
+                      { path: "Deals", element: <DealsPage /> },
+                      { path: "Deals/create", element: <DealCreationForm /> },
+                      { path: "workflow", element: <WorkflowPage /> },
+                      { path: "workflow/create", element: <WorkflowBuilder /> },
+                      { path: "Accounts", element: <Accounts /> },
+                      { path: "Accounts/create", element: <AccountCreationForm /> },
+                      { path: "import/:source", element: <CRMSelectionImport /> },
+                      { path: "import/:source/migration", element: <DataMigrationUpload /> },
+                      { path: "verified-customers", element: <h1>Verified Customers</h1> },
+                      { path: "products", element: <h1>Products</h1> },
+                      { path: "new-product", element: <h1>New Product</h1> },
+                      { path: "inventory", element: <h1>Inventory</h1> },
+                      { path: "settings", element: <h1>Settings</h1> },
+                      //hr
+                      {
+                          path: "hr",
+                          children: [
+                              { path: "", element: <HrDashboard /> },
+                              { path: "employees", element: <Employee /> },
+                              { path: "attendance", element: <Attendance /> },
+                              { path: "payroll", element: <Payroll /> },
+                              { path: "recruitment", element: <Recruitment /> },
+                              { path: "leave", element: <Leave /> },
+                              { path: "performance", element: <Performance /> },
+                          ],
+                      },
+                  ],
+              },
+          ],
       },
-    ],
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-  }
-]);
+      {
+          path: "/login",
+          element: <Login />,
+      },
+      {
+          path: "/register",
+          element: <Register />,
+      },
+  ]);
 
     return (
         <ThemeProvider storageKey="theme">
