@@ -34,12 +34,31 @@ const moduleLinks = {
         { to: "/settings", label: "Settings", icon: <Settings size={20} /> },
         { to: "/users", label: "Users", icon: <UserPlus size={20} /> },
     ],
-    Books: [{ to: "/library", label: "Library", icon: <BookOpen size={20} /> }],
-    Marketing: [{ to: "/campaigns", label: "Ad Campaigns", icon: <Megaphone size={20} /> }],
-    Campaigns: [{ to: "/email-campaigns", label: "Email Campaigns", icon: <Mail size={20} /> }],
-    People: [{ to: "/users", label: "Users", icon: <Users size={20} /> }],
-    TicketDesk: [{ to: "/tickets", label: "Tickets", icon: <HelpCircle size={20} /> }],
+    Books: [
+        { to: "/library", label: "Library", icon: <BookOpen size={20} /> }
+    ],
+    Marketing: [
+        { to: "/campaigns", label: "Ad Campaigns", icon: <Megaphone size={20} /> }
+    ],
+    Campaigns: [
+        { to: "/email-campaigns", label: "Email Campaigns", icon: <Mail size={20} /> }
+    ],
+    People: [
+        { to: "/users", label: "Users", icon: <Users size={20} /> }
+    ],
+    TicketDesk: [
+        { to: "/tickets", label: "Tickets", icon: <HelpCircle size={20} /> }
+    ],
+    HR: [
+        { to: "hr/employees", label: "Employees", icon: <Users size={20} /> },
+        { to: "hr/attendance", label: "Attendance", icon: <Briefcase size={20} /> },
+        { to: "hr/leave", label: "Leave Management", icon: <BookOpen size={20} /> },
+        { to: "hr/payroll", label: "Payroll", icon: <Settings size={20} /> },
+        { to: "hr/performance", label: "Performance", icon: <Workflow size={20} /> },
+        { to: "hr/recruitment", label: "Recruitment", icon: <UserPlus size={20} /> }
+    ]
 };
+
 
 export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
     const [search, setSearch] = useState("");

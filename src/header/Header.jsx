@@ -5,14 +5,16 @@ import {
 import profileImg from "@/assets/profile-image.jpg";
 import PropTypes from "prop-types";
 import { useTheme } from "@/hooks/use-theme";
+import { useNavigate } from "react-router-dom";
 
 export const Header = ({ collapsed, setCollapsed, setActiveModule }) => {
+    const navigate=useNavigate()
     const [showModules, setShowModules] = useState(false);  
     const { theme, setTheme } = useTheme();
     const moduleRef = useRef(null);
     const modules = [
-        { name: "CRM", icon: <Briefcase size={24} className="text-blue-500" /> },
-        { name: "HR", icon: <Users size={24} className="text-green-500" /> },
+        { name: "CRM", icon: <Briefcase size={24} className="text-blue-500" /> ,path:"/"},
+        { name: "HR", icon: <Users size={24} className="text-green-500" /> ,path:"/hr"},
         { name: "Books", icon: <BookOpen size={24} className="text-purple-500" /> },
         { name: "Marketing", icon: <Megaphone size={24} className="text-orange-500" /> },
         { name: "Campaigns", icon: <Mail size={24} className="text-pink-500" /> },
@@ -58,6 +60,7 @@ useEffect(() => {
                                     onClick={() => {
                                         setActiveModule(module.name);
                                         setShowModules(false);
+                                        navigate(module.path)
                                     }}
                                     className="flex flex-col items-center justify-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer transition-all duration-200"
                                 >
