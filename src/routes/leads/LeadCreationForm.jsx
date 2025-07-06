@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { FiCamera, FiUser, FiMail, FiBriefcase, FiMapPin, FiArrowLeft } from "react-icons/fi";
 import "./LeadCreationForm.css";
 import { toast } from "react-toastify";
+import { axiosPrivate } from "../../utils/axios";
+import { apiSummary } from "../../common/apiSummary";
 
 const initialFormState = {
     leadOwner:"",
@@ -72,18 +74,15 @@ const LeadCreationForm = () => {
           Object.entries(formData).map((el) => {
               formdata.append(el[0], el[1]);
           });
-            const response = await fetch("http://localhost:8081/api/leads", {
-                method: "POST",
-                headers: { "Content-Type": "multipart/form-data" },
-                body: formdata,
-            });
+          const resp=await axiosPrivate({
+            ...apiSummary.createLeads
+          })
 
             const data = await response.json();
 
             if (!response.ok) {
                 throw new Error("Failed to save lead");
             }
-
             toast.success("Lead saved successfully!");
             console.log("Lead Saved:", data);
             return true;
@@ -122,20 +121,34 @@ const LeadCreationForm = () => {
         }
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e,ref) => {
         e.preventDefault();
-      for (let pair of formdata.entries()) {
-  console.log(pair[0], pair[1]);
-}
-        // const success = await saveLead();
+      try {
+        console.log(formData)
+          const formdata = new FormData();
+          Object.entries(formData).map((el) => {
+              formdata.append(el[0], el[1]);
+          });
+          const resp=await axiosPrivate({
+            ...apiSummary.createLeads
+          })
 
-        if (success) {
-            if (submitActionRef.current === "saveAndNew") {
-                resetForm();
-            } else if (submitActionRef.current === "save") {
-                resetForm();
-                navigate("/leads");
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error("Failed to save lead");
             }
+            toast.success("Lead saved successfully!");
+            if(ref==="save")
+            {
+                navigate("/leads")
+            }
+            resetForm()
+            console.log("Lead Saved:", data);
+        } catch (error) {
+            toast.error(error.message || "Failed to save lead. Please try again.");
+            console.error("Error saving lead:", error);
+            return false;
         }
     };
 
@@ -151,7 +164,6 @@ const LeadCreationForm = () => {
     return (
         <div className=" w-[calc(100%-10px)] text-sm">
             <form
-                onSubmit={handleSubmit}
                 className="rounded-lg bg-white shadow-md"
             >
                 {/* Header */}
@@ -195,7 +207,7 @@ const LeadCreationForm = () => {
                         <button
                             type="submit"
                             className="rounded  px-4 py-2 hover:bg-gray-100 border border-primary transition-all ease-in-out duration-200 shadow-md"
-                            onClick={() => (submitActionRef.current = "saveAndNew")}
+                            onClick={(e) => handleSubmit(e,"SaveAndNew")}
                         >
                             Save And New
                         </button>
@@ -203,7 +215,7 @@ const LeadCreationForm = () => {
                         <button
                             type="submit"
                             className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover shadow-sm"
-                            onClick={() => (submitActionRef.current = "save")}
+                            onClick={(e) => handleSubmit(e,"save")}
                         >
                             Save
                         </button>
