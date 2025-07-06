@@ -1,21 +1,63 @@
 import { useState, useRef, useEffect, forwardRef } from "react";
 import { NavLink } from "react-router-dom";
 import {
-    Search, Briefcase, Users, User, Building, ArrowLeftCircle,
-    BookOpen, Mail, Megaphone, HelpCircle,
+    Search,
+    Briefcase,
+    Users,
+    User,
+    Building,
+    ArrowLeftCircle,
+    BookOpen,
+    Mail,
+    Megaphone,
+    HelpCircle,
     Workflow,
     Settings,
-    UserPlus
+    UserPlus,
 } from "lucide-react";
 import logoLight from "@/assets/logo-light.svg";
 import logoDark from "@/assets/logo-dark.svg";
 import PropTypes from "prop-types";
 
-
 import "@/sidebar/Sidebar.css";
 import "@/sidebar/sidebar-theme.css";
 import "@/sidebar/sidebar-search.css";
 import "@/sidebar/sidebar-nav.css";
+// Define links per module
+const moduleLinks = {
+    CRM: [
+        { to: "/leads", label: "Leads", icon: <User size={20} /> },
+        { to: "/contacts", label: "Contacts", icon: <Users size={20} /> },
+        { to: "/accounts", label: "Accounts", icon: <Building size={20} /> },
+        { to: "/deals", label: "Deals", icon: <Briefcase size={20} /> },
+        { to: "/workflow", label: "Workflow", icon: <Workflow size={20} /> },
+        { to: "/settings", label: "Settings", icon: <Settings size={20} /> },
+        { to: "/users", label: "Users", icon: <UserPlus size={20} /> },
+    ],
+    Books: [
+        { to: "/library", label: "Library", icon: <BookOpen size={20} /> }
+    ],
+    Marketing: [
+        { to: "/campaigns", label: "Ad Campaigns", icon: <Megaphone size={20} /> }
+    ],
+    Campaigns: [
+        { to: "/email-campaigns", label: "Email Campaigns", icon: <Mail size={20} /> }
+    ],
+    People: [
+        { to: "/users", label: "Users", icon: <Users size={20} /> }
+    ],
+    TicketDesk: [
+        { to: "/tickets", label: "Tickets", icon: <HelpCircle size={20} /> }
+    ],
+    HR: [
+        { to: "hr/employees", label: "Employees", icon: <Users size={20} /> },
+        { to: "hr/attendance", label: "Attendance", icon: <Briefcase size={20} /> },
+        { to: "hr/leave", label: "Leave Management", icon: <BookOpen size={20} /> },
+        { to: "hr/payroll", label: "Payroll", icon: <Settings size={20} /> },
+        { to: "hr/performance", label: "Performance", icon: <Workflow size={20} /> },
+        { to: "hr/recruitment", label: "Recruitment", icon: <UserPlus size={20} /> }
+    ]
+};
 
 
 export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
@@ -26,79 +68,50 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
     return (
         <div
             ref={sidebarRef}
-            className={`h-full transition-all duration-300 bg-blue-900 dark:bg-slate-900 border-r border-gray-200 dark:border-gray-700 ${
+            className={`h-full border-r border-gray-200 bg-blue-900 transition-all duration-300 dark:border-gray-700 dark:bg-slate-900 ${
                 collapsed ? "w-[70px]" : "w-64"
             }`}
             onMouseEnter={() => ref?.current?.scrollTo?.({ top: 0 })}
         >
             <div className="flex items-center gap-x-3 px-6 py-3">
-               
-                <img src={logoDark} alt="Logo" className="" />
+                <img
+                    src={logoDark}
+                    alt="Logo"
+                    className=""
+                />
                 {!collapsed && <p className="text-lg font-medium text-white">Logoipsum</p>}
             </div>
 
             <div className="p-3">
                 <div className="relative">
-                    <Search className="absolute left-4 top-2.5 text-white" size={18} />
-                    
+                    <Search
+                        className="absolute left-4 top-2.5 text-white"
+                        size={18}
+                    />
+
                     <input
                         type="text"
                         placeholder="Search..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-3 py-2 rounded-md border text-white  border-gray-300 dark:border-gray-700 bg-blue-800 dark:bg-slate-800 text-sm"
+                        className="w-full rounded-md border border-gray-300 bg-gray-800 py-2 pl-10 pr-3 text-sm text-gray-300 dark:border-gray-700 dark:bg-slate-800"
                     />
                 </div>
             </div>
 
             <div className="space-y-2 px-3">
-                {search === "" && activeModule === "CRM" && (
-                    <>
-                        <p className="text-xs font-semibold text-gray-50 dark:text-gray-400 ml-2">CRM</p>
-                        <SidebarLink to="/leads" icon={<User size={20} />} label="Leads" collapsed={collapsed} />
-                        <SidebarLink to="/contacts" icon={<Users size={20} />} label="Contacts" collapsed={collapsed} />
-                        <SidebarLink to="/accounts" icon={<Building size={20} />} label="Accounts" collapsed={collapsed} />
-                        <SidebarLink to="/deals" icon={<Briefcase size={20} />} label="Deals" collapsed={collapsed} />
-                        <SidebarLink to="/workflow" icon={<Workflow size={20}/>} label="Workflow" collapsed={collapsed} />
-                        <SidebarLink to="/settings" icon={<Settings  size={20}/>} label="Settings" collapsed={collapsed} />
-                        <SidebarLink to="/users" icon={<UserPlus size={20}/>} label="Users" collapsed={collapsed} />
-                    </>
-                )}
-
-                {search === "" && activeModule === "Books" && (
-                    <>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Books</p>
-                        <SidebarLink to="/library" icon={<BookOpen size={20} />} label="Library" collapsed={collapsed} />
-                    </>
-                )}
-
-                {search === "" && activeModule === "Marketing" && (
-                    <>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Marketing</p>
-                        <SidebarLink to="/campaigns" icon={<Megaphone size={20} />} label="Ad Campaigns" collapsed={collapsed} />
-                    </>
-                )}
-
-                {search === "" && activeModule === "Campaigns" && (
-                    <>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Campaigns</p>
-                        <SidebarLink to="/email-campaigns" icon={<Mail size={20} />} label="Email Campaigns" collapsed={collapsed} />
-                    </>
-                )}
-
-                {search === "" && activeModule === "People" && (
-                    <>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">People</p>
-                        <SidebarLink to="/users" icon={<Users size={20} />} label="Users" collapsed={collapsed} />
-                    </>
-                )}
-
-                {search === "" && activeModule === "TicketDesk" && (
-                    <>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">Support</p>
-                        <SidebarLink to="/tickets" icon={<HelpCircle size={20} />} label="Tickets" collapsed={collapsed} />
-                    </>
-                )}
+                <p className="ml-2 text-xs font-semibold text-gray-50 dark:text-gray-400 line-clamp-1">{activeModule}</p>
+                {moduleLinks[activeModule]
+                    ?.filter((link) => link.label.toLowerCase().includes(search.toLowerCase()))
+                    .map((link, index) => (
+                        <SidebarLink
+                            key={index}
+                            to={link.to}
+                            icon={link.icon}
+                            label={link.label}
+                            collapsed={collapsed}
+                        />
+                    ))}
             </div>
         </div>
     );
@@ -108,9 +121,9 @@ const SidebarLink = ({ to, icon, label, collapsed }) => (
     <NavLink
         to={to}
         className={({ isActive }) =>
-            `flex items-center gap-x-3 px-3 py-2 rounded-md text-sm font-medium ${
-                isActive ? "bg-gray-50 text-black border-primary" : "  text-white"
-            } hover:bg-slate-300 dark:hover:bg-slate-700 hover:text-black`
+            `flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium ${
+                isActive ? "border-primary bg-gray-50 text-primary shadow-md" : "text-white"
+            } hover:bg-slate-300 hover:text-black dark:hover:bg-slate-700`
         }
     >
         {icon}

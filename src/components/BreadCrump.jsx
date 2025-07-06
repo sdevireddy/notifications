@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
-const Breadcrumb = () => {
+const BreadCrumb = () => {
   const location = useLocation();
   const segments = location.pathname.split("/").filter(Boolean);
 
@@ -31,4 +31,4 @@ const Breadcrumb = () => {
   );
 };
 
-export default Breadcrumb;
+export default BreadCrumb;

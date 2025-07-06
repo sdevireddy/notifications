@@ -42,7 +42,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Tooltip from "../../components/ToolTip";
 import Table from "../../components/Table";
 import { EmailComposer } from "../../components/shared/EmailComposer";
-import Breadcrumb from "../../components/BreadCrumb";
+import BreadCrumb from "../../components/BreadCrump";
 export default function ContactPage() {
     const [leads, setLeads] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -249,7 +249,7 @@ const currentContacts=filteredLeads
             <div className="flex items-center justify-between border-b px-6 py-4">
                 <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-semibold text-gray-900">Contacts</h1>
-                    <Breadcrumb />
+                    <BreadCrumb />
                 </div>
                 <div className="flex items-center gap-3">
                     <div onClick={() => setFilterModelOpen(true)}>
