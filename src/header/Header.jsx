@@ -16,7 +16,7 @@ export const Header = ({ collapsed, setCollapsed, setActiveModule }) => {
         { name: "CRM", icon: <Briefcase size={24} className="text-blue-500" /> ,path:"/"},
         { name: "HR", icon: <Users size={24} className="text-green-500" /> ,path:"/hr"},
         { name: "Books", icon: <BookOpen size={24} className="text-purple-500" /> },
-        { name: "Marketing", icon: <Megaphone size={24} className="text-orange-500" /> },
+        { name: "Marketing", icon: <Megaphone size={24} className="text-orange-500" />,path:"/marketing" },
         { name: "Campaigns", icon: <Mail size={24} className="text-pink-500" /> },
         { name: "TicketDesk", icon: <HelpCircle size={24} className="text-red-500" /> },
     ];

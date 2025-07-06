@@ -39,6 +39,10 @@ import Recruitment from "./routes/HR/recruitments/Recruitment";
 import Leave from "./routes/HR/leave/Leave";
 import HrDashboard from "./routes/HR/HrDashboard";
 import Performance from "./routes/HR/performance/Performance";
+import MarketingDashboard from "./routes/Marketing/MarketingDashboard";
+import EmailMarketing from "./routes/Marketing/emailmarketing/EmailMarketing";
+import SocialMediaMarketing from "./routes/Marketing/socialmediamarketing/SocialMediaMarketing";
+import SmsMarketing from "./routes/Marketing/smsmarketing/SmsMarketing";
 
 function App() {
   const router = createBrowserRouter([
@@ -83,6 +87,18 @@ function App() {
                               { path: "performance", element: <Performance /> },
                           ],
                       },
+                      
+                      //marketing
+                      {
+                        path: "marketing",
+                        children: [
+                            { path: "", element: <MarketingDashboard /> },
+                            { path: "EmailMarketing", element: <EmailMarketing /> },
+                            { path: "SMSMarketing", element: <SmsMarketing /> },
+                            { path: "SocialMediaMarketing", element: <SocialMediaMarketing /> },
+                        ],
+                    },
+
                   ],
               },
           ],
