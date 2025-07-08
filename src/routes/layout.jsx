@@ -1,3 +1,4 @@
+
 import { Outlet } from "react-router-dom";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { useClickOutside } from "@/hooks/use-click-outside";
