@@ -4,6 +4,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 import CountUp from "react-countup";
 import { Search, Bell, Settings, TrendingUp, UserPlus, Users, DollarSign } from "lucide-react";
 import Table from "../../components/Table";
+import CountCard from "../../components/CountCard";
 const statsData = [
     {
         label: "Total Leads",
@@ -229,27 +230,7 @@ export default function CRMDashboard() {
                 {/* Stats cards */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
                     {statsData.map((stat, index) => (
-                        <div
-                            key={index}
-                            className="rounded bg-white p-4 shadow-md"
-                        >
-                            <div className="flex justify-between text-sm text-gray-600">
-                                <span>{stat.label}</span>
-                                {stat.icon}
-                            </div>
-                            <div className="mt-2 text-2xl font-bold">
-                                <CountUp
-                                    end={stat.value}
-                                    duration={2}
-                                    separator=","
-                                    prefix={stat.isCurrency ? "₹" : ""}
-                                />
-                            </div>
-                            <p className="mt-1 flex items-center text-xs text-green-600">
-                                <TrendingUp className="mr-1 h-3 w-3" />
-                                {stat.growth}
-                            </p>
-                        </div>
+                        <CountCard key={index}  stat={stat}/>
                     ))}
                 </div>
 
