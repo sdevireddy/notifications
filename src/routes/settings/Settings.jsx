@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUser, FaLock, FaBell, FaShieldAlt, FaCreditCard, FaLanguage, FaQuestionCircle, FaCogs, FaChartPie } from 'react-icons/fa';
 import { Mail } from 'lucide-react';
+import BreadCrumb from '../../components/BreadCrump';
 
 const settingOptions = [
   { label: 'Email Templates', path: '/templates', icon: <Mail /> },
@@ -24,16 +25,23 @@ const Settings = () => {
   );
 
   return (
-    <div className="p-6 bg-white">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Settings</h2>
+    <div className="px-6 bg-white h-full">
+      <div className="flex items-center justify-between border-b py-4">
+                <div className="flex items-center gap-4">
+                    <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
+                    <BreadCrumb />
+                </div>
+                </div>
 
-      <input
+      <div className='py-3'>
+        <input
         type="text"
         placeholder="Search settings..."
         className="w-full px-4 py-3 mb-6 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredOptions.length > 0 ? (
@@ -41,7 +49,7 @@ const Settings = () => {
             <Link
               to={option.path}
               key={index}
-              className="flex items-center gap-4 p-4 bg-white rounded-xl shadow hover:shadow-md hover:bg-blue-50 transition-all border"
+              className="flex items-center gap-4 p-2 bg-white rounded-xl shadow hover:shadow-md hover:bg-blue-50 transition-all border"
             >
               <div className="text-blue-600 text-xl">{option.icon}</div>
               <div className="text-lg font-medium text-gray-800">{option.label}</div>
