@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, forwardRef } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
     Search,
     Briefcase,
@@ -75,13 +75,15 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
             }`}
             onMouseEnter={() => ref?.current?.scrollTo?.({ top: 0 })}
         >
-            <div className="flex items-center gap-x-3 px-6 py-3">
+            <div >
+                <Link to={"/"} className="flex items-center gap-x-3 px-6 py-3">
                 <img
                     src={logoDark}
                     alt="Logo"
                     className=""
                 />
                 {!collapsed && <p className="text-lg font-medium text-white">Logoipsum</p>}
+                </Link>
             </div>
 
             <div className="p-3">
