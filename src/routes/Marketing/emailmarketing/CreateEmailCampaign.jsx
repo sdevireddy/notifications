@@ -1,5 +1,5 @@
-"use client";
-import { useState } from "react";
+import InlineTemplateEditor from "./InlineTemplateEditor";
+import { useState,useRef,useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,12 +9,26 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Calendar } from "@/components/ui/calendar";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
+import grapesjs from "grapesjs";
+import {
+  Plus,
+  Mail,
+  MoreVertical,
+  Search,
+  Trash2,
+  Edit,
+  FileText,
+  ChevronDown,
+} from "lucide-react";
 
 export default function CreateEmailCampaignPage() {
   const [step, setStep] = useState("info");
   const [template, setTemplate] = useState("blank");
   const [sendDate, setSendDate] = useState(null);
   const navigate = useNavigate();
+
+  const [showEditor, setShowEditor] = useState(false);
+  const [templateHtml, setTemplateHtml] = useState("");
 
   const templates = [
     { id: "blank", name: "Blank Template" },
@@ -90,6 +104,16 @@ export default function CreateEmailCampaignPage() {
                   ))}
                 </SelectContent>
               </Select>
+              <Button
+  variant="outline"
+  size="sm"
+  className="mt-1 text-blue-600 hover:text-blue-800 border-blue-300"
+  onClick={() => setShowEditor(true)}
+>
+  <Plus className="mr-1 h-4 w-4" />
+  New Template
+</Button>
+
 
               <Textarea placeholder="Write your email content here..." rows={10} />
 
@@ -97,9 +121,29 @@ export default function CreateEmailCampaignPage() {
               <Button variant="secondary" onClick={() => navigate("/marketing/EmailMarketing")}>Cancel</Button>
 
                 <Button onClick={() => setStep("schedule")}>Next</Button>
+                
+
               </div>
             </CardContent>
           </Card>
+          {showEditor && (
+  <InlineTemplateEditor/>
+    // onSave={(html) => {
+    //   setTemplateHtml(html);
+    //   setShowEditor(false);
+    // }}
+  // />
+)}
+{templateHtml && (
+  <div className="mt-4">
+    <h3 className="text-sm font-medium mb-1">Preview:</h3>
+    <div
+      className="p-4 border rounded bg-white"
+      dangerouslySetInnerHTML={{ __html: templateHtml }}
+    />
+  </div>
+)}
+
         </TabsContent>
 
         {/* Step 4: Schedule & Send */}
