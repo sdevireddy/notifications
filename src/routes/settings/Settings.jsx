@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUser, FaLock, FaBell, FaShieldAlt, FaCreditCard, FaLanguage, FaQuestionCircle, FaCogs, FaChartPie } from 'react-icons/fa';
-import { Mail } from 'lucide-react';
+import { Mail, Notebook } from 'lucide-react';
 import BreadCrumb from '../../components/BreadCrump';
 
 const settingOptions = [
   { label: 'Email Templates', path: '/templates', icon: <Mail /> },
+  { label: 'Roles', path: '/roles', icon: <Notebook />},
   { label: 'Profile', path: '/settings/profile', icon: <FaUser /> },
   { label: 'Account', path: '/settings/account', icon: <FaCogs /> },
   { label: 'Privacy', path: '/settings/privacy', icon: <FaLock /> },
@@ -52,7 +53,7 @@ const Settings = () => {
               className="flex items-center gap-4 p-2 bg-white rounded-xl shadow hover:shadow-md hover:bg-blue-50 transition-all border"
             >
               <div className="text-blue-600 text-xl">{option.icon}</div>
-              <div className="text-lg font-medium text-gray-800">{option.label}</div>
+              <div className=" font-medium text-gray-800">{option.label}</div>
             </Link>
           ))
         ) : (
