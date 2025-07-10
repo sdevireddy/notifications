@@ -36,6 +36,15 @@ const Performance = lazy(() => import("./routes/HR/performance/Performance"));
 const EmailTemplate = lazy(() => import("./routes/emailtemplate/EmailTemplate"));
 const Login = lazy(() => import("./routes/login/Login"));
 const Register = lazy(() => import("./routes/Register/Register"));
+const MarketingDashboard = lazy(()=>import("./routes/Marketing/MarketingDashboard"));
+const EmailMarketing = lazy(()=>import("./routes/Marketing/emailmarketing/EmailMarketing"));
+const SmsMarketing = lazy(()=>import("./routes/Marketing/smsmarketing/SmsMarketing"));
+const SocialMediaMarketing= lazy(()=>import("./routes/Marketing/socialmediamarketing/SocialMediaMarketing"));
+const CreateEmailCampaign = lazy(()=>import("./routes/Marketing/emailmarketing/CreateEmailCampaign"));
+const TemplateCreation = lazy(()=>import("./routes/Marketing/emailmarketing/TemplateCreation"));
+
+
+
 
 const router = createBrowserRouter([
   {
@@ -79,6 +88,16 @@ const router = createBrowserRouter([
               { path: "recruitment", element: <Recruitment /> },
               { path: "leave", element: <Leave /> },
               { path: "performance", element: <Performance /> },
+            ],
+          },
+          {
+            path: "marketing",
+            children: [
+              { path: "", element: <MarketingDashboard /> },
+              { path: "emailmarketing", element: <EmailMarketing /> },
+              { path: "email-campaigns/create", element: <CreateEmailCampaign /> },
+              { path: "SocialMediaMarketing", element: <SmsMarketing /> },
+              { path: "SmsMarketing", element: <SmsMarketing /> },
             ],
           },
         ],
