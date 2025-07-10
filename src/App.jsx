@@ -8,6 +8,8 @@ import { Suspense, lazy } from "react";
 import Settings from "./routes/settings/Settings";
 import TemplateDisplay from "./routes/emailtemplate/templateDisplay";
 import ViewFullTemplate from "./routes/emailtemplate/ViewFullTemplate";
+import Roles from "./routes/roles/Roles";
+import CreateRole from "./routes/roles/CreateRole";
 
 // Lazy Imports
 const Leads = lazy(() => import("@/routes/leads/Leads"));
@@ -69,6 +71,8 @@ const router = createBrowserRouter([
           { path: "templates", element: <TemplateDisplay /> },
           { path: "templates/:id", element: <ViewFullTemplate /> },
           { path: "templates/create", element: <EmailTemplate /> },
+          { path: "roles", element: <Roles /> },
+           { path: "roles/create", element: <CreateRole /> },
           {
             path: "hr",
             children: [
