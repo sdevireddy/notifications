@@ -7,7 +7,7 @@ import { Input } from "../../components/layout/ui/input";
 import { CardContent } from "../../components/layout/ui/card";
 import Table from "../../components/Table";
 import { Checkbox } from "@radix-ui/react-checkbox";
-import BreadCrumb from "../../components/BreadCrump";
+import BreadCrumb from "../../components/BreadCrumb";
 
 const modules = [
   "All Modules", "Leads", "Contacts", "Accounts", "Deals", "Tasks", "Meetings"

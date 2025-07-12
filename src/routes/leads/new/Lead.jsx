@@ -48,7 +48,7 @@ import Tooltip from "../../../components/ToolTip";
 import Table from "../../../components/Table";
 import { EmailComposer } from "../../../components/shared/EmailComposer";
 import { axiosPrivate } from "../../../utils/axios";
-import BreadCrumb from "../../../components/BreadCrump";
+import BreadCrumb from "../../../components/BreadCrumb";
 export default function LeadPage() {
     const [leads, setLeads] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
