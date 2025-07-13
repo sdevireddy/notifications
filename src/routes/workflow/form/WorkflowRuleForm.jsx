@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import BreadCrumb from "../../../components/BreadCrump";
+import BreadCrumb from "../../../components/BreadCrumb";
 
 export default function WorkflowAutomation() {
   const [when, setWhen] = useState("");

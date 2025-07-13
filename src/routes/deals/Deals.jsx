@@ -42,7 +42,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Tooltip from "../../components/ToolTip";
 import Table from "../../components/Table";
 import { EmailComposer } from "../../components/shared/EmailComposer";
-import BreadCrumb from "../../components/BreadCrump";
+import BreadCrumb from "../../components/BreadCrumb";
 export default function ContactPage() {
     const [leads, setLeads] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");

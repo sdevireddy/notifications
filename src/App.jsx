@@ -38,6 +38,7 @@ import Recruitment from "./routes/HR/recruitments/Recruitment";
 import Leave from "./routes/HR/leave/Leave";
 import Performance from "./routes/HR/performance/Performance";
 import EmailTemplate from "./routes/emailtemplate/EmailTemplate";
+import ApplyLeavePage from "./routes/HR/leave/Applyleave";
 
 const router = createBrowserRouter([
   {
@@ -82,6 +83,7 @@ const router = createBrowserRouter([
               { path: "payroll", element: <Payroll /> },
               { path: "recruitment", element: <Recruitment /> },
               { path: "leave", element: <Leave /> },
+              { path: "apply-leave", element: <ApplyLeavePage />},
               { path: "performance", element: <Performance /> },
             ],
           },
