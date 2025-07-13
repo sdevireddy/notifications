@@ -10,6 +10,8 @@ import TemplateDisplay from "./routes/emailtemplate/templateDisplay";
 import ViewFullTemplate from "./routes/emailtemplate/ViewFullTemplate";
 import Roles from "./routes/roles/Roles";
 import CreateRole from "./routes/roles/CreateRole";
+import Login from "./routes/login/Login";
+import Register from "./routes/Register/Register";
 
 // Lazy Imports
 const Leads = lazy(() => import("@/routes/leads/Leads"));
@@ -36,8 +38,6 @@ const Recruitment = lazy(() => import("./routes/HR/recruitments/Recruitment"));
 const Leave = lazy(() => import("./routes/HR/leave/Leave"));
 const Performance = lazy(() => import("./routes/HR/performance/Performance"));
 const EmailTemplate = lazy(() => import("./routes/emailtemplate/EmailTemplate"));
-const Login = lazy(() => import("./routes/login/Login"));
-const Register = lazy(() => import("./routes/Register/Register"));
 
 const router = createBrowserRouter([
   {
