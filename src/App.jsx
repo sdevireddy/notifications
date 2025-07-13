@@ -8,6 +8,8 @@ import { Suspense, lazy } from "react";
 import Settings from "./routes/settings/Settings";
 import TemplateDisplay from "./routes/emailtemplate/templateDisplay";
 import ViewFullTemplate from "./routes/emailtemplate/ViewFullTemplate";
+import ApplyLeavePage from "./routes/HR/leave/Applyleave.jsx";
+
 
 // Lazy Imports
 const Leads = lazy(() => import("@/routes/leads/Leads"));
@@ -32,6 +34,7 @@ const Attendance = lazy(() => import("./routes/HR/attendance/Attendance"));
 const Payroll = lazy(() => import("./routes/HR/payroll/Payroll"));
 const Recruitment = lazy(() => import("./routes/HR/recruitments/Recruitment"));
 const Leave = lazy(() => import("./routes/HR/leave/Leave"));
+const Applyleave = lazy(() => import('./routes/HR/leave/Applyleave.jsx'))
 const Performance = lazy(() => import("./routes/HR/performance/Performance"));
 const EmailTemplate = lazy(() => import("./routes/emailtemplate/EmailTemplate"));
 const Login = lazy(() => import("./routes/login/Login"));
@@ -78,6 +81,7 @@ const router = createBrowserRouter([
               { path: "payroll", element: <Payroll /> },
               { path: "recruitment", element: <Recruitment /> },
               { path: "leave", element: <Leave /> },
+              { path: "apply-leave", element: <ApplyLeavePage />},
               { path: "performance", element: <Performance /> },
             ],
           },
