@@ -87,7 +87,13 @@ export const Header = ({ collapsed, setCollapsed, setActiveModule }) => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
+const handleLogout=()=>{
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("tenantId");
+    navigate("/login")
 
+}
     return (
         <header className="sticky top-0 z-10 flex h-[60px] items-center justify-between border-b-2 border-gray-300 bg-white px-4 transition-colors dark:bg-slate-900">
             <div className="flex items-center gap-x-3">
@@ -168,10 +174,7 @@ export const Header = ({ collapsed, setCollapsed, setActiveModule }) => {
                             </button>
                             <button
                                 className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100"
-                                onClick={() => {
-                                    localStorage.removeItem("token");
-                                    navigate("/login");
-                                }}
+                                onClick={handleLogout}
                             >
                                 Logout
                             </button>

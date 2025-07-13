@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "../../components/layout/ui/button";
-import BreadCrumb from "../../components/BreadCrump";
+import BreadCrumb from "../../components/BreadCrumb";
 import { Input } from "../../components/layout/ui/input";
 
 const MODULES_DATA = {
