@@ -38,6 +38,7 @@ import Recruitment from "./routes/HR/recruitments/Recruitment";
 import Leave from "./routes/HR/leave/Leave";
 import Performance from "./routes/HR/performance/Performance";
 import EmailTemplate from "./routes/emailtemplate/EmailTemplate";
+import ApplyLeavePage from "./routes/HR/leave/Applyleave";
 
 const router = createBrowserRouter([
   {
