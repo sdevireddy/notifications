@@ -2,7 +2,7 @@
 import { Outlet } from "react-router-dom";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { useClickOutside } from "@/hooks/use-click-outside";
-import { Suspense, useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState } from "react";
 
 import {    Sidebar } from "@/sidebar/Sidebar";
 import { Header } from "@/header/Header";
@@ -65,10 +65,8 @@ const Layout = () => {
       setActiveModule={setActiveModule}
     />
     <div className="flex-1">
-      <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
        
       <Outlet />
-      </Suspense>
       <ToastContainer
         position="top-right"
         autoClose={300}

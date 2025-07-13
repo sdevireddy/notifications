@@ -269,7 +269,7 @@ const currentContacts=filteredLeads
     );
 
     return (
-        <div className="min-h-screen flex-1 bg-white">
+        <div className=" flex-1 bg-white">
             <div className="flex items-center justify-between border-b px-6 py-4">
                 <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-semibold text-gray-900">Deals</h1>

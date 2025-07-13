@@ -25,10 +25,13 @@ const Login = () => {
     e.preventDefault();
     try {
         const resp=await axiosPrivate({
-            ...apiSummary.login,
+            ...apiSummary.auth.login,
             data:formData
         })
-        localStorage.setItem("access_token",resp?.data?.access_token)
+        console.log(resp?.data)
+        localStorage.setItem("access_token",resp?.data?.data?.access_token)
+        localStorage.setItem("refresh_token",resp?.data?.data?.refresh_token)
+        localStorage.setItem("tenantId",resp?.data?.data?.tenantId)
         toast.success("Login Successfull")
         navigate("/")
     } catch (error) {
