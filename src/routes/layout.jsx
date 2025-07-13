@@ -2,14 +2,13 @@
 import { Outlet } from "react-router-dom";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { useClickOutside } from "@/hooks/use-click-outside";
-import { Suspense, useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState } from "react";
 
 import {    Sidebar } from "@/sidebar/Sidebar";
 import { Header } from "@/header/Header";
 import { cn } from "../utils/cn";
 import { ToastContainer } from "react-toastify";
 import { useLocation } from "react-router-dom";
-import CRMSkeleton from "../components/SkeletonLoader";
 
 
 export const ScrollToTop = () => {
@@ -66,10 +65,8 @@ const Layout = () => {
       setActiveModule={setActiveModule}
     />
     <div className="flex-1">
-      <Suspense fallback={<CRMSkeleton/>}>
        
       <Outlet />
-      </Suspense>
       <ToastContainer
         position="top-right"
         autoClose={300}
