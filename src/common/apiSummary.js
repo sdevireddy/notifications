@@ -6,7 +6,7 @@ export const baseUrl="https://ec2-16-171-41-109.eu-north-1.compute.amazonaws.com
 export const apiSummary={
     auth:{
       login:{
-        path:"auth/login",
+        url:"auth/login",
         method:"post"
       }
     },
