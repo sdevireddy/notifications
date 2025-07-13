@@ -1,32 +1,14 @@
 //export const baseUrl="http://ec2-13-49-44-42.eu-north-1.compute.amazonaws.com:8081/"
-export const baseUrl="http://localhost:8081/auth"
+export const baseUrl="https://ec2-16-171-41-109.eu-north-1.compute.amazonaws.com:8443/"
 
 
 
 export const apiSummary={
-    login:{
-        url:"/login",
-        method:"post",
-    },
-    register:{
-        url:"/createAccount",
-        method:"post",
-    },
-    createLeads:{
-        url:"/leads",
+    auth:{
+      login:{
+        path:"auth/login",
         method:"post"
+      }
     },
-     getLeads:{
-        url:"/leads",
-        method:"get"
-    },
-     getLead:(id) => ({
-    url: `/leads/${id}`,
-    method: "get",
-  }),
-  deleteLead:{
-    url:"leads/delete",
-    method:"delete"
-  }
 
 }
