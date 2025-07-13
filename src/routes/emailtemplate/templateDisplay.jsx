@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import BreadCrumb from '../../components/BreadCrump';
+import BreadCrumb from '../../components/BreadCrumb';
 
 const TemplateDisplay = () => {
   const [templates, setTemplates] = useState([]);
