@@ -1,104 +1,105 @@
-"use client";
-import { useState, useEffect, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Edit, Trash2, Plus, Search } from "lucide-react";
-import Table from "@/components/Table";
-import BreadCrumb from "@/components/BreadCrump";
-import { axiosPrivate } from "@/utils/axios";
-import { apiSummary } from "../../common/apiSummary";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { ChevronDown, ChevronRight, Pencil, Plus } from 'lucide-react';
+import BreadCrumb from '../../components/BreadCrump';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../../components/layout/ui/button';
 
-const Roles = () => {
-  const [roles, setRoles] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const fetchRoles = async () => {
-    try {
-      const res = await axiosPrivate(apiSummary.getRoles);
-      setRoles(res.data || []);
-    } catch (err) {
-      console.error("Failed to load roles", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchRoles();
-  }, []);
-
-  const filteredRoles = roles.filter((role) =>
-    role.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleDelete = async (roleId) => {
-    try {
-      await axiosPrivate({
-        ...apiSummary.deleteRole,
-        data: { id: roleId },
-      });
-      fetchRoles();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const columns = useMemo(
-    () => [
+const rolesData = [
+  {
+    name: 'CEO',
+    children: [
       {
-        accessorKey: "name",
-        header: "Role Name",
+        name: 'Manager',
+        children: [
+          {
+            name: 'Sales',
+            children: [
+              { name: 'User', children: [] },
+            ],
+          },
+        ],
       },
-      {
-        id: "actions",
-        header: "Actions",
-        cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm">
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleDelete(row.original.id)}
-            >
-              <Trash2 className="h-4 w-4 text-red-500" />
-            </Button>
-          </div>
-        ),
+       {
+        name: 'Manager',
+        children: [
+          {
+            name: 'Sales',
+            children: [
+              { name: 'User', children: [] },
+            ],
+          },
+        ],
       },
     ],
-    []
-  );
+  },
+];
+
+const RoleNode = ({ role }) => {
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className="flex-1 bg-white">
+    <div className="ml-4">
+      <div
+        className="flex items-center gap-4 px-2 py-1 rounded-md transition hover:bg-gray-50 group"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="flex items-center gap-2">
+          {role.children.length > 0 ? (
+            isOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />
+          ) : (
+            <span className="w-[18px]" />
+          )}
+          <span className="font-medium text-gray-800">{role.name}</span>
+        </div>
+
+        {/* Show only on hover of this specific item */}
+        <button
+          className="text-gray-500 hover:text-blue-600 invisible group-hover:visible transition"
+          title="Edit Role"
+          onClick={(e) => {
+            e.stopPropagation();
+            alert(`Edit role: ${role.name}`);
+          }}
+        >
+          <Pencil size={16} />
+        </button>
+      </div>
+
+      {isOpen && role.children.length > 0 && (
+        <div className="ml-4 border-l border-gray-300 pl-3 mt-1">
+          {role.children.map((child, index) => (
+            <RoleNode key={index} role={child} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const RolesPage = () => {
+  const navigate=useNavigate()
+  return (
+    <div className="flex-1 bg-white h-full">
       <div className="flex items-center justify-between border-b px-6 py-4">
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-semibold text-gray-900">Roles</h1>
           <BreadCrumb />
         </div>
-        <Link to={"/roles/create"}>
-        <Button className="bg-buttonprimary text-white hover:bg-buttonprimary-hover">
-          <Plus className="mr-2 h-4 w-4" /> Create Role
-        </Button>
-        </Link>
+        <Button
+                        onClick={() => navigate("/roles/create")}
+                        className="bg-buttonprimary text-white hover:bg-buttonprimary-hover"
+                    >
+                        <Plus className="mr-2 h-4 w-4" /> Create Role
+                    </Button>
       </div>
 
-      <div className="flex justify-end border-b px-6 py-4">
-        <div className="relative w-full max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Input
-            placeholder="Search roles..."
-            className="pl-10"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+      <div className="px-6 py-4">
+        {rolesData.map((role, index) => (
+          <RoleNode key={index} role={role} />
+        ))}
       </div>
-
-      <Table columns={columns} data={filteredRoles} />
     </div>
   );
 };
 
-export default Roles;
+export default RolesPage;
