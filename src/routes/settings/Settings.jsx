@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUser, FaLock, FaBell, FaShieldAlt, FaCreditCard, FaLanguage, FaQuestionCircle, FaCogs, FaChartPie } from 'react-icons/fa';
 import { Mail, Notebook } from 'lucide-react';
-import BreadCrumb from '../../components/BreadCrump';
+import BreadCrumb from '../../components/BreadCrumb';
 
 const settingOptions = [
   { label: 'Email Templates', path: '/templates', icon: <Mail /> },
