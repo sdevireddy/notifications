@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { MoreVertical, Edit, Trash2, UserPlus, Search, Mail } from "lucide-react";
 import Table from "@/components/Table";
-import BreadCrumb from "@/components/BreadCrump";
+import BreadCrumb from "../../components/BreadCrumb";
 import Tooltip from "@/components/ToolTip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import useFetchData from "../../hooks/useFetchData";
