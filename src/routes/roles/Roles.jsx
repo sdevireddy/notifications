@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, Pencil, Plus } from 'lucide-react';
-import BreadCrumb from '../../components/BreadCrump';
+import BreadCrumb from '../../components/BreadCrumb'
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/layout/ui/button';
 
