@@ -126,23 +126,6 @@ export default function CreateEmailCampaignPage() {
               </div>
             </CardContent>
           </Card>
-          {showEditor && (
-  <InlineTemplateEditor/>
-    // onSave={(html) => {
-    //   setTemplateHtml(html);
-    //   setShowEditor(false);
-    // }}
-  // />
-)}
-{templateHtml && (
-  <div className="mt-4">
-    <h3 className="text-sm font-medium mb-1">Preview:</h3>
-    <div
-      className="p-4 border rounded bg-white"
-      dangerouslySetInnerHTML={{ __html: templateHtml }}
-    />
-  </div>
-)}
 
         </TabsContent>
 
