@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export default function ExportModal({ isOpen, onClose, exportData }) {
+export function ExportModal({ isOpen, onClose, exportData }) {
   const [activeTab, setActiveTab] = useState("html");
   const { html, json } = exportData();
 
