@@ -49,11 +49,10 @@ import Table from "../../../components/Table";
 import { EmailComposer } from "../../../components/shared/EmailComposer";
 import { axiosPrivate } from "../../../utils/axios";
 import BreadCrumb from "../../../components/BreadCrumb";
-import toast from "react-hot-toast";
 export default function LeadPage() {
     const [leads, setLeads] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [recordsPerPage, setRecordsPerPage] = useState("10");
+    const [recordsPerPage, setRecordsPerPage] = useState("25");
     const [currentPage, setCurrentPage] = useState(1);
     const [selectMultipleLead, setSelectMultipleLead] = useState([]);
     const [selectSingleLead, setSelectSingleLead] = useState([]);
@@ -65,14 +64,15 @@ export default function LeadPage() {
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
 
-    const [leadsData,refetchData] = useFetchData(apiSummary.crm.getLeads)
+    const [leadsData,refresh,setRefresh] = useFetchData(apiSummary.getLeads)
 
     useEffect(() => {
-        setLeads(leadsData?.data?.data || []);
-        setFilteredLeads(leadsData?.data?.data|| []);
-        setTotalRecords(leadsData?.data?.totalRecords);
+        setLeads(leadsData.data || []);
+        setFilteredLeads(leadsData.data || []);
+        setTotalRecords(leadsData.totalRecords);
         setCurrentPage(1);
     }, [leadsData]);
+
     useEffect(() => {
         const handleFilter=()=>{
             if(leads.length==0) return;
@@ -101,7 +101,7 @@ export default function LeadPage() {
     };
 
     const handleSelectAll = () => {
-        setSelectMultipleLead(selectMultipleLead.length === leadsData.data.data.length ? [] : leadsData.data.data);
+        setSelectMultipleLead(selectMultipleLead.length === leadsData.data.length ? [] : leadsData.data);
     };
 
     const handleSort = (key) => {
@@ -178,9 +178,7 @@ export default function LeadPage() {
             {
                 id: "actions",
                 header: "Actions",
-                cell: ({ row }) => {
-                    const lead = row.original;
-                     return (
+                cell: ({ row }) => (
                     <div className="flex items-center justify-center gap-1">
                         <Button
                             variant="ghost"
@@ -219,33 +217,20 @@ export default function LeadPage() {
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={()=>handleDelete(lead.id)}>
+                                <DropdownMenuItem>
                                     <Trash2 className="mr-2 h-4 w-4 text-red-600" />
                                     Delete
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                )
-               }
+                ),
             },
         ],
         [],
     );
-const handleDelete=async(id)=>{
-    try {
-        const resp=await axiosPrivate({
-            ...apiSummary.crm.deleteLead(id)
-        })
-        toast.success("Lead Deleted SuccussFully");
-        refetchData()
-        setCurrentPage(1);
-    } catch (error) {
-        toast.error("Delation Failed")
-    }
-}
-const handleMultipleDelete=async()=>{
-     if(selectMultipleLead.length<=0)
+const handleDelete=async()=>{
+    if(selectMultipleLead.length<=0)
     {
         return
     }
@@ -270,14 +255,14 @@ const handleMultipleDelete=async()=>{
                     <BreadCrumb />
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="flex items-center" onClick={() => setFilterModelOpen(true)}>
+                    <div onClick={() => setFilterModelOpen(true)}>
                         <Tooltip text={"Filter"}>
                             <LuFilter />
                         </Tooltip>
                     </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="primary">
+                            <Button variant="outline">
                                 Actions <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -360,7 +345,7 @@ const handleMultipleDelete=async()=>{
 
             <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-4">
                 <div className="text-sm text-gray-600">
-                    Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredLeads.length)} of {totalRecord} results
+                    Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredLeads.length)} of {filteredLeads.length} results
                 </div>
                 <div className="flex items-center gap-2">
                     <Button

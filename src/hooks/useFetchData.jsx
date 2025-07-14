@@ -9,18 +9,21 @@ const useFetchData = (urldata) => {
             const resp=await axiosPrivate({
                 ...urldata
             })
+           if(resp?.data?.length>0)
+           {
             setData(resp?.data)
+           }
+           else{
+            setData([])
+           }
         } catch (error) {
             console.log(error)
         }
     }
     useEffect(()=>{
         fetchData()
-    },[refresh])
-    const refetchData=()=>{
-        setRefresh(!refresh)
-    }
-  return [data,refetchData];
+    },[])
+  return [data,refresh.setRefresh];
 }
 
 export default useFetchData
