@@ -101,7 +101,7 @@ export default function WorkflowPage() {
               <div className="relative">
                   <DropdownMenu className={"bg-blue-200"}>
                       <DropdownMenuTrigger asChild>
-                          <Button variant="outline">
+                          <Button variant="primary">
                               Modules <ChevronDown className="ml-2 h-4 w-4" />
                           </Button>
                       </DropdownMenuTrigger>
