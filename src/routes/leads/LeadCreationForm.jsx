@@ -68,30 +68,30 @@ const LeadCreationForm = () => {
         //toast.info("Form reset to default values");
     };
 
-    const saveLead = async () => {
-        try {
-          const formdata = new FormData();
-          Object.entries(formData).map((el) => {
-              formdata.append(el[0], el[1]);
-          });
-          const resp=await axiosPrivate({
-            ...apiSummary.createLeads
-          })
+    // const saveLead = async () => {
+    //     try {
+    //       const formdata = new FormData();
+    //       Object.entries(formData).map((el) => {
+    //           formdata.append(el[0], el[1]);
+    //       });
+    //       const resp=await axiosPrivate({
+    //         ...apiSummary.createLeads
+    //       })
 
-            const data = await response.json();
+    //         const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error("Failed to save lead");
-            }
-            toast.success("Lead saved successfully!");
-            console.log("Lead Saved:", data);
-            return true;
-        } catch (error) {
-            toast.error(error.message || "Failed to save lead. Please try again.");
-            console.error("Error saving lead:", error);
-            return false;
-        }
-    };
+    //         if (!response.ok) {
+    //             throw new Error("Failed to save lead");
+    //         }
+    //         toast.success("Lead saved successfully!");
+    //         console.log("Lead Saved:", data);
+    //         return true;
+    //     } catch (error) {
+    //         toast.error(error.message || "Failed to save lead. Please try again.");
+    //         console.error("Error saving lead:", error);
+    //         return false;
+    //     }
+    // };
 
     const convertLead = async () => {
         try {
@@ -124,27 +124,21 @@ const LeadCreationForm = () => {
     const handleSubmit = async (e,ref) => {
         e.preventDefault();
       try {
-        console.log(formData)
-          const formdata = new FormData();
-          Object.entries(formData).map((el) => {
-              formdata.append(el[0], el[1]);
-          });
+        // console.log(formData)
+        //   const formdata = new FormData();
+        //   Object.entries(formData).map((el) => {
+        //       formdata.append(el[0], el[1]);
+        //   });
           const resp=await axiosPrivate({
-            ...apiSummary.createLeads
+            ...apiSummary.crm.createLead,
+            data:formData
           })
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error("Failed to save lead");
-            }
             toast.success("Lead saved successfully!");
             if(ref==="save")
             {
                 navigate("/leads")
             }
             resetForm()
-            console.log("Lead Saved:", data);
         } catch (error) {
             toast.error(error.message || "Failed to save lead. Please try again.");
             console.error("Error saving lead:", error);
