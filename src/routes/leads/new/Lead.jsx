@@ -50,6 +50,8 @@ import { EmailComposer } from "../../../components/shared/EmailComposer";
 import { axiosPrivate } from "../../../utils/axios";
 import BreadCrumb from "../../../components/BreadCrumb";
 import toast from "react-hot-toast";
+import DeleteConfirmationDialog from "../../../components/ConfirmDeleteModel";
+import StatusBadge from "../../../components/StatusBadge";
 export default function LeadPage() {
     const [leads, setLeads] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -64,8 +66,12 @@ export default function LeadPage() {
     const [isMassEmail, setIsMassEmail] = useState(false);
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+const [leadToDelete, setLeadToDelete] = useState(null);
+const [isDeleting, setIsDeleting] = useState(false);
 
-    const [leadsData,refetchData] = useFetchData(apiSummary.crm.getLeads)
+
+    const [leadsData,refetchData,loading] = useFetchData(apiSummary.crm.getLeads)
 
     useEffect(() => {
         setLeads(leadsData?.data?.data || []);
@@ -174,6 +180,12 @@ export default function LeadPage() {
             {
                 accessorKey: "leadStatus",
                 header: "Status",
+                cell: ({ row }) => {
+                    
+                    const lead = row.original;
+                    return (
+                    <StatusBadge status={lead.leadStatus}/>
+                )}
             },
             {
                 id: "actions",
@@ -181,24 +193,13 @@ export default function LeadPage() {
                 cell: ({ row }) => {
                     const lead = row.original;
                      return (
-                    <div className="flex items-center justify-center gap-1">
+                    <div className="flex items-center justify-center gap-3">
                         <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
-                            className="h-8 w-8 p-0"
-                            onClick={() => {
-                                setSelectSingleLead([row.original]);
-                                setEmailModel(true);
-                            }}
+                            className={"hover:bg-primary hover:text-white"}
                         >
-                            <Mail className="h-4 w-4 text-gray-600" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                        >
-                            <Phone className="h-4 w-4 text-gray-600" />
+                           Convert
                         </Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -219,7 +220,21 @@ export default function LeadPage() {
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={()=>handleDelete(lead.id)}>
+                                 <DropdownMenuItem>
+                                   <Phone className=" mr-2 h-4 w-4" />
+                                    Phone
+                                </DropdownMenuItem>
+                                 <DropdownMenuItem  onClick={() => {
+                                setSelectSingleLead([row.original]);
+                                setEmailModel(true);
+                            }}>
+                                    <Mail className="mr-2 h-4 w-4 " />
+                                    Mail
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+        setLeadToDelete(lead);
+        setShowConfirmDelete(true);
+    }}>
                                     <Trash2 className="mr-2 h-4 w-4 text-red-600" />
                                     Delete
                                 </DropdownMenuItem>
@@ -356,6 +371,7 @@ const handleMultipleDelete=async()=>{
             <Table
                 columns={columns}
                 data={currentLeads}
+                loading={loading}
             />
 
             <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-4">
@@ -402,6 +418,20 @@ const handleMultipleDelete=async()=>{
                     />
                 </Model>
             )}
+            <DeleteConfirmationDialog
+    open={showConfirmDelete}
+    setOpen={setShowConfirmDelete}
+    isLoading={isDeleting}
+    title={`Delete ${leadToDelete?.firstName} ${leadToDelete?.lastName}?`}
+    description="This lead will be permanently deleted. Are you sure?"
+    onConfirm={async () => {
+        setIsDeleting(true);
+        await handleDelete(leadToDelete.id);
+        setIsDeleting(false);
+        setShowConfirmDelete(false);
+    }}
+/>
+
         </div>
     );
 }

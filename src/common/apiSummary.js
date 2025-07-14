@@ -30,7 +30,13 @@ export const apiSummary={
           url:`crm/leads/${id}`,
           method:"delete",
         }
-      }
-    }
+      },
+      //contacts
+      getContacts:
+      {
+        url:"crm/contacts",
+        method:"get"
+      },
+    },
 
 }

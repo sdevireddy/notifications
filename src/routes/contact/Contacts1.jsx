@@ -44,69 +44,45 @@ import Tooltip from "../../components/ToolTip";
 import Table from "../../components/Table";
 import { EmailComposer } from "../../components/shared/EmailComposer";
 import BreadCrumb from "../../components/BreadCrumb";
+import useFetchData from "../../hooks/useFetchData";
+import { apiSummary } from "../../common/apiSummary";
 export default function ContactPage() {
-    const [leads, setLeads] = useState([]);
+    const [contacts, setContacts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [recordsPerPage, setRecordsPerPage] = useState("25");
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectMultipleLead, setSelectMultipleLead] = useState([]);
-    const [selectSingleLead, setSelectSingleLead] = useState([]);
+    const [selectMultipleContacts, setSelectMultipleContacts] = useState([]);
+    const [selectSingleContact, setSelectSingleContact] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-    const [filteredLeads, setFilteredLeads] = useState([]);
+    const [filteredContacts, setFilteredContacts] = useState([]);
     const [totalRecord, setTotalRecords] = useState(0);
     const [emailModel, setEmailModel] = useState(false);
     const [isMassEmail, setIsMassEmail] = useState(false);
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
 
-    const leadsData = {
-        totalRecords: 2,
-        data: [
-            {
-                id: 1,
-                leadOwner: "sales_user1",
-                company: "Tech Innovations Pvt Ltd",
-                firstName: "Jane",
-                lastName: "Smith",
-                title: "Marketing Manager",
-                email: "jane.smith@ab.com",
-                mobile: "+91-9876543210",
-                leadStatus: "New",
-            },
-            {
-                id: 2,
-                leadOwner: "sales_user1",
-                company: "Tech Innovations Pvt Ltd",
-                firstName: "Praveen",
-                lastName: "Smith",
-                title: "Marketing Manager",
-                email: "jane.smith@example.com",
-                mobile: "+91-9876543210",
-                leadStatus: "New",
-            },
-        ],
-    };
+    const [constactData,refetchContacts,loading] = useFetchData(apiSummary.crm.getContacts);
 
-    useEffect(() => {
-        setLeads(leadsData.data);
-        setFilteredLeads(leadsData.data);
-        setTotalRecords(leadsData.totalRecords);
+      useEffect(() => {
+        setContacts(constactData?.data || []);
+        setFilteredContacts(constactData?.data|| []);
+        setTotalRecords(constactData?.totalRecords);
         setCurrentPage(1);
-    }, []);
+    }, [constactData]);
 
     useEffect(() => {
         const term = searchTerm.toLowerCase();
-        setFilteredLeads(
-            leads.filter(
-                (lead) =>
-                    lead.firstName.toLowerCase().includes(term) ||
-                    lead.company.toLowerCase().includes(term) ||
-                    lead.email.toLowerCase().includes(term) ||
-                    lead.mobile.toLowerCase().includes(term),
+        setFilteredContacts(
+            contacts.filter(
+                (contact) =>
+                    contact.firstName.toLowerCase().includes(term) ||
+                    contact.company.toLowerCase().includes(term) ||
+                    contact.email.toLowerCase().includes(term) ||
+                    contact.mobile.toLowerCase().includes(term),
             ),
         );
         setCurrentPage(1);
-    }, [searchTerm,leads]);
+    }, [searchTerm]);
 
     const recordsPerPageValue = parseInt(recordsPerPage);
     const indexOfLastRecord = currentPage * recordsPerPageValue;
@@ -114,17 +90,16 @@ export default function ContactPage() {
     const totalPages = Math.ceil(totalRecord / recordsPerPageValue);
 
     const handleContactSelect = (lead) => {
-        setSelectMultipleLead((prev) => (prev.some((item) => item.id === lead.id) ? prev.filter((item) => item.id !== lead.id) : [...prev, lead]));
+        setSelectMultipleContacts((prev) => (prev.some((item) => item.id === lead.id) ? prev.filter((item) => item.id !== lead.id) : [...prev, lead]));
     };
 
     const handleSelectAll = () => {
-        setSelectMultipleLead(selectMultipleLead.length === leadsData.data.length ? [] : leadsData.data);
+        setSelectMultipleContacts(selectMultipleContacts.length === constactData.data.length ? [] : constactData.data);
     };
 
     const handleSort = (key) => {
         setSortConfig((prev) => (prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }));
     };
-const currentContacts=filteredLeads
     const columns = useMemo(
         () => [
             {
@@ -143,8 +118,8 @@ const currentContacts=filteredLeads
                         checked={row.getIsSelected()}
                         onCheckedChange={(value) => {
                             row.toggleSelected(!!value);
-                            let lead = row.original;
-                            handleContactSelect(lead);
+                            let contact = row.original;
+                            handleContactSelect(contact);
                         }}
                     />
                 ),
@@ -338,12 +313,13 @@ const currentContacts=filteredLeads
 
             <Table
                 columns={columns}
-                data={currentContacts}
+                data={filteredContacts}
+                loading={loading}
             />
 
             <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-4">
                 <div className="text-sm text-gray-600">
-                    Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredLeads.length)} of {filteredLeads.length} results
+                    Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredContacts.length)} of {totalRecord} results
                 </div>
                 <div className="flex items-center gap-2">
                     <Button
