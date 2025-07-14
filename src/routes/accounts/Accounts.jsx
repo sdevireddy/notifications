@@ -248,14 +248,14 @@ const currentContacts=filteredLeads
                     <BreadCrumb />
                 </div>
                 <div className="flex items-center gap-3">
-                    <div onClick={() => setFilterModelOpen(true)}>
+                    <div  className="flex items-center" onClick={() => setFilterModelOpen(true)}>
                         <Tooltip text={"Filter"}>
                             <LuFilter />
                         </Tooltip>
                     </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
+                            <Button variant="primary">
                                 Actions <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
