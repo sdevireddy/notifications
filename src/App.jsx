@@ -39,6 +39,13 @@ import Leave from "./routes/HR/leave/Leave";
 import Performance from "./routes/HR/performance/Performance";
 import EmailTemplate from "./routes/emailtemplate/EmailTemplate";
 import ApplyLeavePage from "./routes/HR/leave/Applyleave";
+import MarketingDashboard from "./routes/Marketing/MarketingDashboard";
+import EmailMarketing from "./routes/Marketing/emailmarketing/EmailMarketing";
+import SmsMarketing from "./routes/Marketing/smsmarketing/SmsMarketing";
+import SocialMediaMarketing from "./routes/Marketing/socialmediamarketing/SocialMediaMarketing";
+import CreateEmailCampaign from "./routes/Marketing/emailmarketing/CreateEmailCampaign";
+import TemplateCreation from "./routes/Marketing/emailmarketing/TemplateCreation";
+
 
 const router = createBrowserRouter([
   {
@@ -85,6 +92,16 @@ const router = createBrowserRouter([
               { path: "leave", element: <Leave /> },
               { path: "apply-leave", element: <ApplyLeavePage />},
               { path: "performance", element: <Performance /> },
+            ],
+          },
+          {
+            path: "marketing",
+            children: [
+              { path: "", element: <MarketingDashboard /> },
+              { path: "emailmarketing", element: <EmailMarketing /> },
+              { path: "email-campaigns/create", element: <CreateEmailCampaign /> },
+              { path: "SocialMediaMarketing", element: <SmsMarketing /> },
+              { path: "SmsMarketing", element: <SmsMarketing /> },
             ],
           },
         ],
