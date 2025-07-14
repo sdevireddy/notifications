@@ -8,42 +8,43 @@ import { Suspense, lazy } from "react";
 import Settings from "./routes/settings/Settings";
 import TemplateDisplay from "./routes/emailtemplate/templateDisplay";
 import ViewFullTemplate from "./routes/emailtemplate/ViewFullTemplate";
+import Roles from "./routes/roles/Roles";
+import CreateRole from "./routes/roles/CreateRole";
+import Login from "./routes/login/Login";
+import Register from "./routes/Register/Register";
 
-// Lazy Imports
-const Leads = lazy(() => import("@/routes/leads/Leads"));
-const LeadPage = lazy(() => import("./routes/leads/new/Lead"));
-const LeadCreationForm = lazy(() => import("./routes/leads/LeadCreationForm"));
-const ViewLeadPage = lazy(() => import("./routes/leads/ViewLeadPage"));
-const EditLead = lazy(() => import("./routes/leads/EditLead"));
-const Users = lazy(() => import("./routes/users/Users"));
-const Contacts1 = lazy(() => import("./routes/contact/Contacts1"));
-const ContactCreationForm = lazy(() => import("./routes/contact/ContactCreationForm"));
-const DealsPage = lazy(() => import("./routes/deals/Deals"));
-const DealCreationForm = lazy(() => import("./routes/deals/DealCreationForm"));
-const WorkflowPage = lazy(() => import("./routes/workflow/WorkFlow"));
-const WorkflowBuilder = lazy(() => import("./routes/workflow/form/WorkflowRuleForm"));
-const Accounts = lazy(() => import("./routes/accounts/Accounts"));
-const AccountCreationForm = lazy(() => import("./routes/accounts/AccountCreationForm"));
-const CRMSelectionImport = lazy(() => import("./routes/import/Import"));
-const DataMigrationUpload = lazy(() => import("./routes/import/DataMigration"));
-const HrDashboard = lazy(() => import("./routes/HR/HrDashboard"));
-const Employee = lazy(() => import("./routes/HR/employee/Employee"));
-const Attendance = lazy(() => import("./routes/HR/attendance/Attendance"));
-const Payroll = lazy(() => import("./routes/HR/payroll/Payroll"));
-const Recruitment = lazy(() => import("./routes/HR/recruitments/Recruitment"));
-const Leave = lazy(() => import("./routes/HR/leave/Leave"));
-const Performance = lazy(() => import("./routes/HR/performance/Performance"));
-const EmailTemplate = lazy(() => import("./routes/emailtemplate/EmailTemplate"));
-const Login = lazy(() => import("./routes/login/Login"));
-const Register = lazy(() => import("./routes/Register/Register"));
-const MarketingDashboard = lazy(()=>import("./routes/Marketing/MarketingDashboard"));
-const EmailMarketing = lazy(()=>import("./routes/Marketing/emailmarketing/EmailMarketing"));
-const SmsMarketing = lazy(()=>import("./routes/Marketing/smsmarketing/SmsMarketing"));
-const SocialMediaMarketing= lazy(()=>import("./routes/Marketing/socialmediamarketing/SocialMediaMarketing"));
-const CreateEmailCampaign = lazy(()=>import("./routes/Marketing/emailmarketing/CreateEmailCampaign"));
-const TemplateCreation = lazy(()=>import("./routes/Marketing/emailmarketing/TemplateCreation"));
-
-
+// Eager Imports (no lazy loading)
+import Leads from "@/routes/leads/Leads";
+import LeadPage from "./routes/leads/new/Lead";
+import LeadCreationForm from "./routes/leads/LeadCreationForm";
+import ViewLeadPage from "./routes/leads/ViewLeadPage";
+import EditLead from "./routes/leads/EditLead";
+import Users from "./routes/users/Users";
+import Contacts1 from "./routes/contact/Contacts1";
+import ContactCreationForm from "./routes/contact/ContactCreationForm";
+import DealsPage from "./routes/deals/Deals";
+import DealCreationForm from "./routes/deals/DealCreationForm";
+import WorkflowPage from "./routes/workflow/WorkFlow";
+import WorkflowBuilder from "./routes/workflow/form/WorkflowRuleForm";
+import Accounts from "./routes/accounts/Accounts";
+import AccountCreationForm from "./routes/accounts/AccountCreationForm";
+import CRMSelectionImport from "./routes/import/Import";
+import DataMigrationUpload from "./routes/import/DataMigration";
+import HrDashboard from "./routes/HR/HrDashboard";
+import Employee from "./routes/HR/employee/Employee";
+import Attendance from "./routes/HR/attendance/Attendance";
+import Payroll from "./routes/HR/payroll/Payroll";
+import Recruitment from "./routes/HR/recruitments/Recruitment";
+import Leave from "./routes/HR/leave/Leave";
+import Performance from "./routes/HR/performance/Performance";
+import EmailTemplate from "./routes/emailtemplate/EmailTemplate";
+import ApplyLeavePage from "./routes/HR/leave/Applyleave";
+import MarketingDashboard from "./routes/Marketing/MarketingDashboard";
+import EmailMarketing from "./routes/Marketing/emailmarketing/EmailMarketing";
+import SmsMarketing from "./routes/Marketing/smsmarketing/SmsMarketing";
+import SocialMediaMarketing from "./routes/Marketing/socialmediamarketing/SocialMediaMarketing";
+import CreateEmailCampaign from "./routes/Marketing/emailmarketing/CreateEmailCampaign";
+import TemplateCreation from "./routes/Marketing/emailmarketing/TemplateCreation";
 
 
 const router = createBrowserRouter([
@@ -78,6 +79,8 @@ const router = createBrowserRouter([
           { path: "templates", element: <TemplateDisplay /> },
           { path: "templates/:id", element: <ViewFullTemplate /> },
           { path: "templates/create", element: <EmailTemplate /> },
+          { path: "roles", element: <Roles /> },
+           { path: "roles/create", element: <CreateRole /> },
           {
             path: "hr",
             children: [
@@ -87,6 +90,7 @@ const router = createBrowserRouter([
               { path: "payroll", element: <Payroll /> },
               { path: "recruitment", element: <Recruitment /> },
               { path: "leave", element: <Leave /> },
+              { path: "apply-leave", element: <ApplyLeavePage />},
               { path: "performance", element: <Performance /> },
             ],
           },
@@ -110,10 +114,10 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <ThemeProvider storageKey="theme">
+    <div>
         <RouterProvider router={router} />
         <Toaster />
-    </ThemeProvider>
+    </div>
   );
 }
 
