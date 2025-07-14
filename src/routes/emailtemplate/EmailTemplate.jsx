@@ -6,6 +6,8 @@ import { Canvas } from "../../components/email/Canvas";
 import { Preview } from "../../components/email/Preview";
 import { generateHTML, generateJSON } from "../../utils/email";
 import { sampleTemplate } from "../../utils/sampleTemplate";
+import { forwardRef, useImperativeHandle } from "react";
+
 
 export default function EmailBuilder() {
   const [blocks, setBlocks] = useState([]);
@@ -22,6 +24,24 @@ export default function EmailBuilder() {
     };
     setBlocks((prev) => [...prev, newBlock]);
   }, []);
+
+  const EmailBuilder = forwardRef((props, ref) => {
+  const [blocks, setBlocks] = useState([]);
+  const [selectedBlockId, setSelectedBlockId] = useState(null);
+  const [activeTab, setActiveTab] = useState("builder");
+   useImperativeHandle(ref, () => ({
+    loadTemplateBlocks: (templateBlocks) => {
+      setBlocks(templateBlocks);
+      setSelectedBlockId(null); // Optional: clear selection
+    },
+    getExportData: () => ({
+      html: generateHTML(blocks),
+      json: generateJSON(blocks),
+    }),
+  }));
+
+  // ... rest of builder code ...
+});
 
   const updateBlock = useCallback((id, updates) => {
     setBlocks((prev) => prev.map((block) => (block.id === id ? { ...block, ...updates } : block)));
