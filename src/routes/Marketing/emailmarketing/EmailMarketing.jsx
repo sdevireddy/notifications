@@ -1,5 +1,3 @@
-// email-campaigns/index.jsx
-
 "use client";
 import {
   Mail,
@@ -9,15 +7,24 @@ import {
   Trash2,
   Edit,
   FileText,
-  ChevronDown,
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Table from "@/components/Table";
-import Tooltip from "@/components/ToolTip";
 import { useNavigate } from "react-router-dom";
 
 export default function EmailMarketing() {
@@ -87,6 +94,19 @@ export default function EmailMarketing() {
       {
         accessorKey: "status",
         header: "Status",
+        cell: ({ getValue }) => {
+          const status = getValue();
+          const colorMap = {
+            Sent: "text-green-600",
+            Scheduled: "text-blue-600",
+            Draft: "text-yellow-600",
+          };
+          return (
+            <span className={`text-xs font-medium ${colorMap[status] || "text-gray-600"}`}>
+              {status}
+            </span>
+          );
+        },
       },
       {
         accessorKey: "sentOn",
@@ -98,11 +118,11 @@ export default function EmailMarketing() {
       },
       {
         accessorKey: "openRate",
-        header: "Opens",
+        header: "Open Rate",
       },
       {
         accessorKey: "clickRate",
-        header: "Clicks",
+        header: "Click Rate",
       },
       {
         id: "actions",
@@ -124,11 +144,11 @@ export default function EmailMarketing() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => console.log("Edit", row.original.id)}>
                   <Edit className="mr-2 h-4 w-4" />
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => console.log("Delete", row.original.id)}>
                   <Trash2 className="mr-2 h-4 w-4 text-red-600" />
                   Delete
                 </DropdownMenuItem>
@@ -143,6 +163,7 @@ export default function EmailMarketing() {
 
   return (
     <div className="min-h-screen flex-1 bg-white">
+      {/* Header */}
       <div className="flex items-center justify-between border-b px-6 py-4">
         <h1 className="text-2xl font-semibold text-gray-900">Email Campaigns</h1>
         <div className="flex items-center gap-3">
@@ -155,6 +176,7 @@ export default function EmailMarketing() {
         </div>
       </div>
 
+      {/* Controls */}
       <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-4">
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -182,8 +204,16 @@ export default function EmailMarketing() {
         </div>
       </div>
 
-      <Table columns={columns} data={currentCampaigns} />
+      {/* Table */}
+      {currentCampaigns.length > 0 ? (
+        <Table columns={columns} data={currentCampaigns} />
+      ) : (
+        <div className="flex items-center justify-center py-10 text-gray-500">
+          No campaigns match your search.
+        </div>
+      )}
 
+      {/* Pagination */}
       <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-4">
         <div className="text-sm text-gray-600">
           Showing {indexOfFirst + 1} to {Math.min(indexOfLast, filtered.length)} of {filtered.length} results
