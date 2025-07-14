@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Pencil, Plus } from 'lucide-react';
+import { ArrowDown, ArrowRight, ChevronDown, ChevronRight, Pencil, Plus } from 'lucide-react';
 import BreadCrumb from '../../components/BreadCrumb'
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/layout/ui/button';
@@ -34,8 +34,8 @@ const rolesData = [
   },
 ];
 
-const RoleNode = ({ role }) => {
-  const [isOpen, setIsOpen] = useState(true);
+const RoleNode = ({ role,isopen }) => {
+  const [isOpen, setIsOpen] = useState(isopen);
 
   return (
     <div className="ml-4">
@@ -45,11 +45,11 @@ const RoleNode = ({ role }) => {
       >
         <div className="flex items-center gap-2">
           {role.children.length > 0 ? (
-            isOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />
+            isOpen ? <ArrowDown size={18} className='text-primary'/> : <ArrowRight size={18} />
           ) : (
             <span className="w-[18px]" />
           )}
-          <span className="font-medium text-gray-800">{role.name}</span>
+          <span className="font-semibold text-gray-800">{role.name}</span>
         </div>
 
         {/* Show only on hover of this specific item */}
@@ -68,7 +68,7 @@ const RoleNode = ({ role }) => {
       {isOpen && role.children.length > 0 && (
         <div className="ml-4 border-l border-gray-300 pl-3 mt-1">
           {role.children.map((child, index) => (
-            <RoleNode key={index} role={child} />
+            <RoleNode key={index} role={child} isopen={false}/>
           ))}
         </div>
       )}
@@ -95,7 +95,7 @@ const RolesPage = () => {
 
       <div className="px-6 py-4">
         {rolesData.map((role, index) => (
-          <RoleNode key={index} role={role} />
+          <RoleNode key={index} role={role} isopen={true}/>
         ))}
       </div>
     </div>
