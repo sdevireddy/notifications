@@ -1,21 +1,21 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Button } from "../../../components/ui/button";
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
   SelectValue,
-} from "@/components/ui/select";
+} from "../../../components/ui/select";
 import toast from "react-hot-toast";
-import { Calendar } from "@/components/ui/calendar";
 import TemplateSelectModal from "../emailmarketing/TemplateSelectModal";
 import EmailBuilder from "../../emailtemplate/EmailTemplate";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Calendar from "../../../components/ui/Calendar";
 export default function CreateEmailCampaign() {
   const emailBuilderRef = useRef(); // for accessing builder methods
 

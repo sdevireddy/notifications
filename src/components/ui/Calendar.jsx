@@ -3,7 +3,7 @@ import { DayPicker } from "react-day-picker"
 import "react-day-picker/dist/style.css"
 import { cn } from "../../utils/cn"
 
-export function Calendar({
+export default function Calendar({
   className,
   classNames,
   showOutsideDays = true,
