@@ -14,7 +14,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import useFetchData from "../../hooks/useFetchData";
 import { apiSummary } from "../../common/apiSummary";
 import { axiosPrivate } from "@/utils/axios";
-import BreadCrumb from './../../components/BreadCrumb';
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
