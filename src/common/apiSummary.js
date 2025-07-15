@@ -38,12 +38,21 @@ export const apiSummary={
         url:"crm/contacts",
         method:"get"
       },
+       createContacts:{
+        url:"crm/contacts/create",
+        method:"post"
+      },
       //deals
       getDeals:
       {
         url:"crm/deals",
         method:"get"
+      },
+      createDeals:{
+        url:"crm/deals/create",
+        method:"post"
       }
+
     },
 
 }
