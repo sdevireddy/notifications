@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiCamera, FiUser, FiMail, FiBriefcase, FiMapPin, FiArrowLeft } from "react-icons/fi";
-
-
-const ContactCreationForm = () => {
-  const navigate = useNavigate();
-  const [contactImage, setContactImage] = useState(null);
-  const [formData, setFormData] = useState({
+import toast from "react-hot-toast";
+import { axiosPrivate } from "../../utils/axios";
+import { apiSummary } from "../../common/apiSummary";
+const initalValues={
     // Basic Information
     contactOwner:"",
     firstName: "",
@@ -28,7 +26,12 @@ const ContactCreationForm = () => {
     country: "",
     // Description
     description: "",
-  });
+  }
+
+const ContactCreationForm = () => {
+  const navigate = useNavigate();
+  const [contactImage, setContactImage] = useState(null);
+  const [formData, setFormData] = useState(initalValues);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -47,15 +50,32 @@ const ContactCreationForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e,ref) => {
     e.preventDefault();
-    console.log("Submitted", formData);
-    // Handle form submission here
+    try {
+        const resp=await axiosPrivate({
+            ...apiSummary.crm.createContacts,
+            data:formData
+        })
+        toast.success("Contact Created Successfully")
+        if(ref==="save")
+        {
+            navigate("/contacts")
+        }
+        resetForm()
+    } catch (error) {
+        toast.error("Contact Creation Failed")
+        console.log(error)
+    }
   };
+   const resetForm = () => {
+        setFormData(initalValues);
+        setContactImage(null);
+    };
 
   return (
     <div className="container mx-auto">
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md">
+      <form className="bg-white rounded-lg shadow-md">
         {/* Header with Left Arrow Button, Contact Image, "Create Contact" text and action buttons */}
         <div className="flex items-center justify-between border-b p-4">
           <div className="flex items-center gap-3">
@@ -93,7 +113,7 @@ const ContactCreationForm = () => {
                         <button
                             type="submit"
                             className="rounded  px-4 py-2 hover:bg-gray-100 border border-primary transition-all ease-in-out duration-200 shadow-md"
-                            onClick={() => (submitActionRef.current = "saveAndNew")}
+                            onClick={(e) =>handleSubmit(e,"saveAndNew")}
                         >
                             Save And New
                         </button>
@@ -101,7 +121,7 @@ const ContactCreationForm = () => {
                         <button
                             type="submit"
                             className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover shadow-sm"
-                            onClick={() => (submitActionRef.current = "save")}
+                             onClick={(e) =>handleSubmit(e,"save")}
                         >
                             Save
                         </button>

@@ -24,7 +24,7 @@ export const ScrollToTop = () => {
 const Layout = () => {
     const isDesktopDevice = useMediaQuery("(min-width: 768px)");
     const [collapsed, setCollapsed] = useState(true);
-    const [activeModule, setActiveModule] = useState("CRM"); // Stores the selected module
+    const [activeModule, setActiveModule] = useState(localStorage.getItem("active_module") || "CRM");
 
     const sidebarRef = useRef(null);
 
