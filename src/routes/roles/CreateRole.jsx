@@ -1,202 +1,156 @@
-"use client";
-
 import React, { useState } from "react";
-import { Button } from "../../components/layout/ui/button";
-import BreadCrumb from "../../components/BreadCrumb";
-import { Input } from "../../components/layout/ui/input";
+import { useNavigate } from "react-router-dom";
+import { FiArrowLeft, FiUser } from "react-icons/fi";
+import { toast } from "react-toastify";
 
-const MODULES_DATA = {
-  leads: {
-    name: "Leads",
-    permissions: [
-      { id: "view_leads", label: "View Leads" },
-      { id: "create_lead", label: "Create Lead" },
-      { id: "edit_lead", label: "Edit Lead" },
-      { id: "delete_lead", label: "Delete Lead" },
-    ],
-  },
-  deals: {
-    name: "Deals",
-    permissions: [
-      { id: "view_deals", label: "View Deals" },
-      { id: "create_deal", label: "Create Deal" },
-      { id: "edit_deal", label: "Edit Deal" },
-      { id: "delete_deal", label: "Delete Deal" },
-    ],
-  },
-  contacts: {
-    name: "Contacts",
-    permissions: [
-      { id: "view_contacts", label: "View Contacts" },
-      { id: "create_contact", label: "Create Contact" },
-      { id: "edit_contact", label: "Edit Contact" },
-      { id: "delete_contact", label: "Delete Contact" },
-    ],
-  },
-  users: {
-    name: "Users",
-    permissions: [
-      { id: "view_users", label: "View Users" },
-      { id: "create_user", label: "Create User" },
-      { id: "edit_user", label: "Edit User" },
-      { id: "delete_user", label: "Delete User" },
-    ],
-  },
-  reports: {
-    name: "Reports",
-    permissions: [
-      { id: "view_reports", label: "View Reports" },
-      { id: "create_report", label: "Create Report" },
-      { id: "edit_report", label: "Edit Report" },
-      { id: "delete_report", label: "Delete Report" },
-    ],
-  },
+const initialFormState = {
+  roleName: "",
+  reportTo: "",
+  description: "",
 };
 
-export default function CreateRoleForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    selectedModules: [],
-    permissions: [],
-  });
+const RoleCreationForm = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState(initialFormState);
 
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleModuleChange = (moduleId, checked) => {
-    setFormData((prev) => {
-      const newSelectedModules = checked
-        ? [...prev.selectedModules, moduleId]
-        : prev.selectedModules.filter((id) => id !== moduleId);
-
-      let newPermissions = prev.permissions;
-      if (!checked) {
-        const modulePermissions = MODULES_DATA[moduleId].permissions.map((p) => p.id);
-        newPermissions = prev.permissions.filter((p) => !modulePermissions.includes(p));
-      }
-
-      return {
-        ...prev,
-        selectedModules: newSelectedModules,
-        permissions: newPermissions,
-      };
-    });
-  };
-
-  const handlePermissionChange = (permissionId, checked) => {
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      permissions: checked
-        ? [...prev.permissions, permissionId]
-        : prev.permissions.filter((id) => id !== permissionId),
+      [name]: value,
     }));
+  };
+
+  const handleReset = () => {
+    setFormData(initialFormState);
+    toast.info("Form reset");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const submitData = {
-      name: formData.name,
-      description: formData.description,
-      permissions: formData.permissions,
-    };
-    console.log("Form Data:", submitData);
+    console.log("Role Data Submitted:", formData);
+    toast.success("Role saved!");
   };
 
   return (
-    <div className="px-4  min-h-screen bg-white">
-      <div className="">
-         <div className="flex items-center justify-between border-b py-4">
-                <div className="flex items-center gap-4">
-                    <h1 className="text-2xl font-semibold text-gray-900">Roles Create</h1>
-                    <BreadCrumb />
-                </div>
-                </div>
-        <form onSubmit={handleSubmit} className="mt-6 space-y-8">
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="roleName" className="block font-medium text-gray-700">Role Name</label>
-              <Input
-                id="roleName"
-                name="name"
-                type="text"
-                placeholder="Enter role name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                
-              />
-            </div>
-
-            <div>
-              <label htmlFor="description" className="block font-medium text-gray-700">Description</label>
-              <Input
-                id="description"
-                name="description"
-                placeholder="Describe the role"
-                value={formData.description}
-                onChange={handleChange}
-                className="p-2 mt-1 block w-full rounded-md resize-none min-h-10 border-gray-400"
-              />
-            </div>
-          </div>
-
-          <hr className="my-4" />
-
-          <div>
-            <h3 className="text-lg font-semibold">Modules</h3>
-            <p className="text-sm text-gray-600 mb-3">Select the modules this role should have access to:</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {Object.entries(MODULES_DATA).map(([moduleId, module]) => (
-                <label key={moduleId} className="flex gap-2">
-                  <input
-                    type="checkbox"
-                    checked={formData.selectedModules.includes(moduleId)}
-                    onChange={(e) => handleModuleChange(moduleId, e.target.checked)}
-                  />
-                  <span className="text-sm">{module.name}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {formData.selectedModules.length > 0 && (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold">Permissions</h3>
-              {formData.selectedModules.map((moduleId) => {
-                const module = MODULES_DATA[moduleId];
-                return (
-                  <div key={moduleId} className="border rounded-md p-4 bg-white shadow">
-                    <strong className="text-gray-800 block mb-2">{module.name} Permissions</strong>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {module.permissions.map((permission) => (
-                        <label key={permission.id} className="flex gap-3">
-                          <input
-                            type="checkbox"
-                            checked={formData.permissions.includes(permission.id)}
-                            onChange={(e) => handlePermissionChange(permission.id, e.target.checked)}
-                          />
-                          <span className="text-sm">{permission.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          <div className="pt-4">
-            <Button
-              type="submit"
-              className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+    <div className="w-full text-sm">
+      <form className="rounded-lg bg-white shadow-md" onSubmit={handleSubmit}>
+        {/* Header */}
+        <div className="flex items-center justify-between border-b p-3 sticky top-0 bg-white">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              type="button"
+              className="rounded p-2 hover:bg-gray-200"
             >
-              Create Role
-            </Button>
+              <FiArrowLeft size={20} />
+            </button>
+            <h2 className="text-xl font-bold">Create Role</h2>
           </div>
-        </form>
-      </div>
+
+          <div className="grid md:grid-cols-2 gap-3 text-sm">
+            <button
+              type="button"
+              className="rounded border border-primary px-4 py-2 hover:bg-gray-100 transition"
+              onClick={handleReset}
+            >
+              Reset
+            </button>
+            <button
+              type="submit"
+              className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover shadow"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+
+        {/* Role Info Section */}
+        <Section title="Role Information" icon={<FiUser />}>
+          <Input
+            label="Role Name"
+            name="roleName"
+            value={formData.roleName}
+            onChange={handleChange}
+            required
+          />
+          <Select
+            label="Report To"
+            name="reportTo"
+            value={formData.reportTo}
+            onChange={handleChange}
+            options={["Admin", "Manager", "Supervisor"]}
+            required
+          />
+          <div className="col-span-full">
+            <label htmlFor="description" className="block text-gray-700">
+              Description
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              rows="4"
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full rounded border border-gray-300 p-2"
+            />
+          </div>
+        </Section>
+      </form>
     </div>
   );
-}
+};
+
+// Reusable Section
+const Section = ({ title, icon, children }) => (
+  <div className="mb-4 rounded border p-4">
+    <h3 className="mb-4 flex items-center gap-2 border-b pb-1 text-lg font-semibold">
+      {icon} {title}
+    </h3>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">{children}</div>
+  </div>
+);
+
+// Reusable Input
+const Input = ({ label, name, type = "text", value, onChange, required = false }) => (
+  <div>
+    <label htmlFor={name} className="block text-gray-700">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <input
+      id={name}
+      name={name}
+      type={type}
+      value={value}
+      onChange={onChange}
+      required={required}
+      className="w-full rounded border-blue-400 p-2 border"
+    />
+  </div>
+);
+
+// Reusable Select
+const Select = ({ label, name, value, onChange, options = [], required = false }) => (
+  <div>
+    <label htmlFor={name} className="block text-gray-700">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <select
+      id={name}
+      name={name}
+      value={value}
+      onChange={onChange}
+      required={required}
+      className="w-full rounded border-blue-400 p-2 border"
+    >
+      <option value="">Select {label}</option>
+      {options.map((opt) => (
+        <option key={opt} value={opt}>
+          {opt}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
+export default RoleCreationForm;

@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import FiltersPopUp from "./FiltersPopup"
 import {
     Filter,
     ChevronDown,
@@ -276,14 +277,14 @@ const currentContacts=filteredLeads
                     <BreadCrumb />
                 </div>
                 <div className="flex items-center gap-3">
-                    <div onClick={() => setFilterModelOpen(true)}>
+                    <div  className="flex items-center" onClick={() => setFilterModelOpen(true)}>
                         <Tooltip text={"Filter"}>
                             <LuFilter />
                         </Tooltip>
                     </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
+                            <Button variant="primary">
                                 Actions <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
