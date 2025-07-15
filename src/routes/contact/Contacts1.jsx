@@ -76,7 +76,7 @@ export default function ContactPage() {
             contacts.filter(
                 (contact) =>
                     contact.firstName.toLowerCase().includes(term) ||
-                    contact.company.toLowerCase().includes(term) ||
+                    // contact.company.toLowerCase().includes(term) ||
                     contact.email.toLowerCase().includes(term) ||
                     contact.mobile.toLowerCase().includes(term),
             ),
