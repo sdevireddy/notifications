@@ -44,80 +44,37 @@ import Tooltip from "../../components/ToolTip";
 import Table from "../../components/Table";
 import { EmailComposer } from "../../components/shared/EmailComposer";
 import BreadCrumb from "../../components/BreadCrumb";
-export default function ContactPage() {
-    const [leads, setLeads] = useState([]);
+import useFetchData from "../../hooks/useFetchData";
+import { apiSummary } from "../../common/apiSummary";
+import StatusBadge from "../../components/StatusBadge";
+export default function DealsPage() {
+    const [deals, setDeals] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [recordsPerPage, setRecordsPerPage] = useState("25");
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectMultipleLead, setSelectMultipleLead] = useState([]);
-    const [selectSingleLead, setSelectSingleLead] = useState([]);
+    const [selectMultipleDeal, setSelectMultipleDeal] = useState([]);
+    const [selectSingleDeal, setSelectSingleDeal] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-    const [filteredLeads, setFilteredLeads] = useState([]);
+    const [filteredDeals, setFilteredDeals] = useState([]);
     const [totalRecord, setTotalRecords] = useState(0);
     const [emailModel, setEmailModel] = useState(false);
     const [isMassEmail, setIsMassEmail] = useState(false);
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
 
-    const leadsData = {
-        totalRecords: 2,
-        data:[
-  {
-    id: 1,
-    dealName: "Enterprise CRM Deal",
-    amount: "₹1,50,000",
-    stage: "Proposal Sent",
-    closingDate: "2025-07-01",
-    company: "Alpha Tech Solutions",
-    title: "Sr. Product Manager",
-    accountName: "Alpha Tech",
-    contactName: "Anjali Rao",
-    owner: "sales_user1",
-    firstName: "Anjali",
-    lastName: "Rao",
-  },
-  {
-    id: 2,
-    dealName: "Annual Subscription",
-    amount: "₹75,000",
-    stage: "Negotiation",
-    closingDate: "2025-07-10",
-    company: "Beta Corp",
-    title: "Operations Lead",
-    accountName: "Beta Corp Pvt Ltd",
-    contactName: "Vikram Singh",
-    owner: "sales_user2",
-    firstName: "Vikram",
-    lastName: "Singh",
-  },
-  {
-    id: 3,
-    dealName: "Cloud Migration",
-    amount: "₹2,20,000",
-    stage: "Qualified",
-    closingDate: "2025-07-15",
-    company: "Gamma Innovations",
-    title: "IT Head",
-    accountName: "Gamma Innovations Inc",
-    contactName: "Meera Patel",
-    owner: "sales_user3",
-    firstName: "Meera",
-    lastName: "Patel",
-  },
-]
-    };
+    const [dealsData,refetchData,loading] =useFetchData(apiSummary.crm.getDeals);
 
     useEffect(() => {
-        setLeads(leadsData.data);
-        setFilteredLeads(leadsData.data);
-        setTotalRecords(leadsData.totalRecords);
+        setDeals(dealsData?.data || []);
+        setFilteredDeals(dealsData?.data|| []);
+        setTotalRecords(dealsData?.totalRecords);
         setCurrentPage(1);
-    }, []);
+    }, [dealsData]);
 
     useEffect(() => {
         const term = searchTerm.toLowerCase();
-        setFilteredLeads(
-            leads.filter(
+        setFilteredDeals(
+            deals.filter(
                 (lead) =>
                     lead.dealName.toLowerCase().includes(term) ||
                     lead.amount.toLowerCase().includes(term) ||
@@ -127,25 +84,24 @@ export default function ContactPage() {
             ),
         );
         setCurrentPage(1);
-    }, [searchTerm,leads]);
+    }, [searchTerm]);
 
     const recordsPerPageValue = parseInt(recordsPerPage);
     const indexOfLastRecord = currentPage * recordsPerPageValue;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPageValue;
     const totalPages = Math.ceil(totalRecord / recordsPerPageValue);
 
-    const handleContactSelect = (lead) => {
-        setSelectMultipleLead((prev) => (prev.some((item) => item.id === lead.id) ? prev.filter((item) => item.id !== lead.id) : [...prev, lead]));
+    const handleContactSelect = (deal) => {
+        setSelectMultipleDeal((prev) => (prev.some((item) => item.id === deal.id) ? prev.filter((item) => item.id !== deal.id) : [...prev, deal]));
     };
 
     const handleSelectAll = () => {
-        setSelectMultipleLead(selectMultipleLead.length === leadsData.data.length ? [] : leadsData.data);
+        setSelectMultipleDeal(selectMultipleDeal.length === deals.length ? [] : deals);
     };
 
     const handleSort = (key) => {
         setSortConfig((prev) => (prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }));
     };
-const currentContacts=filteredLeads
     const columns = useMemo(
         () => [
             {
@@ -192,6 +148,12 @@ const currentContacts=filteredLeads
             {
                 accessorKey: "stage",
                 header: "Stage",
+                 cell: ({ row }) => {
+                                    
+                                    const deal = row.original;
+                                    return (
+                                    <StatusBadge status={deal.stage}/>
+                                )}
             },
             {
                 accessorKey: "closingDate",
@@ -202,16 +164,16 @@ const currentContacts=filteredLeads
                     </div>
                 ),
             },
-            {
-                accessorKey: "accountName",
-                header: "Account Name",
-            },
-            {
-                accessorKey: "contactName",
-                header: "Contact Name",
-            },
+            // {
+            //     accessorKey: "accountName",
+            //     header: "Account Name",
+            // },
+            // {
+            //     accessorKey: "contactName",
+            //     header: "Contact Name",
+            // },
              {
-                accessorKey: "owner",
+                accessorKey: "dealOwner",
                 header: "Owner",
             },
             {
@@ -362,12 +324,13 @@ const currentContacts=filteredLeads
 
             <Table
                 columns={columns}
-                data={currentContacts}
+                data={filteredDeals}
+                loading={loading}
             />
 
             <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-4">
                 <div className="text-sm text-gray-600">
-                    Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredLeads.length)} of {filteredLeads.length} results
+                    Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredDeals.length)} of {totalRecord} results
                 </div>
                 <div className="flex items-center gap-2">
                     <Button

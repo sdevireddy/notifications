@@ -7,6 +7,7 @@ const statusColors = {
   New: 'bg-green-100 text-green-800',
   Lost: 'bg-red-100 text-red-800',
   Qualified: 'bg-purple-100 text-purple-800',
+  PROPOSAL: 'bg-green-100 text-green-800'
 };
 
 const StatusBadge = ({ status }) => {
