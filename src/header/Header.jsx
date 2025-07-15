@@ -51,6 +51,8 @@ export const Header = ({ collapsed, setCollapsed, setActiveModule }) => {
                     className="text-orange-500"
                 />
             ),
+             path: "/marketing",
+
         },
         {
             name: "Campaigns",

@@ -45,8 +45,8 @@ import SmsMarketing from "./routes/Marketing/smsmarketing/SmsMarketing";
 import SocialMediaMarketing from "./routes/Marketing/socialmediamarketing/SocialMediaMarketing";
 import CreateEmailCampaign from "./routes/Marketing/emailmarketing/CreateEmailCampaign";
 import TemplateCreation from "./routes/Marketing/emailmarketing/TemplateCreation";
-
-
+import UsersPage from "./routes/Marketing/Users/Users"
+import CreateListPage from "./routes/Marketing/Users/CreateList"
 const router = createBrowserRouter([
   {
     path: "/",
@@ -98,6 +98,10 @@ const router = createBrowserRouter([
             path: "marketing",
             children: [
               { path: "", element: <MarketingDashboard /> },
+              { path: "users", element: <UsersPage /> },
+              { path: "users/create", element: <CreateListPage /> },
+
+
               { path: "emailmarketing", element: <EmailMarketing /> },
               { path: "email-campaigns/create", element: <CreateEmailCampaign /> },
               { path: "SocialMediaMarketing", element: <SmsMarketing /> },
