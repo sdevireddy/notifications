@@ -76,7 +76,7 @@ export default function ContactPage() {
             contacts.filter(
                 (contact) =>
                     contact.firstName.toLowerCase().includes(term) ||
-                    contact.company.toLowerCase().includes(term) ||
+                    // contact.company.toLowerCase().includes(term) ||
                     contact.email.toLowerCase().includes(term) ||
                     contact.mobile.toLowerCase().includes(term),
             ),
@@ -152,18 +152,18 @@ export default function ContactPage() {
                 header: "Company",
                 cell: ({ row }) => (
                     <div>
-                        <div>{row.original.company}</div>
+                        <div>{row.original.vendorName}</div>
                         <div className="text-xs text-gray-500">{row.original.title}</div>
                     </div>
                 ),
             },
             {
-                accessorKey: "leadOwner",
+                accessorKey: "contactOwner",
                 header: "Owner",
             },
             {
-                accessorKey: "leadStatus",
-                header: "Status",
+                accessorKey: "leadSource",
+                header: "Source",
             },
             {
                 id: "actions",

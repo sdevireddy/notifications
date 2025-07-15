@@ -11,6 +11,7 @@ export const apiSummary={
       }
     },
     crm:{
+      //leads
       getLeads:{
         url:"crm/leads",
         method:"get"
@@ -37,6 +38,12 @@ export const apiSummary={
         url:"crm/contacts",
         method:"get"
       },
+      //deals
+      getDeals:
+      {
+        url:"crm/deals",
+        method:"get"
+      }
     },
 
 }
