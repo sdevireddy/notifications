@@ -5,13 +5,13 @@ import { LuFilter } from "react-icons/lu";
 import {Button} from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
-import {Dialog,DialogContent} from "../../../components/ui/Dialog";
 import ViewListModal from "./ViewList";
 import { Plus, Search, MoreVertical, Edit, Trash2, Eye } from "lucide-react";
 import Table from "@/components/Table";
 import Tooltip from "@/components/ToolTip";
 import BreadCrumb from "@/components/BreadCrumb";
 import { Checkbox } from "../../../components/ui/Checkbox";
+import { Dialog } from "../../../components/ui/Dialog";
 // import { ViewListModal } from "@/components/marketing/users/ViewListModal";
 
 export default function UsersPage() {
