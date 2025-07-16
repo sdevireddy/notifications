@@ -2,16 +2,15 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { LuFilter } from "react-icons/lu";
-import {Button} from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
+import {Button} from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ViewListModal from "./ViewList";
 import { Plus, Search, MoreVertical, Edit, Trash2, Eye } from "lucide-react";
 import Table from "@/components/Table";
 import Tooltip from "@/components/ToolTip";
 import BreadCrumb from "@/components/BreadCrumb";
-import { Checkbox } from "../../../components/ui/Checkbox";
-// import { ViewListModal } from "@/components/marketing/users/ViewListModal";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function UsersPage() {
   const navigate = useNavigate();
