@@ -10,7 +10,6 @@ import { Plus, Search, MoreVertical, Edit, Trash2, Eye } from "lucide-react";
 import Table from "@/components/Table";
 import Tooltip from "@/components/ToolTip";
 import BreadCrumb from "@/components/BreadCrumb";
-import { Dialog } from "../../../components/ui/Dialog";
 import { Checkbox } from "../../../components/ui/Checkbox";
 // import { ViewListModal } from "@/components/marketing/users/ViewListModal";
 
@@ -241,13 +240,11 @@ export default function UsersPage() {
         </div>
       </div>
 
-      <Dialog open={viewModalOpen} onOpenChange={setViewModalOpen}>
   <ViewListModal
     open={viewModalOpen}
     onClose={() => setViewModalOpen(false)}
     list={selectedList}
   />
-</Dialog>
     </div>
   );
 }
