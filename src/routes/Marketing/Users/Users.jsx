@@ -5,7 +5,7 @@ import { LuFilter } from "react-icons/lu";
 import {Button} from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
-import {Dialog,DialogContent} from "../../../components/ui/Dialog";
+import {Dialog,DialogContent} from "../../../components/ui/dialog";
 import ViewListModal from "./ViewList";
 import { Plus, Search, MoreVertical, Edit, Trash2, Eye } from "lucide-react";
 import Table from "@/components/Table";
