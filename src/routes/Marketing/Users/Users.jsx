@@ -10,8 +10,8 @@ import { Plus, Search, MoreVertical, Edit, Trash2, Eye } from "lucide-react";
 import Table from "@/components/Table";
 import Tooltip from "@/components/ToolTip";
 import BreadCrumb from "@/components/BreadCrumb";
-import { Checkbox } from "../../../components/ui/Checkbox";
 import { Dialog } from "../../../components/ui/Dialog";
+import { Checkbox } from "../../../components/ui/Checkbox";
 // import { ViewListModal } from "@/components/marketing/users/ViewListModal";
 
 export default function UsersPage() {
