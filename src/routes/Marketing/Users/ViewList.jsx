@@ -6,7 +6,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Search, Edit, Trash2, User } from "lucide-react";
 import Table from "@/components/Table";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Checkbox } from "../../../components/ui/Checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function ViewListModal({ open, onClose, list }) {
   const [searchTerm, setSearchTerm] = useState("");
