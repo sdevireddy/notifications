@@ -57,7 +57,13 @@ export const apiSummary={
       createDeals:{
         url:"crm/deals/create",
         method:"post"
-      }
+      },
+      deleteDeal:(id)=>{
+        return {
+            url:`crm/deals/${id}`,
+            method:"delete",
+        }
+      },
 
     },
 
