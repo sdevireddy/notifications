@@ -43,90 +43,63 @@ import Tooltip from "../../components/ToolTip";
 import Table from "../../components/Table";
 import { EmailComposer } from "../../components/shared/EmailComposer";
 import BreadCrumb from "../../components/BreadCrumb";
+import useFetchData from "../../hooks/useFetchData";
+import { apiSummary } from "../../common/apiSummary";
 export default function AccountsPage() {
-    const [leads, setLeads] = useState([]);
+    const [accounts, setAccounts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [recordsPerPage, setRecordsPerPage] = useState("25");
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectMultipleLead, setSelectMultipleLead] = useState([]);
-    const [selectSingleLead, setSelectSingleLead] = useState([]);
+    const [selectMultipleAccount, setSelectMultipleAccount] = useState([]);
+    const [selectSingleAccount, setSelectSingleAccount] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-    const [filteredLeads, setFilteredLeads] = useState([]);
+    const [filteredAccounts, setFilteredAccounts] = useState([]);
     const [totalRecord, setTotalRecords] = useState(0);
     const [emailModel, setEmailModel] = useState(false);
     const [isMassEmail, setIsMassEmail] = useState(false);
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
 
-    const leadsData = {
-        totalRecords: 2,
-        data:  [
-  {
-    id: 1,
-    accountName: "Acme Corp",
-    email: "info@acmecorp.com",
-    mobile: "+91-9123456780",
-    website: "https://www.acmecorp.com",
-    accountOwner: "Rahul Verma",
-  },
-  {
-    id: 2,
-    accountName: "Globex Pvt Ltd",
-    email: "contact@globex.com",
-    mobile: "+91-9876543211",
-    website: "https://www.globex.com",
-    accountOwner: "Sneha Mehta",
-  },
-  {
-    id: 3,
-    accountName: "Initech",
-    email: "support@initech.in",
-    mobile: "+91-9000012345",
-    website: "https://www.initech.in",
-    accountOwner: "Amit Sharma",
-  },
-        ],
-    };
+    const [accountsData,reFetchData,loading] =useFetchData(apiSummary.crm.getAccounts)
 
     useEffect(() => {
-        setLeads(leadsData.data);
-        setFilteredLeads(leadsData.data);
-        setTotalRecords(leadsData.totalRecords);
+        setAccounts(accountsData.data);
+        setFilteredAccounts(accountsData.data);
+        setTotalRecords(accountsData.totalRecords);
         setCurrentPage(1);
-    }, []);
+    }, [accountsData]);
 
     useEffect(() => {
         const term = searchTerm.toLowerCase();
-        setFilteredLeads(
-            leads.filter(
-                (lead) =>
-                    lead.accountName.toLowerCase().includes(term) ||
-                    lead.email.toLowerCase().includes(term) ||
-                    lead.mobile.toLowerCase().includes(term) ||
-                    lead.accountOwner.toLowerCase().includes(term ) ||
-                     lead.website.toLowerCase().includes(term),
+        setFilteredAccounts(
+            accounts.filter(
+                (account) =>
+                    account.accountName.toLowerCase().includes(term) ||
+                    account.email.toLowerCase().includes(term) ||
+                    account.mobile.toLowerCase().includes(term) ||
+                    account.accountOwner.toLowerCase().includes(term ) ||
+                     account.website.toLowerCase().includes(term),
             ),
         );
         setCurrentPage(1);
-    }, [searchTerm,leads]);
+    }, [searchTerm]);
 
     const recordsPerPageValue = parseInt(recordsPerPage);
     const indexOfLastRecord = currentPage * recordsPerPageValue;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPageValue;
     const totalPages = Math.ceil(totalRecord / recordsPerPageValue);
 
-    const handleContactSelect = (lead) => {
-        setSelectMultipleLead((prev) => (prev.some((item) => item.id === lead.id) ? prev.filter((item) => item.id !== lead.id) : [...prev, lead]));
+    const handleContactSelect = (account) => {
+        setSelectMultipleAccount((prev) => (prev.some((item) => item.id === account.id) ? prev.filter((item) => item.id !== account.id) : [...prev, account]));
     };
 
     const handleSelectAll = () => {
-        setSelectMultipleLead(selectMultipleLead.length === leadsData.data.length ? [] : leadsData.data);
+        setSelectMultipleLead(selectMultipleAccount.length === accounts.length ? [] : accounts);
     };
 
     const handleSort = (key) => {
         setSortConfig((prev) => (prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }));
     };
-const currentContacts=filteredLeads
     const columns = useMemo(
         () => [
             {
@@ -164,12 +137,12 @@ const currentContacts=filteredLeads
                     );
                 },
             },
+            // {
+            //     accessorKey: "email",
+            //     header: "Email",
+            // },
             {
-                accessorKey: "email",
-                header: "Email",
-            },
-            {
-                accessorKey: "mobile",
+                accessorKey: "phone",
                 header: "Phone",
             },
             {
@@ -333,12 +306,13 @@ const currentContacts=filteredLeads
 
             <Table
                 columns={columns}
-                data={currentContacts}
+                data={filteredAccounts}
+                loading={loading}
             />
 
             <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-4">
                 <div className="text-sm text-gray-600">
-                    Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredLeads.length)} of {filteredLeads.length} results
+                    Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredAccounts.length)} of {totalRecord} results
                 </div>
                 <div className="flex items-center gap-2">
                     <Button
