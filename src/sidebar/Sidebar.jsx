@@ -4,12 +4,12 @@ import {
     Search,
     Briefcase,
     Users,
+    MessageCircle,
     User,
     Building,
     ArrowLeftCircle,
     BookOpen,
-    Mail,
-    Megaphone,
+        Megaphone,
     HelpCircle,
     Workflow,
     Settings,
@@ -18,6 +18,8 @@ import {
     UserRoundSearch,
     CircleDollarSign,
     ChartNoAxesCombined,
+    Mail,
+
 } from "lucide-react";
 import logoLight from "@/assets/logo-light.svg";
 import logoDark from "@/assets/logo-dark.svg";
@@ -42,8 +44,9 @@ const moduleLinks = {
         { to: "/library", label: "Library", icon: <BookOpen size={20} /> }
     ],
     Marketing: [
-        { to: "marketing/emailmarketing", label: "Email Marketing", icon: <Megaphone size={20} /> },
-        { to: "marketing/SMSMarketing", label: "SMS Marketing", icon: <Megaphone size={20} /> },
+        { to: "marketing/users", label: "Users", icon: <Users size={20} /> },
+        { to: "marketing/emailmarketing", label: "Email Marketing", icon: <Mail size={20} /> },
+        { to: "marketing/SMSMarketing", label: "SMS Marketing", icon: <MessageCircle size={20} /> },
         { to: "marketing/SocialMediaMarketing", label: "Social media marketing", icon:<Megaphone size={20} /> },
         
     ],

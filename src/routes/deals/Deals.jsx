@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import FiltersPopUp from "./FiltersPopup"
+import FiltersPopUp from "./FiltersPopup";
 import {
     Filter,
     ChevronDown,
@@ -47,6 +47,9 @@ import BreadCrumb from "../../components/BreadCrumb";
 import useFetchData from "../../hooks/useFetchData";
 import { apiSummary } from "../../common/apiSummary";
 import StatusBadge from "../../components/StatusBadge";
+import { axiosPrivate } from "../../utils/axios";
+import DeleteConfirmationDialog from "../../components/ConfirmDeleteModel";
+import toast from "react-hot-toast";
 export default function DealsPage() {
     const [deals, setDeals] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -61,12 +64,14 @@ export default function DealsPage() {
     const [isMassEmail, setIsMassEmail] = useState(false);
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
-
-    const [dealsData,refetchData,loading] =useFetchData(apiSummary.crm.getDeals);
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+    const [dealToDelete, setDealToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [dealsData, refetchData, loading] = useFetchData(apiSummary.crm.getDeals);
 
     useEffect(() => {
         setDeals(dealsData?.data || []);
-        setFilteredDeals(dealsData?.data|| []);
+        setFilteredDeals(dealsData?.data || []);
         setTotalRecords(dealsData?.totalRecords);
         setCurrentPage(1);
     }, [dealsData]);
@@ -75,12 +80,12 @@ export default function DealsPage() {
         const term = searchTerm.toLowerCase();
         setFilteredDeals(
             deals.filter(
-                (lead) =>
-                    lead.dealName.toLowerCase().includes(term) ||
-                    lead.amount.toLowerCase().includes(term) ||
-                    lead.owner.toLowerCase().includes(term) ||
-                    lead.accountName.toLowerCase().includes(term) ||
-                     lead.contactName.toLowerCase().includes(term),
+                (deal) =>
+                    deal.dealName.toLowerCase().includes(term) ||
+                    // deal.amount.toLowerCase().includes(term) ||
+                    deal.dealOwner.toLowerCase().includes(term),
+                // deal.accountName.toLowerCase().includes(term) ||
+                //  deal.contactName.toLowerCase().includes(term),
             ),
         );
         setCurrentPage(1);
@@ -148,12 +153,10 @@ export default function DealsPage() {
             {
                 accessorKey: "stage",
                 header: "Stage",
-                 cell: ({ row }) => {
-                                    
-                                    const deal = row.original;
-                                    return (
-                                    <StatusBadge status={deal.stage}/>
-                                )}
+                cell: ({ row }) => {
+                    const deal = row.original;
+                    return <StatusBadge status={deal.stage} />;
+                },
             },
             {
                 accessorKey: "closingDate",
@@ -172,74 +175,100 @@ export default function DealsPage() {
             //     accessorKey: "contactName",
             //     header: "Contact Name",
             // },
-             {
+            {
                 accessorKey: "dealOwner",
                 header: "Owner",
             },
             {
                 id: "actions",
                 header: "Actions",
-                cell: ({ row }) => (
-                    <div className="flex items-center justify-center gap-1">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                            onClick={() => {
-                                setSelectSingleLead([row.original]);
-                                setEmailModel(true);
-                            }}
-                        >
-                            <Mail className="h-4 w-4 text-gray-600" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                        >
-                            <Phone className="h-4 w-4 text-gray-600" />
-                        </Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0"
-                                >
-                                    <MoreVertical className="h-4 w-4 text-gray-600" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                    <User className="mr-2 h-4 w-4" />
-                                    View Profile
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    Edit
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Trash2 className="mr-2 h-4 w-4 text-red-600" />
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                ),
+                cell: ({ row }) => {
+                    const deal = row.original;
+                    return (
+                        <div className="flex items-center justify-center gap-1">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                                onClick={() => {
+                                    setSelectSingleLead([row.original]);
+                                    setEmailModel(true);
+                                }}
+                            >
+                                <Mail className="h-4 w-4 text-gray-600" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                            >
+                                <Phone className="h-4 w-4 text-gray-600" />
+                            </Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-8 w-8 p-0"
+                                    >
+                                        <MoreVertical className="h-4 w-4 text-gray-600" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem>
+                                        <User className="mr-2 h-4 w-4" />
+                                        View Profile
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Edit className="mr-2 h-4 w-4" />
+                                        Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => {
+                                            setDealToDelete(deal);
+                                            setShowConfirmDelete(true);
+                                        }}
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4 text-red-600" />
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    );
+                },
             },
         ],
         [],
     );
-
+    const handleDelete = async (id) => {
+        try {
+            const resp = await axiosPrivate({
+                ...apiSummary.crm.deleteDeal(id),
+            });
+            toast.success("Lead Deleted SuccussFully");
+            refetchData();
+            setCurrentPage(1);
+        } catch (error) {
+            toast.error("Delation Failed");
+        } finally {
+            setIsDeleting(false);
+            setIsDeleting(false);
+            setShowConfirmDelete(false);
+        }
+    };
     return (
-        <div className=" flex-1 bg-white">
+        <div className="flex-1 bg-white">
             <div className="flex items-center justify-between border-b px-6 py-4">
                 <div className="flex items-center gap-4">
                     <h1 className="text-2xl font-semibold text-gray-900">Deals</h1>
                     <BreadCrumb />
                 </div>
                 <div className="flex items-center gap-3">
-                    <div  className="flex items-center" onClick={() => setFilterModelOpen(true)}>
+                    <div
+                        className="flex items-center"
+                        onClick={() => setFilterModelOpen(true)}
+                    >
                         <Tooltip text={"Filter"}>
                             <LuFilter />
                         </Tooltip>
@@ -372,7 +401,17 @@ export default function DealsPage() {
                     />
                 </Model>
             )}
+            <DeleteConfirmationDialog
+                open={showConfirmDelete}
+                setOpen={setShowConfirmDelete}
+                isLoading={isDeleting}
+                title={`Delete ${dealToDelete?.dealName} ?`}
+                description="This lead will be permanently deleted. Are you sure?"
+                onConfirm={async () => {
+                    setIsDeleting(true);
+                    await handleDelete(dealToDelete.dealId);
+                }}
+            />
         </div>
     );
 }
-
