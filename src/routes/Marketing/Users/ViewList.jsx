@@ -1,11 +1,11 @@
 "use client";
 import { useState, useMemo, useEffect } from "react";
-  import {Input} from "../../../components/ui/input";
-  import {Button} from "../../../components/ui/button";
+  import {Input} from "@/components/ui/input";
+  import {Button} from "@/components/ui/button";
   import Tooltip from "../../../components/ToolTip"
 import { Search, Edit, Trash2, User } from "lucide-react";
 import Table from "@/components/Table";
-import { Dialog, DialogContent } from "../../../components/ui/Dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Checkbox } from "../../../components/ui/Checkbox";
 
 export default function ViewListModal({ open, onClose, list }) {
