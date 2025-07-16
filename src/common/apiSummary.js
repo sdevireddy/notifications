@@ -64,7 +64,15 @@ export const apiSummary={
             method:"delete",
         }
       },
-
+      //accounts
+      getAccounts:{
+        url:"crm/accounts",
+        method:"get"
+      },
+      createAccount:{
+         url:"crm/accounts/create",
+        method:"post"
+      }
     },
 
 }
