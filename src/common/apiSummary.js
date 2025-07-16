@@ -72,7 +72,14 @@ export const apiSummary={
       createAccount:{
          url:"crm/accounts/create",
         method:"post"
-      }
+      },
+      deleteAccount:(id)=>{
+        return {
+            url:`crm/accounts/${id}`,
+            method:"delete",
+        }
+      },
     },
+
 
 }

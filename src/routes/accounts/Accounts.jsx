@@ -45,6 +45,9 @@ import { EmailComposer } from "../../components/shared/EmailComposer";
 import BreadCrumb from "../../components/BreadCrumb";
 import useFetchData from "../../hooks/useFetchData";
 import { apiSummary } from "../../common/apiSummary";
+import toast from "react-hot-toast";
+import { axiosPrivate } from "../../utils/axios";
+import DeleteConfirmationDialog from "../../components/ConfirmDeleteModel";
 export default function AccountsPage() {
     const [accounts, setAccounts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -59,8 +62,10 @@ export default function AccountsPage() {
     const [isMassEmail, setIsMassEmail] = useState(false);
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
-
-    const [accountsData,reFetchData,loading] =useFetchData(apiSummary.crm.getAccounts)
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+    const [accountToDelete, setAccountToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [accountsData,refetchData,loading] =useFetchData(apiSummary.crm.getAccounts)
 
     useEffect(() => {
         setAccounts(accountsData.data);
@@ -74,11 +79,10 @@ export default function AccountsPage() {
         setFilteredAccounts(
             accounts.filter(
                 (account) =>
-                    account.accountName.toLowerCase().includes(term) ||
-                    account.email.toLowerCase().includes(term) ||
-                    account.mobile.toLowerCase().includes(term) ||
-                    account.accountOwner.toLowerCase().includes(term ) ||
-                     account.website.toLowerCase().includes(term),
+                    account.accountName?.toLowerCase().includes(term) ||
+                    account.phone?.toLowerCase().includes(term) ||
+                    account.accountOwner?.toLowerCase().includes(term ) ||
+                    account.website?.toLowerCase().includes(term),
             ),
         );
         setCurrentPage(1);
@@ -161,7 +165,9 @@ export default function AccountsPage() {
             {
                 id: "actions",
                 header: "Actions",
-                cell: ({ row }) => (
+                cell: ({ row }) => {
+                    const account=row.original
+                    return(
                     <div className="flex items-center justify-center gap-1">
                         <Button
                             variant="ghost"
@@ -200,19 +206,39 @@ export default function AccountsPage() {
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem
+                                 onClick={() => {
+                                            setAccountToDelete(account);
+                                            setShowConfirmDelete(true);
+                                        }}
+                                        >
                                     <Trash2 className="mr-2 h-4 w-4 text-red-600" />
                                     Delete
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                ),
+                )}
             },
         ],
         [],
     );
-
+const handleDelete = async (id) => {
+        try {
+            const resp = await axiosPrivate({
+                ...apiSummary.crm.deleteAccount(id),
+            });
+            toast.success("Lead Deleted SuccussFully");
+            refetchData();
+            setCurrentPage(1);
+        } catch (error) {
+            toast.error("Delation Failed");
+        } finally {
+            setIsDeleting(false);
+            setIsDeleting(false);
+            setShowConfirmDelete(false);
+        }
+    };
     return (
         <div className="flex-1 bg-white">
             <div className="flex items-center justify-between border-b px-6 py-4">
@@ -354,6 +380,17 @@ export default function AccountsPage() {
                     />
                 </Model>
             )}
+             <DeleteConfirmationDialog
+                open={showConfirmDelete}
+                setOpen={setShowConfirmDelete}
+                isLoading={isDeleting}
+                title={`Delete ${accountToDelete?.accountName} ?`}
+                description="This lead will be permanently deleted. Are you sure?"
+                onConfirm={async () => {
+                    setIsDeleting(true);
+                    await handleDelete(accountToDelete.accountId);
+                }}
+            />
         </div>
     );
 }
