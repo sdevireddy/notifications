@@ -57,8 +57,29 @@ export const apiSummary={
       createDeals:{
         url:"crm/deals/create",
         method:"post"
-      }
-
+      },
+      deleteDeal:(id)=>{
+        return {
+            url:`crm/deals/${id}`,
+            method:"delete",
+        }
+      },
+      //accounts
+      getAccounts:{
+        url:"crm/accounts",
+        method:"get"
+      },
+      createAccount:{
+         url:"crm/accounts/create",
+        method:"post"
+      },
+      deleteAccount:(id)=>{
+        return {
+            url:`crm/accounts/${id}`,
+            method:"delete",
+        }
+      },
     },
+
 
 }
