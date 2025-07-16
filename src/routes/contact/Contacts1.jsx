@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Model from "../../components/Model"
+import Model from "../../components/Model";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
@@ -46,6 +46,9 @@ import { EmailComposer } from "../../components/shared/EmailComposer";
 import BreadCrumb from "../../components/BreadCrumb";
 import useFetchData from "../../hooks/useFetchData";
 import { apiSummary } from "../../common/apiSummary";
+import DeleteConfirmationDialog from "../../components/ConfirmDeleteModel";
+import { axiosPrivate } from "../../utils/axios";
+import toast from "react-hot-toast";
 export default function ContactPage() {
     const [contacts, setContacts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -61,11 +64,13 @@ export default function ContactPage() {
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
 
-    const [constactData,refetchContacts,loading] = useFetchData(apiSummary.crm.getContacts);
-
-      useEffect(() => {
+    const [constactData, refetchContacts, loading] = useFetchData(apiSummary.crm.getContacts);
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+    const [contactToDelete, setContactToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    useEffect(() => {
         setContacts(constactData?.data || []);
-        setFilteredContacts(constactData?.data|| []);
+        setFilteredContacts(constactData?.data || []);
         setTotalRecords(constactData?.totalRecords);
         setCurrentPage(1);
     }, [constactData]);
@@ -76,7 +81,7 @@ export default function ContactPage() {
             contacts.filter(
                 (contact) =>
                     contact.firstName.toLowerCase().includes(term) ||
-                    contact.company.toLowerCase().includes(term) ||
+                    // contact.company.toLowerCase().includes(term) ||
                     contact.email.toLowerCase().includes(term) ||
                     contact.mobile.toLowerCase().includes(term),
             ),
@@ -90,7 +95,9 @@ export default function ContactPage() {
     const totalPages = Math.ceil(totalRecord / recordsPerPageValue);
 
     const handleContactSelect = (lead) => {
-        setSelectMultipleContacts((prev) => (prev.some((item) => item.id === lead.id) ? prev.filter((item) => item.id !== lead.id) : [...prev, lead]));
+        setSelectMultipleContacts((prev) =>
+            prev.some((item) => item.id === lead.id) ? prev.filter((item) => item.id !== lead.id) : [...prev, lead],
+        );
     };
 
     const handleSelectAll = () => {
@@ -152,74 +159,97 @@ export default function ContactPage() {
                 header: "Company",
                 cell: ({ row }) => (
                     <div>
-                        <div>{row.original.company}</div>
+                        <div>{row.original.vendorName}</div>
                         <div className="text-xs text-gray-500">{row.original.title}</div>
                     </div>
                 ),
             },
             {
-                accessorKey: "leadOwner",
+                accessorKey: "contactOwner",
                 header: "Owner",
             },
             {
-                accessorKey: "leadStatus",
-                header: "Status",
+                accessorKey: "leadSource",
+                header: "Source",
             },
             {
                 id: "actions",
                 header: "Actions",
-                cell: ({ row }) => (
-                    <div className="flex items-center justify-center gap-1">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                            onClick={() => {
-                                setSelectSingleLead([row.original]);
-                                setEmailModel(true);
-                            }}
-                        >
-                            <Mail className="h-4 w-4 text-gray-600" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                        >
-                            <Phone className="h-4 w-4 text-gray-600" />
-                        </Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0"
-                                >
-                                    <MoreVertical className="h-4 w-4 text-gray-600" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                    <User className="mr-2 h-4 w-4" />
-                                    View Profile
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    Edit
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Trash2 className="mr-2 h-4 w-4 text-red-600" />
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                ),
+                cell: ({ row }) => {
+                    const contact = row.original;
+                    return (
+                        <div className="flex items-center justify-center gap-1">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                                onClick={() => {
+                                    setSelectSingleLead([row.original]);
+                                    setEmailModel(true);
+                                }}
+                            >
+                                <Mail className="h-4 w-4 text-gray-600" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                            >
+                                <Phone className="h-4 w-4 text-gray-600" />
+                            </Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-8 w-8 p-0"
+                                    >
+                                        <MoreVertical className="h-4 w-4 text-gray-600" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem>
+                                        <User className="mr-2 h-4 w-4" />
+                                        View Profile
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Edit className="mr-2 h-4 w-4" />
+                                        Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => {
+                                            console.log(contact)
+                                            setContactToDelete(contact);
+                                            setShowConfirmDelete(true);
+                                        }}
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4 text-red-600" />
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    );
+                },
             },
         ],
         [],
     );
-
+    const handleDelete = async (id) => {
+        try {
+            const resp = await axiosPrivate({
+                ...apiSummary.crm.deleteContact(id),
+            });
+            toast.success("Contact Deleted SuccussFully");
+            refetchContacts();
+            setCurrentPage(1);
+        } catch (error) {
+            toast.error("Contact Delation Failed");
+        }
+        finally{
+            setIsDeleting(false);
+        }
+    };
     return (
         <div className="flex-1 bg-white">
             <div className="flex items-center justify-between border-b px-6 py-4">
@@ -228,7 +258,10 @@ export default function ContactPage() {
                     <BreadCrumb />
                 </div>
                 <div className="flex items-center gap-3">
-                    <div  className="flex items-center" onClick={() => setFilterModelOpen(true)}>
+                    <div
+                        className="flex items-center"
+                        onClick={() => setFilterModelOpen(true)}
+                    >
                         <Tooltip text={"Filter"}>
                             <LuFilter />
                         </Tooltip>
@@ -361,8 +394,18 @@ export default function ContactPage() {
                     />
                 </Model>
             )}
+            <DeleteConfirmationDialog
+                open={showConfirmDelete}
+                setOpen={setShowConfirmDelete}
+                isLoading={isDeleting}
+                title={`Delete ${contactToDelete?.firstName} ${contactToDelete?.lastName}?`}
+                description="This contact will be permanently deleted. Are you sure?"
+                onConfirm={async () => {
+                    setIsDeleting(true);
+                    await handleDelete(contactToDelete.contactId);
+                    setShowConfirmDelete(false);
+                }}
+            />
         </div>
     );
 }
-
-

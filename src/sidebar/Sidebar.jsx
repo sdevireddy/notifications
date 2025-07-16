@@ -14,6 +14,10 @@ import {
     Workflow,
     Settings,
     UserPlus,
+    CalendarDays,
+    UserRoundSearch,
+    CircleDollarSign,
+    ChartNoAxesCombined,
 } from "lucide-react";
 import logoLight from "@/assets/logo-light.svg";
 import logoDark from "@/assets/logo-dark.svg";
@@ -54,10 +58,10 @@ const moduleLinks = {
     ],
     HR: [
         { to: "hr/employees", label: "Employees", icon: <Users size={20} /> },
-        { to: "hr/attendance", label: "Attendance", icon: <Briefcase size={20} /> },
-        { to: "hr/leave", label: "Leave Management", icon: <BookOpen size={20} /> },
-        { to: "hr/payroll", label: "Payroll", icon: <Settings size={20} /> },
-        { to: "hr/performance", label: "Performance", icon: <Workflow size={20} /> },
+        { to: "hr/attendance", label: "Attendance", icon: <UserRoundSearch size={20} /> },
+        { to: "hr/leave", label: "Leave Management", icon: <CalendarDays size={20} /> },
+        { to: "hr/payroll", label: "Payroll", icon: <CircleDollarSign size={20} /> },
+        { to: "hr/performance", label: "Performance", icon: <ChartNoAxesCombined size={20} /> },
         { to: "hr/recruitment", label: "Recruitment", icon: <UserPlus size={20} /> }
     ]
 };

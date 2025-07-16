@@ -7,6 +7,7 @@ import dayGridPlugin from "@fullcalendar/daygrid"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import BreadCrumb from "@/components/BreadCrumb"
 
 export default function LeaveManagementPage() {
   const navigate = useNavigate()
@@ -19,12 +20,12 @@ export default function LeaveManagementPage() {
     { type: "Annual", count: 8, color: "text-blue-400" },
   ])
 
-  const leaveData = [
+  const [leaveData, setLeaveData] = useState([
     { name: "Jessica", type: "Sick Leave", start: "First Half", end: "First Half", status: "Pending" },
     { name: "Jenny", type: "Sick Leave", start: "15 July 2023", end: "15 July 2023", status: "Pending" },
     { name: "John", type: "Casual Leave", start: "15 July 2023", end: "18 July 2023", status: "Pending" },
     { name: "Jack", type: "Earned Leave", start: "20 July 2023", end: "23 July 2023", status: "Pending" },
-  ]
+  ])
 
   const barChartData = [
     { month: "Jan", leaves: 10 },
@@ -37,31 +38,39 @@ export default function LeaveManagementPage() {
   ]
 
   const handleApplyLeave = () => {
-    // Dummy leave application logic (for demonstration only)
-    const leaveType = "Casual"; // In real case, this would come from form data
-
+    const leaveType = "Casual"
     setLeaveAvailability((prev) =>
       prev.map((leave) =>
         leave.type === leaveType && leave.count > 0
           ? { ...leave, count: leave.count - 1 }
           : leave
       )
-    );
-
+    )
     navigate("/hr/apply-leave")
   }
 
+  const handleApprove = (index) => {
+    setLeaveData(prev => prev.map((entry, i) => i === index ? { ...entry, status: "Approved" } : entry))
+  }
+
+  const handleReject = (index) => {
+    setLeaveData(prev => prev.map((entry, i) => i === index ? { ...entry, status: "Rejected" } : entry))
+  }
+
   return (
-    <div className="min-h-screen bg-white p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Leave Management System</h2>
+    <div className="flex-1 bg-white text-gray-900">
+      <div className="flex items-center justify-between border-b px-6 py-4">
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-semibold">Leave Management</h1>
+          <BreadCrumb currentPath={["HR", "Leave Management"]} />
+        </div>
         <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={handleApplyLeave}>
           Apply Leave
         </Button>
       </div>
 
       {/* Leave Availability */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 px-6 py-6">
         {leaveAvailability.map((item) => (
           <Card key={item.type} className="text-center">
             <CardContent className="p-4">
@@ -74,9 +83,8 @@ export default function LeaveManagementPage() {
       </div>
 
       {/* Leave Approval and Team Leave Track side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Leave Approval Table */}
-        <div className="bg-white rounded-lg border p-4 w-full max-w-[600px]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 mb-8">
+        <div className="bg-white rounded-lg border p-4 w-full">
           <h3 className="text-lg font-bold text-gray-800 mb-4">Leave Approval</h3>
           <table className="w-full text-sm text-left">
             <thead className="text-gray-500">
@@ -99,8 +107,8 @@ export default function LeaveManagementPage() {
                   <td><Badge variant="outline">{entry.status}</Badge></td>
                   <td>
                     <div className="flex space-x-2">
-                      <Button size="sm" variant="success">✓</Button>
-                      <Button size="sm" variant="destructive">✕</Button>
+                      <button onClick={() => handleApprove(index)} className="w-6 h-6 md:w-7 md:h-7 flex items-center justify-center rounded-full bg-green-500 text-white hover:bg-green-600 text-xs shadow-sm">✓</button>
+                      <button onClick={() => handleReject(index)} className="w-6 h-6 md:w-7 md:h-7 flex items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600 text-xs shadow-sm">✕</button>
                     </div>
                   </td>
                 </tr>
@@ -109,7 +117,6 @@ export default function LeaveManagementPage() {
           </table>
         </div>
 
-        {/* Team Leave Track Chart */}
         <div className="bg-white rounded-lg border p-4 w-full">
           <h3 className="text-lg font-bold text-gray-800 mb-4">Team Leave Track</h3>
           <ResponsiveContainer width="100%" height={250}>
@@ -124,7 +131,7 @@ export default function LeaveManagementPage() {
       </div>
 
       {/* Leave Calendar */}
-      <div className="bg-white rounded-lg border p-6">
+      <div className="bg-white rounded-lg border p-6 mx-6">
         <h3 className="text-lg font-bold text-gray-800 mb-4">Leave Calendar</h3>
         <FullCalendar plugins={[dayGridPlugin]} initialView="dayGridMonth" height={500} events={[]} />
         <div className="flex flex-wrap justify-center text-sm text-gray-500 mt-4 gap-4">
