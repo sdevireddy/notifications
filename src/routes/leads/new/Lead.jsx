@@ -53,19 +53,19 @@ import toast from "react-hot-toast";
 import DeleteConfirmationDialog from "../../../components/ConfirmDeleteModel";
 import StatusBadge from "../../../components/StatusBadge";
 import FilterSidebar from "./Filter";
-const avaliableColumns={
-  firstName: true,
-  email: true,
-  mobile: true,
-  company: true,
-  leadOwner: true,
-  leadStatus: true,
-  company:false,
-  website:false,
-  industry:false,
-  followUp:false,
-  comments:false
-}
+const avaliableColumns = {
+    firstName: true,
+    email: true,
+    mobile: true,
+    company: true,
+    leadOwner: true,
+    leadStatus: true,
+    company: false,
+    website: false,
+    industry: false,
+    followUp: false,
+    comments: false,
+};
 export default function LeadPage() {
     const [leads, setLeads] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -81,24 +81,22 @@ export default function LeadPage() {
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-const [leadToDelete, setLeadToDelete] = useState(null);
-const [isDeleting, setIsDeleting] = useState(false);
+    const [leadToDelete, setLeadToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
-
-    const [leadsData,refetchData,loading] = useFetchData(apiSummary.crm.getLeads)
+    const [leadsData, refetchData, loading] = useFetchData(apiSummary.crm.getLeads);
     const [visibleColumns, setVisibleColumns] = useState(avaliableColumns);
-const [showColumnSelector, setShowColumnSelector] = useState(false);
-
+    const [showColumnSelector, setShowColumnSelector] = useState(false);
 
     useEffect(() => {
         setLeads(leadsData?.data?.data || []);
-        setFilteredLeads(leadsData?.data?.data|| []);
+        setFilteredLeads(leadsData?.data?.data || []);
         setTotalRecords(leadsData?.data?.totalRecords);
         setCurrentPage(1);
     }, [leadsData]);
     useEffect(() => {
-        const handleFilter=()=>{
-            if(leads.length==0) return;
+        const handleFilter = () => {
+            if (leads.length == 0) return;
             const term = searchTerm.toLowerCase();
             setFilteredLeads(
                 leads.filter(
@@ -110,8 +108,8 @@ const [showColumnSelector, setShowColumnSelector] = useState(false);
                 ),
             );
             setCurrentPage(1);
-        }
-        handleFilter()
+        };
+        handleFilter();
     }, [searchTerm]);
 
     const recordsPerPageValue = parseInt(recordsPerPage);
@@ -131,177 +129,179 @@ const [showColumnSelector, setShowColumnSelector] = useState(false);
         setSortConfig((prev) => (prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }));
     };
 
-    const currentLeads = filteredLeads
+    const currentLeads = filteredLeads;
 
-   const columns = useMemo(() => {
-  const baseColumns = [];
+    const columns = useMemo(() => {
+        const baseColumns = [];
 
-  // Checkbox column
-  baseColumns.push({
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllRowsSelected()}
-        onCheckedChange={(value) => {
-          table.toggleAllRowsSelected(!!value);
-          handleSelectAll();
-        }}
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => {
-          row.toggleSelected(!!value);
-          let lead = row.original;
-          handleContactSelect(lead);
-        }}
-      />
-    ),
-  });
+        // Checkbox column
+        baseColumns.push({
+            id: "select",
+            header: ({ table }) => (
+                <Checkbox
+                    checked={table.getIsAllRowsSelected()}
+                    onCheckedChange={(value) => {
+                        table.toggleAllRowsSelected(!!value);
+                        handleSelectAll();
+                    }}
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => {
+                        row.toggleSelected(!!value);
+                        let lead = row.original;
+                        handleContactSelect(lead);
+                    }}
+                />
+            ),
+        });
 
-  if (visibleColumns.firstName) {
-    baseColumns.push({
-      accessorKey: "firstName",
-      header: "Name",
-      cell: ({ row }) => {
-        const lead = row.original;
-        return (
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
-              <User className="h-4 w-4 text-gray-500" />
-            </div>
-            <div>{lead.firstName + " " + lead.lastName}</div>
-          </div>
-        );
-      },
-    });
-  }
+        if (visibleColumns.firstName) {
+            baseColumns.push({
+                accessorKey: "firstName",
+                header: "Name",
+                cell: ({ row }) => {
+                    const lead = row.original;
+                    return (
+                        <div className="flex items-center gap-2">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
+                                <User className="h-4 w-4 text-gray-500" />
+                            </div>
+                            <div>{lead.firstName + " " + lead.lastName}</div>
+                        </div>
+                    );
+                },
+            });
+        }
 
-  if (visibleColumns.email) {
-    baseColumns.push({
-      accessorKey: "email",
-      header: "Email",
-    });
-  }
+        if (visibleColumns.email) {
+            baseColumns.push({
+                accessorKey: "email",
+                header: "Email",
+            });
+        }
 
-  if (visibleColumns.mobile) {
-    baseColumns.push({
-      accessorKey: "mobile",
-      header: "Phone",
-    });
-  }
+        if (visibleColumns.mobile) {
+            baseColumns.push({
+                accessorKey: "mobile",
+                header: "Phone",
+            });
+        }
 
-  if (visibleColumns.company) {
-    baseColumns.push({
-      accessorKey: "company",
-      header: "Company",
-      cell: ({ row }) => (
-        <div>
-          <div>{row.original.company}</div>
-          <div className="text-xs text-gray-500">{row.original.title}</div>
-        </div>
-      ),
-    });
-  }
+        if (visibleColumns.company) {
+            baseColumns.push({
+                accessorKey: "company",
+                header: "Company",
+                cell: ({ row }) => (
+                    <div>
+                        <div>{row.original.company}</div>
+                        <div className="text-xs text-gray-500">{row.original.title}</div>
+                    </div>
+                ),
+            });
+        }
 
-  if (visibleColumns.leadOwner) {
-    baseColumns.push({
-      accessorKey: "leadOwner",
-      header: "Owner",
-    });
-  }
+        if (visibleColumns.leadOwner) {
+            baseColumns.push({
+                accessorKey: "leadOwner",
+                header: "Owner",
+            });
+        }
 
-  if (visibleColumns.leadStatus) {
-    baseColumns.push({
-      accessorKey: "leadStatus",
-      header: "Status",
-      cell: ({ row }) => <StatusBadge status={row.original.leadStatus} />,
-    });
-  }
-  if (visibleColumns.website) {
-  baseColumns.push({
-    accessorKey: "website",
-    header: "Website",
-    cell: ({ row }) => row.original.website || "-",
-  });
-}
+        if (visibleColumns.leadStatus) {
+            baseColumns.push({
+                accessorKey: "leadStatus",
+                header: "Status",
+                cell: ({ row }) => <StatusBadge status={row.original.leadStatus} />,
+            });
+        }
+        if (visibleColumns.website) {
+            baseColumns.push({
+                accessorKey: "website",
+                header: "Website",
+                cell: ({ row }) => row.original.website || "-",
+            });
+        }
 
-if (visibleColumns.industry) {
-  baseColumns.push({
-    accessorKey: "industry",
-    header: "Industry",
-    cell: ({ row }) => row.original.industry || "-",
-  });
-}
+        if (visibleColumns.industry) {
+            baseColumns.push({
+                accessorKey: "industry",
+                header: "Industry",
+                cell: ({ row }) => row.original.industry || "-",
+            });
+        }
 
-if (visibleColumns.followUp) {
-  baseColumns.push({
-    accessorKey: "followUp",
-    header: "Follow Up",
-    cell: ({ row }) => row.original.followUp || "-",
-  });
-}
+        if (visibleColumns.followUp) {
+            baseColumns.push({
+                accessorKey: "followUp",
+                header: "Follow Up",
+                cell: ({ row }) => row.original.followUp || "-",
+            });
+        }
 
-if (visibleColumns.comments) {
-  baseColumns.push({
-    accessorKey: "comments",
-    header: "Comments",
-    cell: ({ row }) => row.original.comments || "-",
-  });
-}
+        if (visibleColumns.comments) {
+            baseColumns.push({
+                accessorKey: "comments",
+                header: "Comments",
+                cell: ({ row }) => row.original.comments || "-",
+            });
+        }
 
+        // Always show actions column
+        baseColumns.push({
+            id: "actions",
+            header: "Actions",
+            cell: ({ row }) => {
+                const lead = row.original;
+                return (
+                    <div className="flex items-center justify-center gap-3">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="hover:bg-primary hover:text-white"
+                        >
+                            Convert
+                        </Button>
+                        {/* Dropdown code remains same */}
+                    </div>
+                );
+            },
+        });
 
-  // Always show actions column
-  baseColumns.push({
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => {
-      const lead = row.original;
-      return (
-        <div className="flex items-center justify-center gap-3">
-          <Button variant="outline" size="sm" className="hover:bg-primary hover:text-white">
-            Convert
-          </Button>
-          {/* Dropdown code remains same */}
-        </div>
-      );
-    },
-  });
+        return baseColumns;
+    }, [visibleColumns]);
 
-  return baseColumns;
-}, [visibleColumns]);
-
-const handleDelete=async(id)=>{
-    try {
-        const resp=await axiosPrivate({
-            ...apiSummary.crm.deleteLead(id)
-        })
-        toast.success("Lead Deleted SuccussFully");
-        refetchData()
-        setCurrentPage(1);
-    } catch (error) {
-        toast.error("Delation Failed")
-    }
-}
-const handleMultipleDelete=async()=>{
-     if(selectMultipleLead.length<=0)
-    {
-        return
-    }
-    try {
-        const ids=selectMultipleLead.map((lead)=>lead.id)
-        const resp=await axiosPrivate({
-            ...apiSummary.deleteLead,
-            data:{
-                deleteIds:ids
-            }
-        })
-        setRefresh(!refresh)
-    } catch (error) {
-        console.log(error)
-    }
-}
+    const handleDelete = async (id) => {
+        try {
+            const resp = await axiosPrivate({
+                ...apiSummary.crm.deleteLead(id),
+            });
+            toast.success("Lead Deleted SuccussFully");
+            refetchData();
+            setCurrentPage(1);
+        } catch (error) {
+            toast.error("Delation Failed");
+        }
+    };
+    const handleMultipleDelete = async () => {
+        if (selectMultipleLead.length <= 0) {
+            return;
+        }
+        try {
+            const ids = selectMultipleLead.map((lead) => lead.id);
+            const resp = await axiosPrivate({
+                ...apiSummary.deleteLead,
+                data: {
+                    deleteIds: ids,
+                },
+            });
+            setRefresh(!refresh);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <div className="flex-1 bg-white">
             <div className="flex items-center justify-between border-b px-6 py-4">
@@ -310,40 +310,49 @@ const handleMultipleDelete=async()=>{
                     <BreadCrumb />
                 </div>
                 <div className="flex items-center gap-3">
-                    <DropdownMenu open={showColumnSelector} onOpenChange={setShowColumnSelector}>
-  <DropdownMenuTrigger asChild>
-    <Button variant="outline">
-      Columns <ChevronDown className="ml-2 h-4 w-4" />
-    </Button>
-  </DropdownMenuTrigger>
-  <DropdownMenuContent align="end" className="w-56 h-80 overflow-auto ">
-    {Object.keys(visibleColumns).map((key) => (
-      <DropdownMenuItem
-        key={key}
-        onSelect={(e) => e.preventDefault()}
-        className="flex items-center justify-between"
-      >
-      <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
-
-        <Checkbox
-          checked={visibleColumns[key]}
-          onCheckedChange={() =>
-            setVisibleColumns((prev) => ({
-              ...prev,
-              [key]: !prev[key],
-            }))
-          }
-        />
-      </DropdownMenuItem>
-    ))}
-  </DropdownMenuContent>
-</DropdownMenu>
-
-                    <div className="flex items-center" onClick={() => setFilterModelOpen(true)}>
+                    <div
+                        className="flex items-center"
+                        onClick={() => setFilterModelOpen(true)}
+                    >
                         <Tooltip text={"Filter"}>
                             <LuFilter />
                         </Tooltip>
                     </div>
+                       <DropdownMenu
+                        open={showColumnSelector}
+                        onOpenChange={setShowColumnSelector}
+                    >
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            align="end"
+                            className="h-80 w-56 overflow-auto"
+                        >
+                            {Object.keys(visibleColumns).map((key) => (
+                                <DropdownMenuItem
+                                    key={key}
+                                    onSelect={(e) => e.preventDefault()}
+                                    className="flex items-center justify-between"
+                                >
+                                    <span className="capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
+
+                                    <Checkbox
+                                        checked={visibleColumns[key]}
+                                        onCheckedChange={() =>
+                                            setVisibleColumns((prev) => ({
+                                                ...prev,
+                                                [key]: !prev[key],
+                                            }))
+                                        }
+                                    />
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="primary">
@@ -364,7 +373,10 @@ const handleMultipleDelete=async()=>{
                                 <Edit className="mr-2 h-4 w-4" />
                                 Update Multiple Leads
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900" onClick={handleDelete}>
+                            <DropdownMenuItem
+                                className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
+                                onClick={handleDelete}
+                            >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Delete Selected
                             </DropdownMenuItem>
@@ -454,7 +466,10 @@ const handleMultipleDelete=async()=>{
                     </Button>
                 </div>
             </div>
-            <FilterSidebar isOpen={filterModelOpen} onClose={() => setFilterModelOpen(false)}/>
+            <FilterSidebar
+                isOpen={filterModelOpen}
+                onClose={() => setFilterModelOpen(false)}
+            />
             {/* {filterModelOpen && <FiltersPopUp onClose={() => setFilterModelOpen(false)} />} */}
             {emailModel && (
                 <Model>
@@ -473,19 +488,18 @@ const handleMultipleDelete=async()=>{
                 </Model>
             )}
             <DeleteConfirmationDialog
-    open={showConfirmDelete}
-    setOpen={setShowConfirmDelete}
-    isLoading={isDeleting}
-    title={`Delete ${leadToDelete?.firstName} ${leadToDelete?.lastName}?`}
-    description="This lead will be permanently deleted. Are you sure?"
-    onConfirm={async () => {
-        setIsDeleting(true);
-        await handleDelete(leadToDelete.id);
-        setIsDeleting(false);
-        setShowConfirmDelete(false);
-    }}
-/>
-
+                open={showConfirmDelete}
+                setOpen={setShowConfirmDelete}
+                isLoading={isDeleting}
+                title={`Delete ${leadToDelete?.firstName} ${leadToDelete?.lastName}?`}
+                description="This lead will be permanently deleted. Are you sure?"
+                onConfirm={async () => {
+                    setIsDeleting(true);
+                    await handleDelete(leadToDelete.id);
+                    setIsDeleting(false);
+                    setShowConfirmDelete(false);
+                }}
+            />
         </div>
     );
 }
