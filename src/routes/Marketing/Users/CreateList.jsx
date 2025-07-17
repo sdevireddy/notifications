@@ -1,19 +1,19 @@
 "use client";
 import { useState } from "react";
-import { Button } from "../../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
-} from "../../../components/ui/card";
-import { Label } from "../../../components/ui/label";
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Papa from "papaparse"; // ✅ Import PapaParse
-import { Input } from "../../../components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function CreateListPage() {
   const navigate = useNavigate();
