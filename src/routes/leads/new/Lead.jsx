@@ -52,6 +52,7 @@ import BreadCrumb from "../../../components/BreadCrumb";
 import toast from "react-hot-toast";
 import DeleteConfirmationDialog from "../../../components/ConfirmDeleteModel";
 import StatusBadge from "../../../components/StatusBadge";
+import FilterSidebar from "./Filter";
 export default function LeadPage() {
     const [leads, setLeads] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -400,8 +401,8 @@ const handleMultipleDelete=async()=>{
                     </Button>
                 </div>
             </div>
-
-            {filterModelOpen && <FiltersPopUp onClose={() => setFilterModelOpen(false)} />}
+            <FilterSidebar isOpen={filterModelOpen} onClose={() => setFilterModelOpen(false)}/>
+            {/* {filterModelOpen && <FiltersPopUp onClose={() => setFilterModelOpen(false)} />} */}
             {emailModel && (
                 <Model>
                     <EmailComposer
