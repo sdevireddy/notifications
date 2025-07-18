@@ -48,6 +48,51 @@ import { apiSummary } from "../../common/apiSummary";
 import toast from "react-hot-toast";
 import { axiosPrivate } from "../../utils/axios";
 import DeleteConfirmationDialog from "../../components/ConfirmDeleteModel";
+
+const accountsColumnsConfig = {
+    accountName: {
+        label: "Account Name",
+        render: ({ row }) => {
+            const account = row.original;
+            return (
+                <div className="flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
+                        <User className="h-4 w-4 text-gray-500" />
+                    </div>
+                    <div>{account.accountName}</div>
+                </div>
+            );
+        },
+    },
+    phone: {
+        label: "Phone",
+        render: ({ row }) => row.original.phone || "-",
+    },
+    website: {
+        label: "Website",
+        render: ({ row }) => row.original.website || "-",
+    },
+    industry: {
+        label: "Industry",
+        render: ({ row }) => row.original.industry || "-",
+    },
+    annualRevenue: {
+        label: "Revenue",
+        render: ({ row }) => row.original.annualRevenue?.toLocaleString() || "-",
+    },
+    accountOwner: {
+        label: "Owner",
+        render: ({ row }) => row.original.accountOwner || "-",
+    },
+};
+const availableAccountColumns = {
+    accountName: true,
+    phone: true,
+    website: true,
+    industry: true,
+    annualRevenue: true,
+    accountOwner: true,
+};
 export default function AccountsPage() {
     const [accounts, setAccounts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -65,8 +110,9 @@ export default function AccountsPage() {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [accountToDelete, setAccountToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [accountsData,refetchData,loading] =useFetchData(apiSummary.crm.getAccounts)
-
+    const [accountsData, refetchData, loading] = useFetchData(apiSummary.crm.getAccounts);
+    const [visibleColumns, setVisibleColumns] = useState(availableAccountColumns);
+    const [showColumnSelector, setShowColumnSelector] = useState(false);
     useEffect(() => {
         setAccounts(accountsData.data);
         setFilteredAccounts(accountsData.data);
@@ -81,7 +127,7 @@ export default function AccountsPage() {
                 (account) =>
                     account.accountName?.toLowerCase().includes(term) ||
                     account.phone?.toLowerCase().includes(term) ||
-                    account.accountOwner?.toLowerCase().includes(term ) ||
+                    account.accountOwner?.toLowerCase().includes(term) ||
                     account.website?.toLowerCase().includes(term),
             ),
         );
@@ -94,7 +140,9 @@ export default function AccountsPage() {
     const totalPages = Math.ceil(totalRecord / recordsPerPageValue);
 
     const handleContactSelect = (account) => {
-        setSelectMultipleAccount((prev) => (prev.some((item) => item.id === account.id) ? prev.filter((item) => item.id !== account.id) : [...prev, account]));
+        setSelectMultipleAccount((prev) =>
+            prev.some((item) => item.id === account.id) ? prev.filter((item) => item.id !== account.id) : [...prev, account],
+        );
     };
 
     const handleSelectAll = () => {
@@ -104,8 +152,16 @@ export default function AccountsPage() {
     const handleSort = (key) => {
         setSortConfig((prev) => (prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }));
     };
-    const columns = useMemo(
-        () => [
+    const columns = useMemo(() => {
+        const dynamicCols = Object.entries(accountsColumnsConfig)
+            .filter(([key]) => visibleColumns[key])
+            .map(([key, { label, render }]) => ({
+                accessorKey: key,
+                header: label,
+                cell: render,
+            }));
+
+        return [
             {
                 id: "select",
                 header: ({ table }) => (
@@ -122,108 +178,74 @@ export default function AccountsPage() {
                         checked={row.getIsSelected()}
                         onCheckedChange={(value) => {
                             row.toggleSelected(!!value);
-                            let lead = row.original;
-                            handleContactSelect(lead);
+                            handleContactSelect(row.original);
                         }}
                     />
                 ),
             },
-            {
-                accessorKey: "accountName",
-                header: "Account Name",
-                cell: ({ row }) => {
-                    const lead = row.original;
-                    return (
-                        <div className="flex items-center gap-2">
-                            
-                            <div>{row.original.accountName}</div>
-                        </div>
-                    );
-                },
-            },
-            // {
-            //     accessorKey: "email",
-            //     header: "Email",
-            // },
-            {
-                accessorKey: "phone",
-                header: "Phone",
-            },
-            {
-                accessorKey: "website",
-                header: "Website",
-                cell: ({ row }) => (
-                    <div>
-                        <div className="text-xs">{row.original.website}</div>
-                    </div>
-                ),
-            },
-            {
-                accessorKey: "accountOwner",
-                header: "Owner",
-            },
+            ...dynamicCols,
             {
                 id: "actions",
                 header: "Actions",
                 cell: ({ row }) => {
-                    const account=row.original
-                    return(
-                    <div className="flex items-center justify-center gap-1">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                            onClick={() => {
-                                setSelectSingleLead([row.original]);
-                                setEmailModel(true);
-                            }}
-                        >
-                            <Mail className="h-4 w-4 text-gray-600" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                        >
-                            <Phone className="h-4 w-4 text-gray-600" />
-                        </Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0"
-                                >
-                                    <MoreVertical className="h-4 w-4 text-gray-600" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                    <User className="mr-2 h-4 w-4" />
-                                    View Profile
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    Edit
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                 onClick={() => {
+                    const account = row.original;
+                    return (
+                        <div className="flex items-center justify-center gap-1">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                                onClick={() => {
+                                    setSelectSingleLead([row.original]);
+                                    setEmailModel(true);
+                                }}
+                            >
+                                <Mail className="h-4 w-4 text-gray-600" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                            >
+                                <Phone className="h-4 w-4 text-gray-600" />
+                            </Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-8 w-8 p-0"
+                                    >
+                                        <MoreVertical className="h-4 w-4 text-gray-600" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem>
+                                        <User className="mr-2 h-4 w-4" />
+                                        View Profile
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Edit className="mr-2 h-4 w-4" />
+                                        Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => {
                                             setAccountToDelete(account);
                                             setShowConfirmDelete(true);
                                         }}
-                                        >
-                                    <Trash2 className="mr-2 h-4 w-4 text-red-600" />
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                )}
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4 text-red-600" />
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    );
+                },
             },
-        ],
-        [],
-    );
-const handleDelete = async (id) => {
+        ];
+    }, [visibleColumns]);
+    const handleDelete = async (id) => {
         try {
             const resp = await axiosPrivate({
                 ...apiSummary.crm.deleteAccount(id),
@@ -247,11 +269,47 @@ const handleDelete = async (id) => {
                     <BreadCrumb />
                 </div>
                 <div className="flex items-center gap-3">
-                    <div  className="flex items-center" onClick={() => setFilterModelOpen(true)}>
+                    <div
+                        className="flex items-center"
+                        onClick={() => setFilterModelOpen(true)}
+                    >
                         <Tooltip text={"Filter"}>
                             <LuFilter />
                         </Tooltip>
                     </div>
+                    <DropdownMenu
+                        open={showColumnSelector}
+                        onOpenChange={setShowColumnSelector}
+                    >
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            align="end"
+                            className="h-80 w-56 overflow-auto"
+                        >
+                            {Object.keys(accountsColumnsConfig).map((key) => (
+                                <DropdownMenuItem
+                                    key={key}
+                                    onSelect={(e) => e.preventDefault()}
+                                    className="flex items-center justify-between"
+                                >
+                                    <span className="text-sm">{accountsColumnsConfig[key].label}</span>
+                                    <Checkbox
+                                        checked={visibleColumns[key]}
+                                        onCheckedChange={() =>
+                                            setVisibleColumns((prev) => ({
+                                                ...prev,
+                                                [key]: !prev[key],
+                                            }))
+                                        }
+                                    />
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="primary">
@@ -266,11 +324,11 @@ const handleDelete = async (id) => {
                             </DropdownMenuItem>
                             <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                                 <Users className="mr-2 h-4 w-4" />
-                                Mass Transfer 
+                                Mass Transfer
                             </DropdownMenuItem>
                             <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                                 <Edit className="mr-2 h-4 w-4" />
-                                Update Multiple 
+                                Update Multiple
                             </DropdownMenuItem>
                             <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                                 <Trash2 className="mr-2 h-4 w-4" />
@@ -380,7 +438,7 @@ const handleDelete = async (id) => {
                     />
                 </Model>
             )}
-             <DeleteConfirmationDialog
+            <DeleteConfirmationDialog
                 open={showConfirmDelete}
                 setOpen={setShowConfirmDelete}
                 isLoading={isDeleting}
