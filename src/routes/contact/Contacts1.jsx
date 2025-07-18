@@ -49,6 +49,77 @@ import { apiSummary } from "../../common/apiSummary";
 import DeleteConfirmationDialog from "../../components/ConfirmDeleteModel";
 import { axiosPrivate } from "../../utils/axios";
 import toast from "react-hot-toast";
+
+const availableContactColumns = {
+  firstName: true,
+  email: true,
+  mobile: true,
+  vendorName: true,
+  contactOwner: true,
+  leadSource: true,
+  department: false,
+  assistant: false,
+  secondaryEmail: false,
+};
+const contactColumnsConfig = {
+  firstName: {
+    label: "Name",
+    render: ({ row }) => {
+      const contact = row.original;
+      return (
+        <div className="flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
+            <User className="h-4 w-4 text-gray-500" />
+          </div>
+          <div>{contact.firstName + " " + contact.lastName}</div>
+        </div>
+      );
+    },
+  },
+  email: {
+    label: "Email",
+    render: ({ row }) => row.original.email,
+  },
+  mobile: {
+    label: "Phone",
+    render: ({ row }) => row.original.mobile,
+  },
+  company: {
+    label: "Company",
+    render: ({ row }) => (
+      <div>
+        <div>{row.original.vendorName}</div>
+        <div className="text-xs text-gray-500">{row.original.title}</div>
+      </div>
+    ),
+  },
+  contactOwner: {
+    label: "Owner",
+    render: ({ row }) => row.original.contactOwner,
+  },
+  leadSource: {
+    label: "Source",
+    render: ({ row }) => row.original.leadSource,
+  },
+  twitterHandle: {
+    label: "Twitter",
+    render: ({ row }) => row.original.twitterHandle || "-",
+  },
+  department: {
+    label: "Department",
+    render: ({ row }) => row.original.department || "-",
+  },
+  skypeId: {
+    label: "Skype",
+    render: ({ row }) => row.original.skypeId || "-",
+  },
+  assistant: {
+    label: "Assistant",
+    render: ({ row }) => row.original.assistant || "-",
+  },
+};
+
+
 export default function ContactPage() {
     const [contacts, setContacts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -63,6 +134,8 @@ export default function ContactPage() {
     const [isMassEmail, setIsMassEmail] = useState(false);
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
+    const [visibleColumns, setVisibleColumns] = useState(availableContactColumns);
+     const [showColumnSelector, setShowColumnSelector] = useState(false);
 
     const [constactData, refetchContacts, loading] = useFetchData(apiSummary.crm.getContacts);
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -107,134 +180,81 @@ export default function ContactPage() {
     const handleSort = (key) => {
         setSortConfig((prev) => (prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }));
     };
-    const columns = useMemo(
-        () => [
-            {
-                id: "select",
-                header: ({ table }) => (
-                    <Checkbox
-                        checked={table.getIsAllRowsSelected()}
-                        onCheckedChange={(value) => {
-                            table.toggleAllRowsSelected(!!value);
-                            handleSelectAll();
-                        }}
-                    />
-                ),
-                cell: ({ row }) => (
-                    <Checkbox
-                        checked={row.getIsSelected()}
-                        onCheckedChange={(value) => {
-                            row.toggleSelected(!!value);
-                            let contact = row.original;
-                            handleContactSelect(contact);
-                        }}
-                    />
-                ),
-            },
-            {
-                accessorKey: "firstName",
-                header: "Name",
-                cell: ({ row }) => {
-                    const lead = row.original;
-                    return (
-                        <div className="flex items-center gap-2">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
-                                <User className="h-4 w-4 text-gray-500" />
-                            </div>
-                            <div>{lead.firstName + " " + lead.lastName}</div>
-                        </div>
-                    );
-                },
-            },
-            {
-                accessorKey: "email",
-                header: "Email",
-            },
-            {
-                accessorKey: "mobile",
-                header: "Phone",
-            },
-            {
-                accessorKey: "company",
-                header: "Company",
-                cell: ({ row }) => (
-                    <div>
-                        <div>{row.original.vendorName}</div>
-                        <div className="text-xs text-gray-500">{row.original.title}</div>
-                    </div>
-                ),
-            },
-            {
-                accessorKey: "contactOwner",
-                header: "Owner",
-            },
-            {
-                accessorKey: "leadSource",
-                header: "Source",
-            },
-            {
-                id: "actions",
-                header: "Actions",
-                cell: ({ row }) => {
-                    const contact = row.original;
-                    return (
-                        <div className="flex items-center justify-center gap-1">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0"
-                                onClick={() => {
-                                    setSelectSingleLead([row.original]);
-                                    setEmailModel(true);
-                                }}
-                            >
-                                <Mail className="h-4 w-4 text-gray-600" />
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0"
-                            >
-                                <Phone className="h-4 w-4 text-gray-600" />
-                            </Button>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-8 w-8 p-0"
-                                    >
-                                        <MoreVertical className="h-4 w-4 text-gray-600" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>
-                                        <User className="mr-2 h-4 w-4" />
-                                        View Profile
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <Edit className="mr-2 h-4 w-4" />
-                                        Edit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onClick={() => {
-                                            console.log(contact)
-                                            setContactToDelete(contact);
-                                            setShowConfirmDelete(true);
-                                        }}
-                                    >
-                                        <Trash2 className="mr-2 h-4 w-4 text-red-600" />
-                                        Delete
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                    );
-                },
-            },
-        ],
-        [],
-    );
+ const columns = useMemo(() => {
+  const dynamicCols = Object.keys(visibleColumns)
+    .filter((key) => visibleColumns[key] && contactColumnsConfig[key])
+    .map((key) => ({
+      accessorKey: key,
+      header: contactColumnsConfig[key].label,
+      cell: contactColumnsConfig[key].render,
+    }));
+
+  return [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllRowsSelected()}
+          onCheckedChange={(val) => {
+            table.toggleAllRowsSelected(!!val);
+            handleSelectAll();
+          }}
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(val) => {
+            row.toggleSelected(!!val);
+            handleContactSelect(row.original);
+          }}
+        />
+      ),
+    },
+    ...dynamicCols,
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const contact = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => {
+                setSelectSingleContact([contact]);
+                setEmailModel(true);
+              }}
+            >
+              <Mail className="h-4 w-4" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="icon" variant="ghost">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>View Profile</DropdownMenuItem>
+                <DropdownMenuItem>Edit</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setContactToDelete(contact);
+                    setShowConfirmDelete(true);
+                  }}
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        );
+      },
+    },
+  ];
+}, [visibleColumns]);
+
     const handleDelete = async (id) => {
         try {
             const resp = await axiosPrivate({
@@ -266,6 +286,39 @@ export default function ContactPage() {
                             <LuFilter />
                         </Tooltip>
                     </div>
+                  
+
+<DropdownMenu open={showColumnSelector} onOpenChange={setShowColumnSelector}>
+  <DropdownMenuTrigger asChild>
+    <Button variant="outline">
+      Columns <ChevronDown className="ml-2 h-4 w-4" />
+    </Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="end" className="h-80 w-56 overflow-auto">
+    {Object.keys(visibleColumns).map((key) => (
+      <DropdownMenuItem
+        key={key}
+        onSelect={(e) => e.preventDefault()}
+        className="flex items-center justify-between gap-2"
+      >
+        <span className="text-sm text-gray-700">
+          {contactColumnsConfig[key]?.label || key.replace(/([A-Z])/g, " $1")}
+        </span>
+        <Checkbox
+          checked={visibleColumns[key]}
+          onCheckedChange={() =>
+            setVisibleColumns((prev) => ({
+              ...prev,
+              [key]: !prev[key],
+            }))
+          }
+        />
+      </DropdownMenuItem>
+    ))}
+  </DropdownMenuContent>
+</DropdownMenu>
+
+
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="primary">

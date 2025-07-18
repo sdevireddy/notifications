@@ -50,6 +50,77 @@ import StatusBadge from "../../components/StatusBadge";
 import { axiosPrivate } from "../../utils/axios";
 import DeleteConfirmationDialog from "../../components/ConfirmDeleteModel";
 import toast from "react-hot-toast";
+const dealColumnsConfig = {
+    dealName: {
+        label: "Deal Name",
+        render: ({ row }) => {
+            const deal = row.original;
+            return (
+                <div className="flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
+                        <User className="h-4 w-4 text-gray-500" />
+                    </div>
+                    <div>{deal.dealName}</div>
+                </div>
+            );
+        },
+    },
+    amount: {
+        label: "Amount",
+        render: ({ row }) => row.original.amount,
+    },
+    stage: {
+        label: "Stage",
+        render: ({ row }) => <StatusBadge status={row.original.stage} />,
+    },
+    closingDate: {
+        label: "Closing Date",
+        render: ({ row }) => row.original.closingDate?.split("T")[0] || "-",
+    },
+    type: {
+        label: "Type",
+        render: ({ row }) => row.original.type || "-",
+    },
+    leadSource: {
+        label: "Lead Source",
+        render: ({ row }) => row.original.leadSource || "-",
+    },
+    probability: {
+        label: "Probability",
+        render: ({ row }) => `${row.original.probability}%`,
+    },
+    expectedRevenue: {
+        label: "Expected Revenue",
+        render: ({ row }) => row.original.expectedRevenue,
+    },
+    nextStep: {
+        label: "Next Step",
+        render: ({ row }) => row.original.nextStep || "-",
+    },
+    campaignSource: {
+        label: "Campaign Source",
+        render: ({ row }) => row.original.campaignSource || "-",
+    },
+    dealOwner: {
+        label: "Owner",
+        render: ({ row }) => row.original.dealOwner,
+    },
+};
+
+export const availableDealColumns = {
+    dealName: true,
+    amount: true,
+    stage: true,
+    closingDate: true,
+    dealOwner: true,
+    type: false,
+    leadSource: false,
+    nextStep: false,
+    probability: false,
+    expectedRevenue: false,
+    campaignSource: false,
+};
+
 export default function DealsPage() {
     const [deals, setDeals] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -68,7 +139,8 @@ export default function DealsPage() {
     const [dealToDelete, setDealToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [dealsData, refetchData, loading] = useFetchData(apiSummary.crm.getDeals);
-
+    const [visibleColumns, setVisibleColumns] = useState(availableDealColumns);
+    const [showColumnSelector, setShowColumnSelector] = useState(false);
     useEffect(() => {
         setDeals(dealsData?.data || []);
         setFilteredDeals(dealsData?.data || []);
@@ -107,8 +179,16 @@ export default function DealsPage() {
     const handleSort = (key) => {
         setSortConfig((prev) => (prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }));
     };
-    const columns = useMemo(
-        () => [
+    const columns = useMemo(() => {
+        const dynamicCols = Object.entries(dealColumnsConfig)
+            .filter(([key]) => visibleColumns[key])
+            .map(([key, { label, render }]) => ({
+                accessorKey: key,
+                header: label,
+                cell: render,
+            }));
+
+        return [
             {
                 id: "select",
                 header: ({ table }) => (
@@ -125,67 +205,19 @@ export default function DealsPage() {
                         checked={row.getIsSelected()}
                         onCheckedChange={(value) => {
                             row.toggleSelected(!!value);
-                            let lead = row.original;
-                            handleContactSelect(lead);
+                            handleContactSelect(row.original);
                         }}
                     />
                 ),
             },
-            {
-                accessorKey: "dealName",
-                header: "Deal Name",
-                cell: ({ row }) => {
-                    const lead = row.original;
-                    return (
-                        <div className="flex items-center gap-2">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
-                                <User className="h-4 w-4 text-gray-500" />
-                            </div>
-                            <div>{lead.dealName}</div>
-                        </div>
-                    );
-                },
-            },
-            {
-                accessorKey: "amount",
-                header: "Amount",
-            },
-            {
-                accessorKey: "stage",
-                header: "Stage",
-                cell: ({ row }) => {
-                    const deal = row.original;
-                    return <StatusBadge status={deal.stage} />;
-                },
-            },
-            {
-                accessorKey: "closingDate",
-                header: "Closing Date",
-                cell: ({ row }) => (
-                    <div>
-                        <div>{row.original.closingDate}</div>
-                    </div>
-                ),
-            },
-            // {
-            //     accessorKey: "accountName",
-            //     header: "Account Name",
-            // },
-            // {
-            //     accessorKey: "contactName",
-            //     header: "Contact Name",
-            // },
-            {
-                accessorKey: "dealOwner",
-                header: "Owner",
-            },
+            ...dynamicCols,
             {
                 id: "actions",
                 header: "Actions",
                 cell: ({ row }) => {
                     const deal = row.original;
                     return (
-                        <div className="flex items-center justify-center gap-1">
+                     <div className="flex items-center justify-center gap-1">
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -235,12 +267,11 @@ export default function DealsPage() {
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
-                    );
+                    )
                 },
             },
-        ],
-        [],
-    );
+        ];
+    }, [visibleColumns]);
     const handleDelete = async (id) => {
         try {
             const resp = await axiosPrivate({
@@ -273,6 +304,40 @@ export default function DealsPage() {
                             <LuFilter />
                         </Tooltip>
                     </div>
+                    <DropdownMenu
+                        open={showColumnSelector}
+                        onOpenChange={setShowColumnSelector}
+                    >
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            align="end"
+                            className="h-80 w-56 overflow-auto"
+                        >
+                            {Object.keys(dealColumnsConfig).map((key) => (
+                                <DropdownMenuItem
+                                    key={key}
+                                    onSelect={(e) => e.preventDefault()}
+                                    className="flex items-center justify-between"
+                                >
+                                    <span className="text-sm">{dealColumnsConfig[key].label}</span>
+                                    <Checkbox
+                                        checked={visibleColumns[key]}
+                                        onCheckedChange={() =>
+                                            setVisibleColumns((prev) => ({
+                                                ...prev,
+                                                [key]: !prev[key],
+                                            }))
+                                        }
+                                    />
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="primary">
