@@ -66,6 +66,64 @@ const avaliableColumns = {
     followUp: false,
     comments: false,
 };
+const columnsConfig = {
+  firstName: {
+    label: "Name",
+    render: ({ row }) => {
+      const lead = row.original;
+      return (
+        <div className="flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
+            <User className="h-4 w-4 text-gray-500" />
+          </div>
+          <div>{lead.firstName + " " + lead.lastName}</div>
+        </div>
+      );
+    },
+  },
+  email: {
+    label: "Email",
+    render: ({ row }) => row.original.email,
+  },
+  mobile: {
+    label: "Phone",
+    render: ({ row }) => row.original.mobile,
+  },
+  company: {
+    label: "Company",
+    render: ({ row }) => (
+      <div>
+        <div>{row.original.company}</div>
+        <div className="text-xs text-gray-500">{row.original.title}</div>
+      </div>
+    ),
+  },
+  leadOwner: {
+    label: "Owner",
+    render: ({ row }) => row.original.leadOwner,
+  },
+  leadStatus: {
+    label: "Status",
+    render: ({ row }) => <StatusBadge status={row.original.leadStatus} />,
+  },
+  website: {
+    label: "Website",
+    render: ({ row }) => row.original.website || "-",
+  },
+  industry: {
+    label: "Industry",
+    render: ({ row }) => row.original.industry || "-",
+  },
+  followUp: {
+    label: "Follow Up",
+    render: ({ row }) => row.original.followUp || "-",
+  },
+  comments: {
+    label: "Comments",
+    render: ({ row }) => row.original.comments || "-",
+  },
+};
+
 export default function LeadPage() {
     const [leads, setLeads] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -131,147 +189,63 @@ export default function LeadPage() {
 
     const currentLeads = filteredLeads;
 
-    const columns = useMemo(() => {
-        const baseColumns = [];
+   const columns = useMemo(() => {
+  const dynamicColumns = [];
 
-        // Checkbox column
-        baseColumns.push({
-            id: "select",
-            header: ({ table }) => (
-                <Checkbox
-                    checked={table.getIsAllRowsSelected()}
-                    onCheckedChange={(value) => {
-                        table.toggleAllRowsSelected(!!value);
-                        handleSelectAll();
-                    }}
-                />
-            ),
-            cell: ({ row }) => (
-                <Checkbox
-                    checked={row.getIsSelected()}
-                    onCheckedChange={(value) => {
-                        row.toggleSelected(!!value);
-                        let lead = row.original;
-                        handleContactSelect(lead);
-                    }}
-                />
-            ),
-        });
+  // Select Checkbox Column
+  dynamicColumns.push({
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllRowsSelected()}
+        onCheckedChange={(value) => {
+          table.toggleAllRowsSelected(!!value);
+          handleSelectAll();
+        }}
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => {
+          row.toggleSelected(!!value);
+          handleContactSelect(row.original);
+        }}
+      />
+    ),
+  });
 
-        if (visibleColumns.firstName) {
-            baseColumns.push({
-                accessorKey: "firstName",
-                header: "Name",
-                cell: ({ row }) => {
-                    const lead = row.original;
-                    return (
-                        <div className="flex items-center gap-2">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
-                                <User className="h-4 w-4 text-gray-500" />
-                            </div>
-                            <div>{lead.firstName + " " + lead.lastName}</div>
-                        </div>
-                    );
-                },
-            });
-        }
+  // Dynamically add columns based on visibility
+  Object.keys(columnsConfig).forEach((key) => {
+    if (visibleColumns[key]) {
+      dynamicColumns.push({
+        accessorKey: key,
+        header: columnsConfig[key].label,
+        cell: columnsConfig[key].render,
+      });
+    }
+  });
 
-        if (visibleColumns.email) {
-            baseColumns.push({
-                accessorKey: "email",
-                header: "Email",
-            });
-        }
+  // Actions column
+  dynamicColumns.push({
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <div className="flex items-center justify-center gap-3">
+        <Button
+          variant="outline"
+          size="sm"
+          className="hover:bg-primary hover:text-white"
+        >
+          Convert
+        </Button>
+      </div>
+    ),
+  });
 
-        if (visibleColumns.mobile) {
-            baseColumns.push({
-                accessorKey: "mobile",
-                header: "Phone",
-            });
-        }
+  return dynamicColumns;
+}, [visibleColumns]);
 
-        if (visibleColumns.company) {
-            baseColumns.push({
-                accessorKey: "company",
-                header: "Company",
-                cell: ({ row }) => (
-                    <div>
-                        <div>{row.original.company}</div>
-                        <div className="text-xs text-gray-500">{row.original.title}</div>
-                    </div>
-                ),
-            });
-        }
-
-        if (visibleColumns.leadOwner) {
-            baseColumns.push({
-                accessorKey: "leadOwner",
-                header: "Owner",
-            });
-        }
-
-        if (visibleColumns.leadStatus) {
-            baseColumns.push({
-                accessorKey: "leadStatus",
-                header: "Status",
-                cell: ({ row }) => <StatusBadge status={row.original.leadStatus} />,
-            });
-        }
-        if (visibleColumns.website) {
-            baseColumns.push({
-                accessorKey: "website",
-                header: "Website",
-                cell: ({ row }) => row.original.website || "-",
-            });
-        }
-
-        if (visibleColumns.industry) {
-            baseColumns.push({
-                accessorKey: "industry",
-                header: "Industry",
-                cell: ({ row }) => row.original.industry || "-",
-            });
-        }
-
-        if (visibleColumns.followUp) {
-            baseColumns.push({
-                accessorKey: "followUp",
-                header: "Follow Up",
-                cell: ({ row }) => row.original.followUp || "-",
-            });
-        }
-
-        if (visibleColumns.comments) {
-            baseColumns.push({
-                accessorKey: "comments",
-                header: "Comments",
-                cell: ({ row }) => row.original.comments || "-",
-            });
-        }
-
-        // Always show actions column
-        baseColumns.push({
-            id: "actions",
-            header: "Actions",
-            cell: ({ row }) => {
-                const lead = row.original;
-                return (
-                    <div className="flex items-center justify-center gap-3">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="hover:bg-primary hover:text-white"
-                        >
-                            Convert
-                        </Button>
-                        {/* Dropdown code remains same */}
-                    </div>
-                );
-            },
-        });
-
-        return baseColumns;
-    }, [visibleColumns]);
 
     const handleDelete = async (id) => {
         try {
