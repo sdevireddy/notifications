@@ -230,17 +230,59 @@ export default function LeadPage() {
   dynamicColumns.push({
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center gap-3">
-        <Button
-          variant="outline"
-          size="sm"
-          className="hover:bg-primary hover:text-white"
-        >
-          Convert
-        </Button>
-      </div>
-    ),
+    cell: ({ row }) =>{
+        const lead=row.original
+        return (
+              <div className="flex items-center justify-center gap-3">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className={"hover:bg-primary hover:text-white"}
+                        >
+                           Convert
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0"
+                                >
+                                    <MoreVertical className="h-4 w-4 text-gray-600" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem>
+                                    <User className="mr-2 h-4 w-4" />
+                                    View Profile
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    Edit
+                                </DropdownMenuItem>
+                                 <DropdownMenuItem>
+                                   <Phone className=" mr-2 h-4 w-4" />
+                                    Phone
+                                </DropdownMenuItem>
+                                 <DropdownMenuItem  onClick={() => {
+                                setSelectSingleLead([row.original]);
+                                setEmailModel(true);
+                            }}>
+                                    <Mail className="mr-2 h-4 w-4 " />
+                                    Mail
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+        setLeadToDelete(lead);
+        setShowConfirmDelete(true);
+    }}>
+                                    <Trash2 className="mr-2 h-4 w-4 text-red-600" />
+                                    Delete
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+        )
+    }
   });
 
   return dynamicColumns;
