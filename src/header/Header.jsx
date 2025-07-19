@@ -127,6 +127,7 @@ const handleLogout=()=>{
                                 <div
                                     key={index}
                                     onClick={() => {
+                                        localStorage.setItem("active_module",module.name)
                                         setActiveModule(module.name);
                                         setShowModules(false);
                                         if (module.path) navigate(module.path);

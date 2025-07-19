@@ -4,12 +4,12 @@ import {
     Search,
     Briefcase,
     Users,
+    MessageCircle,
     User,
     Building,
     ArrowLeftCircle,
     BookOpen,
-    Mail,
-    Megaphone,
+        Megaphone,
     HelpCircle,
     Workflow,
     Settings,
@@ -18,6 +18,8 @@ import {
     UserRoundSearch,
     CircleDollarSign,
     ChartNoAxesCombined,
+    Mail,
+
 } from "lucide-react";
 import logoLight from "@/assets/logo-light.svg";
 import logoDark from "@/assets/logo-dark.svg";
@@ -42,8 +44,9 @@ const moduleLinks = {
         { to: "/library", label: "Library", icon: <BookOpen size={20} /> }
     ],
     Marketing: [
-        { to: "marketing/emailmarketing", label: "Email Marketing", icon: <Megaphone size={20} /> },
-        { to: "marketing/SMSMarketing", label: "SMS Marketing", icon: <Megaphone size={20} /> },
+        { to: "marketing/users", label: "Users", icon: <Users size={20} /> },
+        { to: "marketing/emailmarketing", label: "Email Marketing", icon: <Mail size={20} /> },
+        { to: "marketing/SMSMarketing", label: "SMS Marketing", icon: <MessageCircle size={20} /> },
         { to: "marketing/SocialMediaMarketing", label: "Social media marketing", icon:<Megaphone size={20} /> },
         
     ],
@@ -76,7 +79,7 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
         <div
             ref={sidebarRef}
             className={`h-full border-r border-gray-200 bg-blue-900 transition-all duration-300 dark:border-gray-700 dark:bg-slate-900 ${
-                collapsed ? "w-[70px]" : "w-64"
+                collapsed ? "w-[70px]" : "w-56"
             }`}
             onMouseEnter={() => ref?.current?.scrollTo?.({ top: 0 })}
         >
@@ -136,7 +139,7 @@ const SidebarLink = ({ to, icon, label, collapsed }) => (
         }
     >
         {icon}
-        {!collapsed && <span>{label}</span>}
+        {!collapsed && <span className="line-clamp-1">{label}</span>}
     </NavLink>
 );
 

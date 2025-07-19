@@ -1,24 +1,23 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiCamera, FiUser, FiMail, FiBriefcase, FiMapPin, FiArrowLeft } from "react-icons/fi";
-
-
-const AccountCreationForm = () => {
-  const navigate = useNavigate();
-  const [accountImage,setAccountImage] = useState(null);
-  const [formData, setFormData] = useState({
+import toast from "react-hot-toast";
+import { axiosPrivate } from "../../utils/axios";
+import { apiSummary } from "../../common/apiSummary";
+const initialFormData={
     // Basic Information
     accoutImage:"",
     accountOwner:"",
     accountName: "",
     parentAccount: "",
     accountNumber: "",
-    accountType: "",
+    // accountType: "",
     industry: "",
     annualRevenue:"",
-    rating:"",
+    // rating:"",
     phone:"",
     fax:"",
+    industry:"",
     website:"",
     employees:"",
     sicCode:"",
@@ -34,7 +33,12 @@ const AccountCreationForm = () => {
     country: "",
     // Description
     description: "",
-  });
+  }
+
+const AccountCreationForm = () => {
+  const navigate = useNavigate();
+  const [accountImage,setAccountImage] = useState(null);
+  const [formData, setFormData] = useState(initialFormData);
 
    const submitActionRef = useRef("save");
   
@@ -62,51 +66,9 @@ const AccountCreationForm = () => {
       };
   
       const resetForm = () => {
-          setFormData(initialFormState);
+          setFormData(initialFormData);
           setAccountImage(null);
           //toast.info("Form reset to default values");
-      };
-  
-      const saveLead = async () => {
-          try {
-            const formdata = new FormData();
-            Object.entries(formData).map((el) => {
-                formdata.append(el[0], el[1]);
-            });
-              const response = await fetch("http://localhost:8081/api/leads", {
-                  method: "POST",
-                  headers: { "Content-Type": "multipart/form-data" },
-                  body: formdata,
-              });
-  
-              const data = await response.json();
-  
-              if (!response.ok) {
-                  throw new Error("Failed to save lead");
-              }
-  
-              toast.success("Lead saved successfully!");
-              console.log("Lead Saved:", data);
-              return true;
-          } catch (error) {
-              toast.error(error.message || "Failed to save lead. Please try again.");
-              console.error("Error saving lead:", error);
-              return false;
-          }
-      };
-  
-      const convertLead = async () => {
-          try {
-              const response = await fetch("/api/leads/convert", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ ...formData }),
-              });
-              const data = await response.json();
-              console.log("Lead Converted:", data);
-          } catch (error) {
-              console.error("Error converting lead:", error);
-          }
       };
   
       const cancelLead = async () => {
@@ -123,29 +85,22 @@ const AccountCreationForm = () => {
           }
       };
   
-      const handleSubmit = async (e) => {
+      const handleSubmit = async (e,ref) => {
           e.preventDefault();
-        for (let pair of formdata.entries()) {
-    console.log(pair[0], pair[1]);
-  }
-          // const success = await saveLead();
-  
-          if (success) {
-              if (submitActionRef.current === "saveAndNew") {
-                  resetForm();
-              } else if (submitActionRef.current === "save") {
-                  resetForm();
-                  navigate("/leads");
-              }
-          }
-      };
-  
-      const handleSaveAndNew = async () => {
-          const success = await saveLead();
-          if (success) {
-              setFormData(initialFormState);
-              setLeadImage(null);
-              toast.success("Lead saved. You can add a new one now!");
+          try {
+            const resp=await axiosPrivate({
+                ...apiSummary.crm.createAccount,
+                data:formData
+            })
+            toast.success("Account Created Successfully")
+            if(ref==="save")
+            {
+                navigate("/accounts")
+            }
+            resetForm()
+          } catch (error) {
+            console.log(error)
+            toast.error("Account Creation Failed")
           }
       };
   
@@ -196,7 +151,7 @@ const AccountCreationForm = () => {
                           <button
                               type="submit"
                               className="rounded  px-4 py-2 hover:bg-gray-100 border border-primary transition-all ease-in-out duration-200 shadow-md"
-                              onClick={() => (submitActionRef.current = "saveAndNew")}
+                              onClick={(e) => handleSubmit(e,"saveAndNew")}
                           >
                               Save And New
                           </button>
@@ -204,7 +159,7 @@ const AccountCreationForm = () => {
                           <button
                               type="submit"
                               className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover shadow-sm"
-                              onClick={() => (submitActionRef.current = "save")}
+                             onClick={(e) => handleSubmit(e,"save")}
                           >
                               Save
                           </button>
@@ -241,7 +196,7 @@ const AccountCreationForm = () => {
                       />
                       <Input
                           label="Parent Account"
-                          name="accountName"
+                          name="parentAccount"
                           value={formData.parentAccount}
                           onChange={handleChange}
                           required
@@ -261,11 +216,18 @@ const AccountCreationForm = () => {
                           required
                       />
                       <Input
+                          label="Industry"
+                          name="industry"
+                          value={formData.industry}
+                          onChange={handleChange}
+                          required
+                      />
+                      {/* <Input
                           label="Rating"
                           name="rating"
                           value={formData.rating}
                           onChange={handleChange}
-                      />
+                      /> */}
                       <Input
                           label="Phone"
                           name="phone"
