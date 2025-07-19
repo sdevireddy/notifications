@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
+import { format } from "date-fns";
+
 import {
   Select,
   SelectTrigger,
@@ -23,31 +25,28 @@ export default function CreateEmailCampaign() {
   const [recipientList, setRecipientList] = useState("");
   const [isScheduled, setIsScheduled] = useState(false);
   const [scheduledDate, setScheduledDate] = useState(null);
-
   const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [selectedTemplateHtml, setSelectedTemplateHtml] = useState("");
-  const [selectedTemplateName, setSelectedTemplateName] = useState("");
-
-  const handleLoadTemplate = (template) => {
-    setSelectedTemplateHtml(template.html);
-    setSelectedTemplateName(template.name);
-    setShowTemplateModal(false);
-  };
+  const [selectedTemplate, setSelectedTemplate] = useState(null); // { name: "", html: "" }
 
   const handleSubmit = async () => {
+    if (!campaignName || !topic || !recipientList || !selectedTemplate) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
     const payload = {
       name: campaignName,
       topic,
       recipientsListId: recipientList,
-      htmlContent: selectedTemplateHtml,
-      templateName: selectedTemplateName,
+      htmlContent: selectedTemplate.html,
+      jsonContent: selectedTemplate.name, // optional identifier
       sendType: isScheduled ? "scheduled" : "immediate",
       scheduledTime: isScheduled ? scheduledDate : null,
     };
 
     console.log("📤 Submitting payload:", payload);
 
-    // Uncomment this to integrate with backend
+    // Uncomment for backend integration
     /*
     const res = await fetch("/api/email-campaigns", {
       method: "POST",
@@ -55,21 +54,29 @@ export default function CreateEmailCampaign() {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    console.log("✅ Response:", data);
+    if (res.ok) {
+      toast.success("Campaign created successfully!");
+      navigate("/marketing/emailmarketing");
+    } else {
+      toast.error("Error creating campaign");
+    }
     */
 
-    toast.success("Campaign successfully created!", { position: "top-right" });
+    toast.success("Campaign created successfully!");
     navigate("/marketing/emailmarketing");
   };
 
-  return (
-    <div className="min-h-screen max-w-5xl mx-auto p-6 space-y-8 bg-white rounded-lg shadow">
-      <h1 className="text-3xl font-bold text-gray-800">
-        Create Email Campaign
-      </h1>
+  const handleLoadTemplate = (template) => {
+    setSelectedTemplate(template);
+    setShowTemplateModal(false);
+  };
 
-      {/* Campaign Info Form */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  return (
+    <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-8">
+      <h1 className="text-3xl font-semibold text-gray-800">Create Email Campaign</h1>
+
+      {/* Campaign Details Form */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded shadow-md">
         <Input
           placeholder="Campaign Name"
           value={campaignName}
@@ -90,40 +97,38 @@ export default function CreateEmailCampaign() {
             <SelectItem value="list3">All Users</SelectItem>
           </SelectContent>
         </Select>
-      </div>
 
-      {/* Template Section */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-lg font-medium text-gray-700">
-            Selected Template:{" "}
-            {selectedTemplateName ? (
-              <span className="text-blue-600">{selectedTemplateName}</span>
-            ) : (
-              <span className="text-gray-400 italic">None</span>
-            )}
-          </span>
-          <Button variant="outline" onClick={() => setShowTemplateModal(true)}>
-            Select Template
+        {/* Template Selection */}
+        <div className="flex flex-col gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowTemplateModal(true)}
+            className="w-full"
+          >
+            {selectedTemplate ? `Template: ${selectedTemplate.name}` : "Select Email Template"}
           </Button>
+          {selectedTemplate && (
+            <p className="text-sm text-gray-500">
+              Selected: <strong>{selectedTemplate.name}</strong>
+            </p>
+          )}
         </div>
-        {selectedTemplateHtml && (
-          <div className="border p-4 rounded bg-gray-50 max-h-[300px] overflow-auto text-xs">
-            <pre>{selectedTemplateHtml}</pre>
-          </div>
-        )}
       </div>
-
-      {/* Schedule Section */}
-      <div className="flex items-center gap-4 mt-6">
-        <Button
-          onClick={handleSubmit}
-          className="bg-buttonprimary text-white px-6"
-        >
+{isScheduled && scheduledDate && (
+            <p className="text-sm text-gray-600 ml-1 ">
+              Send at:{" "}
+              <span className="font-medium text-black">
+                {format(scheduledDate, "MMMM d, yyyy")}
+              </span>
+            </p>
+          )}
+      {/* Submit & Schedule Section */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4">
+        <Button onClick={handleSubmit} className="bg-buttonprimary text-white px-6">
           {isScheduled ? "Schedule Send" : "Send Now"}
         </Button>
 
-        <div className="relative flex items-center gap-2">
+        <div className="relative flex flex-col md:flex-row items-start md:items-center gap-2">
           <button
             onClick={() => setIsScheduled(!isScheduled)}
             className={`px-4 py-2 rounded-md border text-sm transition ${
@@ -135,13 +140,29 @@ export default function CreateEmailCampaign() {
             {isScheduled ? "Scheduled" : "Schedule Later"}
           </button>
 
+          {/* Calendar Popover */}
           {isScheduled && (
-            <div className="absolute top-12 z-10 bg-white border rounded shadow p-2">
+            <div className="w-50 h-50">
               <Calendar
-                selected={scheduledDate}
-                onSelect={(date) => setScheduledDate(date)}
-              />
+  mode="single"
+  selected={scheduledDate}
+  onSelect={(date) => {
+    if (date) setScheduledDate(date);
+  }}
+  className="rounded-md border"
+/>
+
             </div>
+          )}
+
+          {/* Selected Date Display */}
+          {isScheduled && scheduledDate && (
+            <p className="text-sm text-gray-600 ml-1 ">
+              Send at:{" "}
+              <span className="font-medium text-black">
+                {format(scheduledDate, "MMMM d, yyyy")}
+              </span>
+            </p>
           )}
         </div>
       </div>
