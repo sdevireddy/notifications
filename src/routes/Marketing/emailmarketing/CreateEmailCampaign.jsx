@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
 import {
@@ -12,69 +12,61 @@ import {
 } from "../../../components/ui/select";
 import toast from "react-hot-toast";
 import TemplateSelectModal from "../emailmarketing/TemplateSelectModal";
-import EmailBuilder from "../../emailtemplate/EmailTemplate";
-import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Calendar from "../../../components/ui/Calendar";
+
 export default function CreateEmailCampaign() {
-  const emailBuilderRef = useRef(); // for accessing builder methods
+  const navigate = useNavigate();
 
   const [campaignName, setCampaignName] = useState("");
   const [topic, setTopic] = useState("");
   const [recipientList, setRecipientList] = useState("");
   const [isScheduled, setIsScheduled] = useState(false);
   const [scheduledDate, setScheduledDate] = useState(null);
-  const [showTemplateModal, setShowTemplateModal] = useState(false);
-const navigate = useNavigate();
-  const handleSubmit = async () => {
-    const { html, json } = emailBuilderRef.current?.exportData?.() || {
-      html: "",
-      json: "",
-    };
 
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [selectedTemplateHtml, setSelectedTemplateHtml] = useState("");
+  const [selectedTemplateName, setSelectedTemplateName] = useState("");
+
+  const handleLoadTemplate = (template) => {
+    setSelectedTemplateHtml(template.html);
+    setSelectedTemplateName(template.name);
+    setShowTemplateModal(false);
+  };
+
+  const handleSubmit = async () => {
     const payload = {
       name: campaignName,
       topic,
       recipientsListId: recipientList,
-      htmlContent: html,
-      jsonContent: json,
+      htmlContent: selectedTemplateHtml,
+      templateName: selectedTemplateName,
       sendType: isScheduled ? "scheduled" : "immediate",
       scheduledTime: isScheduled ? scheduledDate : null,
     };
 
     console.log("📤 Submitting payload:", payload);
 
-    // Uncomment below to integrate with backend
-    // const res = await fetch("/api/email-campaigns", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(payload),
-    // });
-    // const data = await res.json();
-    // console.log("✅ Response:", data);
-    toast.success("campaign Success done!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
+    // Uncomment this to integrate with backend
+    /*
+    const res = await fetch("/api/email-campaigns", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
-    navigate("/marketing/emailmarketing")
-  };
+    const data = await res.json();
+    console.log("✅ Response:", data);
+    */
 
-  const handleLoadTemplate = (templateBlocks) => {
-    // Use loadBlocks method exposed by builder
-    if (emailBuilderRef.current?.loadBlocks) {
-      emailBuilderRef.current.loadBlocks(templateBlocks);
-    }
-    setShowTemplateModal(false);
+    toast.success("Campaign successfully created!", { position: "top-right" });
+    navigate("/marketing/emailmarketing");
   };
 
   return (
-    <div className="min-h-screen p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Create Email Campaign</h1>
+    <div className="min-h-screen max-w-5xl mx-auto p-6 space-y-8 bg-white rounded-lg shadow">
+      <h1 className="text-3xl font-bold text-gray-800">
+        Create Email Campaign
+      </h1>
 
       {/* Campaign Info Form */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -98,64 +90,68 @@ const navigate = useNavigate();
             <SelectItem value="list3">All Users</SelectItem>
           </SelectContent>
         </Select>
-        <div className="flex items-center gap-2">
-         
-          
-        </div>
-       
       </div>
 
-      {/* Load Template Button */}
-      {/* <div>
-        <Button onClick={() => setShowTemplateModal(true)}>
-          Load Template
-        </Button>
-      </div> */}
+      {/* Template Section */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-lg font-medium text-gray-700">
+            Selected Template:{" "}
+            {selectedTemplateName ? (
+              <span className="text-blue-600">{selectedTemplateName}</span>
+            ) : (
+              <span className="text-gray-400 italic">None</span>
+            )}
+          </span>
+          <Button variant="outline" onClick={() => setShowTemplateModal(true)}>
+            Select Template
+          </Button>
+        </div>
+        {selectedTemplateHtml && (
+          <div className="border p-4 rounded bg-gray-50 max-h-[300px] overflow-auto text-xs">
+            <pre>{selectedTemplateHtml}</pre>
+          </div>
+        )}
+      </div>
 
-      {/* Modal for Selecting Template */}
+      {/* Schedule Section */}
+      <div className="flex items-center gap-4 mt-6">
+        <Button
+          onClick={handleSubmit}
+          className="bg-buttonprimary text-white px-6"
+        >
+          {isScheduled ? "Schedule Send" : "Send Now"}
+        </Button>
+
+        <div className="relative flex items-center gap-2">
+          <button
+            onClick={() => setIsScheduled(!isScheduled)}
+            className={`px-4 py-2 rounded-md border text-sm transition ${
+              isScheduled
+                ? "bg-blue-100 text-blue-700 border-blue-300"
+                : "bg-gray-100 text-gray-600 border-gray-300"
+            }`}
+          >
+            {isScheduled ? "Scheduled" : "Schedule Later"}
+          </button>
+
+          {isScheduled && (
+            <div className="absolute top-12 z-10 bg-white border rounded shadow p-2">
+              <Calendar
+                selected={scheduledDate}
+                onSelect={(date) => setScheduledDate(date)}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Template Modal */}
       <TemplateSelectModal
         isOpen={showTemplateModal}
         onClose={() => setShowTemplateModal(false)}
         onLoad={handleLoadTemplate}
       />
-
-      {/* Email Builder Area */}
-      <div className="border rounded">
-        <EmailBuilder ref={emailBuilderRef} />
-      </div>
-
-      {/* Submit */}
-      {/* Submit & Schedule Buttons */}
-<div className="flex items-center gap-4 mt-6">
-  <Button onClick={handleSubmit} className="bg-buttonprimary text-white">
-    {isScheduled ? "Schedule Send" : "Send Now"}
-  </Button>
-
-  {/* Schedule Toggle */}
-  <div className="relative flex items-center gap-2">
-    <button
-      onClick={() => setIsScheduled(!isScheduled)}
-      className={`px-4 py-2 rounded-md border text-sm transition ${
-        isScheduled
-          ? "bg-blue-100 text-blue-700 border-blue-300"
-          : "bg-gray-100 text-gray-600 border-gray-300"
-      }`}
-    >
-      {isScheduled ? "Scheduled" : "Schedule Later"}
-    </button>
-
-    {/* Calendar Popover (only show if scheduled) */}
-    {isScheduled && (
-      <div className="absolute top-12 z-10 bg-white border rounded shadow p-2">
-        <Calendar
-          selected={scheduledDate}
-          onSelect={(date) => setScheduledDate(date)}
-        />
-      </div>
-    )}
-  </div>
-</div>
-
     </div>
   );
 }

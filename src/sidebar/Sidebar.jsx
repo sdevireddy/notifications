@@ -19,6 +19,7 @@ import {
     CircleDollarSign,
     ChartNoAxesCombined,
     Mail,
+    GalleryHorizontalEnd,
 
 } from "lucide-react";
 import logoLight from "@/assets/logo-light.svg";
@@ -45,6 +46,8 @@ const moduleLinks = {
     ],
     Marketing: [
         { to: "marketing/users", label: "Users", icon: <Users size={20} /> },
+        { to: "marketing/templates", label: "Templates", icon: <GalleryHorizontalEnd size={20} /> },
+
         { to: "marketing/emailmarketing", label: "Email Marketing", icon: <Mail size={20} /> },
         { to: "marketing/SMSMarketing", label: "SMS Marketing", icon: <MessageCircle size={20} /> },
         { to: "marketing/SocialMediaMarketing", label: "Social media marketing", icon:<Megaphone size={20} /> },
