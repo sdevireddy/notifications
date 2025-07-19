@@ -1,339 +1,350 @@
 "use client"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { Camera, ArrowLeft, User, Building, MapPin, Phone } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { useState } from "react"
-import { Upload, User } from "lucide-react"
 
-export function AddEmployeeModal({ isOpen, onClose, onSave }) {
-  const [formData, setFormData] = useState({
-    employeeId: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    mobile: "",
-    department: "",
-    designation: "",
-    joiningDate: "",
-    manager: "",
-    dateOfBirth: "",
-    address: "",
-    emergencyContactName: "",
-    emergencyContactPhone: "",
-    emergencyContactRelation: "",
-    profileImage: null,
-  })
+const initialFormState = {
+  employeeId: "",
+  firstName: "",
+  lastName: "",
+  email: "",
+  mobile: "",
+  secondaryEmail: "",
+  department: "",
+  designation: "",
+  employmentType: "",
+  workLocation: "",
+  joiningDate: "",
+  salary: "",
+  manager: "",
+  emergencyContactName: "",
+  emergencyContactPhone: "",
+  emergencyContactRelation: "",
+  addressLine1: "",
+  addressLine2: "",
+  city: "",
+  state: "",
+  zip: "",
+  country: "",
+  notes: "",
+  image: null,
+}
 
-  const [imagePreview, setImagePreview] = useState(null)
+export default function AddEmployeePage() {
+  const navigate = useNavigate()
+  const [employeeImage, setEmployeeImage] = useState(null)
+  const [formData, setFormData] = useState(initialFormState)
+  const [loading, setLoading] = useState(false)
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
-
-  const handleImageUpload = (event) => {
+  const handleImageChange = (event) => {
     const file = event.target.files[0]
     if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        image: file,
+      }))
       const reader = new FileReader()
-      reader.onload = (e) => {
-        setImagePreview(e.target.result)
-        setFormData((prev) => ({ ...prev, profileImage: e.target.result }))
-      }
+      reader.onloadend = () => setEmployeeImage(reader.result)
       reader.readAsDataURL(file)
     }
   }
 
-  const handleSave = () => {
-    onSave(formData)
-    setFormData({
-      employeeId: "",
-      firstName: "",
-      lastName: "",
-      email: "",
-      mobile: "",
-      department: "",
-      designation: "",
-      joiningDate: "",
-      manager: "",
-      dateOfBirth: "",
-      address: "",
-      emergencyContactName: "",
-      emergencyContactPhone: "",
-      emergencyContactRelation: "",
-      profileImage: null,
-    })
-    setImagePreview(null)
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const handleSelectChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const resetForm = () => {
+    setFormData(initialFormState)
+    setEmployeeImage(null)
+  }
+
+  const handleSubmit = async (e, action) => {
+    e.preventDefault()
+    setLoading(true)
+
+    try {
+      // TODO: Replace with actual API call when backend is ready
+      // const formDataToSend = new FormData()
+      // Object.entries(formData).forEach(([key, value]) => {
+      //   if (value !== null && value !== '') {
+      //     formDataToSend.append(key, value)
+      //   }
+      // })
+
+      // const response = await fetch('/api/employees', {
+      //   method: 'POST',
+      //   body: formDataToSend
+      // })
+
+      // if (!response.ok) {
+      //   throw new Error('Failed to create employee')
+      // }
+
+      // const result = await response.json()
+
+      // Mock API call - remove when backend is ready
+      console.log("Employee data to be saved:", formData)
+
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      if (action === "save") {
+        navigate("/hr/employees")
+      } else if (action === "saveAndNew") {
+        resetForm()
+      }
+    } catch (error) {
+      console.error("Error saving employee:", error)
+      alert("Failed to save employee. Please try again.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-gray-900">Add Employee</DialogTitle>
-        </DialogHeader>
-
-        <div className="space-y-8">
-          {/* Profile Image Section */}
-          <div className="form-section">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 border-b-2 border-gray-500 pb-2">Profile Image</h3>
-            <div className="flex items-center gap-6">
-              <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                {imagePreview ? (
-                  <img src={imagePreview || "/placeholder.svg"} alt="Profile" className="w-full h-full object-cover" />
-                ) : (
-                  <User className="h-12 w-12 text-gray-500" />
-                )}
-              </div>
-              <div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  id="profile-image"
+    <div className="w-[calc(100%-10px)] text-sm">
+      <form className="rounded-lg bg-white shadow-md">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b p-3 sticky top-0 bg-white">
+          <div className="flex items-center gap-3">
+            <button onClick={() => navigate(-1)} type="button" className="rounded p-2 hover:bg-gray-200">
+              <ArrowLeft size={20} />
+            </button>
+            {/* Employee Image Upload */}
+            <div
+              title="Click to upload image"
+              className="relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-full bg-gray-200"
+              onClick={() => document.getElementById("employee-image-input").click()}
+            >
+              {employeeImage ? (
+                <img
+                  src={employeeImage || "/placeholder.svg"}
+                  alt="Employee"
+                  className="h-full w-full rounded-full object-cover"
                 />
-                <Label htmlFor="profile-image">
-                  <Button variant="outline" className="cursor-pointer bg-transparent" asChild>
-                    <span>
-                      <Upload className="mr-2 h-4 w-4" />
-                      Upload Photo
-                    </span>
-                  </Button>
-                </Label>
-              </div>
+              ) : (
+                <Camera className="text-2xl text-gray-500" />
+              )}
             </div>
+            <h2 className="text-xl font-bold">Add Employee</h2>
           </div>
-
-          {/* Basic Information Section */}
-          <div className="form-section">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 border-b-2 border-gray-500 pb-2">Basic Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <Label htmlFor="employeeId" className="enhanced-label">
-                  Employee ID *
-                </Label>
-                <Input
-                  id="employeeId"
-                  value={formData.employeeId}
-                  onChange={(e) => handleInputChange("employeeId", e.target.value)}
-                  placeholder="Enter employee ID"
-                  className="enhanced-input"
-                />
-              </div>
-              <div>
-                <Label htmlFor="firstName" className="enhanced-label">
-                  First Name *
-                </Label>
-                <Input
-                  id="firstName"
-                  value={formData.firstName}
-                  onChange={(e) => handleInputChange("firstName", e.target.value)}
-                  placeholder="Enter first name"
-                  className="enhanced-input"
-                />
-              </div>
-              <div>
-                <Label htmlFor="lastName" className="enhanced-label">
-                  Last Name *
-                </Label>
-                <Input
-                  id="lastName"
-                  value={formData.lastName}
-                  onChange={(e) => handleInputChange("lastName", e.target.value)}
-                  placeholder="Enter last name"
-                  className="enhanced-input"
-                />
-              </div>
-              <div>
-                <Label htmlFor="email" className="enhanced-label">
-                  Email *
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  placeholder="Enter email address"
-                  className="enhanced-input"
-                />
-              </div>
-              <div>
-                <Label htmlFor="mobile" className="enhanced-label">
-                  Mobile *
-                </Label>
-                <Input
-                  id="mobile"
-                  value={formData.mobile}
-                  onChange={(e) => handleInputChange("mobile", e.target.value)}
-                  placeholder="Enter mobile number"
-                  className="enhanced-input"
-                />
-              </div>
-              <div>
-                <Label htmlFor="dateOfBirth" className="enhanced-label">
-                  Date of Birth
-                </Label>
-                <Input
-                  id="dateOfBirth"
-                  type="date"
-                  value={formData.dateOfBirth}
-                  onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
-                  className="enhanced-input"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Employment Information Section */}
-          <div className="form-section">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 border-b-2 border-gray-500 pb-2">
-              Employment Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <Label htmlFor="department" className="enhanced-label">
-                  Department *
-                </Label>
-                <Select value={formData.department} onValueChange={(value) => handleInputChange("department", value)}>
-                  <SelectTrigger className="enhanced-input">
-                    <SelectValue placeholder="Select department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Engineering">Engineering</SelectItem>
-                    <SelectItem value="Marketing">Marketing</SelectItem>
-                    <SelectItem value="Sales">Sales</SelectItem>
-                    <SelectItem value="HR">HR</SelectItem>
-                    <SelectItem value="Finance">Finance</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="designation" className="enhanced-label">
-                  Designation *
-                </Label>
-                <Input
-                  id="designation"
-                  value={formData.designation}
-                  onChange={(e) => handleInputChange("designation", e.target.value)}
-                  placeholder="Enter designation"
-                  className="enhanced-input"
-                />
-              </div>
-              <div>
-                <Label htmlFor="joiningDate" className="enhanced-label">
-                  Joining Date *
-                </Label>
-                <Input
-                  id="joiningDate"
-                  type="date"
-                  value={formData.joiningDate}
-                  onChange={(e) => handleInputChange("joiningDate", e.target.value)}
-                  className="enhanced-input"
-                />
-              </div>
-              <div>
-                <Label htmlFor="manager" className="enhanced-label">
-                  Manager
-                </Label>
-                <Select value={formData.manager} onValueChange={(value) => handleInputChange("manager", value)}>
-                  <SelectTrigger className="enhanced-input">
-                    <SelectValue placeholder="Select manager" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Jane Smith">Jane Smith</SelectItem>
-                    <SelectItem value="Mike Wilson">Mike Wilson</SelectItem>
-                    <SelectItem value="Lisa Brown">Lisa Brown</SelectItem>
-                    <SelectItem value="Robert Kim">Robert Kim</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-
-          {/* Address Information Section */}
-          <div className="form-section">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 border-b-2 border-gray-500 pb-2">
-              Address Information
-            </h3>
-            <div>
-              <Label htmlFor="address" className="enhanced-label">
-                Address
-              </Label>
-              <Textarea
-                id="address"
-                value={formData.address}
-                onChange={(e) => handleInputChange("address", e.target.value)}
-                placeholder="Enter complete address"
-                className="enhanced-textarea"
-                rows={3}
-              />
-            </div>
-          </div>
-
-          {/* Emergency Contact Section */}
-          <div className="form-section">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 border-b-2 border-gray-500 pb-2">Emergency Contact</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <Label htmlFor="emergencyContactName" className="enhanced-label">
-                  Contact Name
-                </Label>
-                <Input
-                  id="emergencyContactName"
-                  value={formData.emergencyContactName}
-                  onChange={(e) => handleInputChange("emergencyContactName", e.target.value)}
-                  placeholder="Enter contact name"
-                  className="enhanced-input"
-                />
-              </div>
-              <div>
-                <Label htmlFor="emergencyContactPhone" className="enhanced-label">
-                  Contact Phone
-                </Label>
-                <Input
-                  id="emergencyContactPhone"
-                  value={formData.emergencyContactPhone}
-                  onChange={(e) => handleInputChange("emergencyContactPhone", e.target.value)}
-                  placeholder="Enter contact phone"
-                  className="enhanced-input"
-                />
-              </div>
-              <div>
-                <Label htmlFor="emergencyContactRelation" className="enhanced-label">
-                  Relationship
-                </Label>
-                <Select
-                  value={formData.emergencyContactRelation}
-                  onValueChange={(value) => handleInputChange("emergencyContactRelation", value)}
-                >
-                  <SelectTrigger className="enhanced-input">
-                    <SelectValue placeholder="Select relationship" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Father">Father</SelectItem>
-                    <SelectItem value="Mother">Mother</SelectItem>
-                    <SelectItem value="Spouse">Spouse</SelectItem>
-                    <SelectItem value="Sibling">Sibling</SelectItem>
-                    <SelectItem value="Friend">Friend</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-end gap-3 pt-6 border-t-2 border-gray-200">
-            <Button variant="outline" onClick={onClose} className="font-semibold bg-transparent">
-              Cancel
-            </Button>
-            <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700 font-semibold">
-              Save Employee
-            </Button>
+          <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-3 grid-cols-1 text-sm">
+            <button
+              type="button"
+              className="rounded px-4 py-2 hover:bg-gray-100 border border-gray-300 transition-all ease-in-out duration-200 shadow-md"
+              onClick={resetForm}
+              disabled={loading}
+            >
+              Reset
+            </button>
+            <button
+              type="submit"
+              className="rounded px-4 py-2 hover:bg-gray-100 border border-gray-300 transition-all ease-in-out duration-200 shadow-md"
+              onClick={(e) => handleSubmit(e, "saveAndNew")}
+              disabled={loading}
+            >
+              {loading ? "Saving..." : "Save And New"}
+            </button>
+            <button
+              type="submit"
+              className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover shadow-sm"
+              onClick={(e) => handleSubmit(e, "save")}
+              disabled={loading}
+            >
+              {loading ? "Saving..." : "Save"}
+            </button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+        <input type="file" id="employee-image-input" accept="image/*" className="hidden" onChange={handleImageChange} />
+
+        {/* Basic Information Section */}
+        <Section title="Basic Information" icon={<User />} iconBg="bg-blue-100" iconColor="text-blue-600">
+          <InputField
+            label="Employee ID"
+            name="employeeId"
+            value={formData.employeeId}
+            onChange={handleChange}
+            required
+          />
+          <InputField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} required />
+          <InputField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} required />
+          <InputField label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required />
+          <InputField label="Mobile" name="mobile" value={formData.mobile} onChange={handleChange} required />
+          <InputField
+            label="Secondary Email"
+            name="secondaryEmail"
+            type="email"
+            value={formData.secondaryEmail}
+            onChange={handleChange}
+          />
+        </Section>
+
+        {/* Employment Information Section */}
+        <Section title="Employment Information" icon={<Building />} iconBg="bg-green-100" iconColor="text-green-600">
+          <SelectField
+            label="Department"
+            name="department"
+            value={formData.department}
+            onChange={handleSelectChange}
+            options={["Engineering", "Marketing", "Sales", "HR", "Finance", "Operations"]}
+            required
+          />
+          <InputField
+            label="Designation"
+            name="designation"
+            value={formData.designation}
+            onChange={handleChange}
+            required
+          />
+          <SelectField
+            label="Employment Type"
+            name="employmentType"
+            value={formData.employmentType}
+            onChange={handleSelectChange}
+            options={["Full-time", "Part-time", "Contract", "Intern"]}
+            required
+          />
+          <InputField label="Work Location" name="workLocation" value={formData.workLocation} onChange={handleChange} />
+          <InputField
+            label="Joining Date"
+            name="joiningDate"
+            type="date"
+            value={formData.joiningDate}
+            onChange={handleChange}
+            required
+          />
+          <InputField label="Salary" name="salary" type="number" value={formData.salary} onChange={handleChange} />
+          <SelectField
+            label="Manager"
+            name="manager"
+            value={formData.manager}
+            onChange={handleSelectChange}
+            options={["Jane Smith", "Mike Wilson", "Lisa Brown", "Robert Kim", "Anna Lee"]}
+          />
+        </Section>
+
+        {/* Address Information Section */}
+        <Section title="Address Information" icon={<MapPin />} iconBg="bg-purple-100" iconColor="text-purple-600">
+          <InputField
+            label="Address Line 1"
+            name="addressLine1"
+            value={formData.addressLine1}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Address Line 2"
+            name="addressLine2"
+            value={formData.addressLine2}
+            onChange={handleChange}
+          />
+          <InputField label="City" name="city" value={formData.city} onChange={handleChange} />
+          <InputField label="State" name="state" value={formData.state} onChange={handleChange} />
+          <InputField label="ZIP" name="zip" value={formData.zip} onChange={handleChange} />
+          <InputField label="Country" name="country" value={formData.country} onChange={handleChange} />
+        </Section>
+
+        {/* Emergency Contact Section */}
+        <Section title="Emergency Contact" icon={<Phone />} iconBg="bg-orange-100" iconColor="text-orange-600">
+          <InputField
+            label="Contact Name"
+            name="emergencyContactName"
+            value={formData.emergencyContactName}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Contact Phone"
+            name="emergencyContactPhone"
+            value={formData.emergencyContactPhone}
+            onChange={handleChange}
+          />
+          <SelectField
+            label="Relation"
+            name="emergencyContactRelation"
+            value={formData.emergencyContactRelation}
+            onChange={handleSelectChange}
+            options={["Spouse", "Parent", "Sibling", "Friend", "Other"]}
+          />
+          <div className="col-span-full">
+            <Label htmlFor="notes" className="block text-gray-700">
+              Notes
+            </Label>
+            <Textarea
+              id="notes"
+              name="notes"
+              rows={4}
+              value={formData.notes}
+              onChange={handleChange}
+              className="w-full rounded border border-gray-300 p-2"
+              placeholder="Additional notes about the employee..."
+            />
+          </div>
+        </Section>
+      </form>
+    </div>
   )
 }
+
+// Reusable Components
+const Section = ({ title, icon, iconBg, iconColor, children }) => (
+  <div className="mb-4 rounded border p-4">
+    <h3 className="mb-4 flex items-center gap-3 border-b pb-3 text-lg font-semibold">
+      <div className={`w-8 h-8 rounded-full ${iconBg} flex items-center justify-center`}>
+        <div className={`${iconColor}`}>{icon}</div>
+      </div>
+      {title}
+    </h3>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">{children}</div>
+  </div>
+)
+
+const InputField = ({ label, name, type = "text", value, onChange, required = false, className = "" }) => (
+  <div className={className}>
+    <Label htmlFor={name} className="block text-gray-700">
+      {label} {required && <span className="text-red-500">*</span>}
+    </Label>
+    <Input
+      id={name}
+      name={name}
+      type={type}
+      value={value}
+      onChange={onChange}
+      required={required}
+      className="w-full rounded border-gray-300 p-2 border-[1px] focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+    />
+  </div>
+)
+
+const SelectField = ({ label, name, value, onChange, options = [], required = false }) => (
+  <div>
+    <Label htmlFor={name} className="block text-gray-700">
+      {label} {required && <span className="text-red-500">*</span>}
+    </Label>
+    <Select value={value} onValueChange={(val) => onChange(name, val)}>
+      <SelectTrigger className="w-full rounded border-[1px] border-gray-300 p-2 focus:border-gray-400 focus:ring-1 focus:ring-gray-400">
+        <SelectValue placeholder={`Select ${label}`} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((opt) => (
+          <SelectItem key={opt} value={opt}>
+            {opt}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  </div>
+)
