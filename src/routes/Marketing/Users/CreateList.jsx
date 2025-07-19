@@ -23,10 +23,10 @@ export default function CreateListPage() {
   const [csvPreview, setCsvPreview] = useState([]);
   const [parsedCSVData, setParsedCSVData] = useState([]); // ✅ Store full parsed data
 
+
   const handleCSVUpload = (e) => {
     const file = e.target.files[0];
     setCsvFile(file);
-
     Papa.parse(file, {
       header: true, // ✅ First row as keys
       skipEmptyLines: true,
@@ -58,6 +58,7 @@ export default function CreateListPage() {
 
     // Example:
     // await axios.post("/api/lists", payload);
+>>>>>>> Dev
 
     navigate("/marketing/users");
   };
