@@ -101,6 +101,10 @@ const router = createBrowserRouter([
             children: [
               { path: "", element: <MarketingDashboard /> },
               { path: "users", element: <UsersPage /> },
+
+              { path: "templates", element: <TemplateDisplay /> },
+
+
               { path: "users/create", element: <CreateListPage /> },
 
 
