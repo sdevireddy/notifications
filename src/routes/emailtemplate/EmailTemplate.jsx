@@ -6,14 +6,19 @@ import { Canvas } from "../../components/email/Canvas";
 import { Preview } from "../../components/email/Preview";
 import { generateHTML, generateJSON } from "../../utils/email";
 import { sampleTemplate } from "../../utils/sampleTemplate";
-import { forwardRef, useImperativeHandle } from "react";
-
+import TemplateSelectModal from "../Marketing/emailmarketing/TemplateSelectModal";
 
 export default function EmailBuilder() {
   const [blocks, setBlocks] = useState([]);
   const [selectedBlockId, setSelectedBlockId] = useState(null);
-  const [showExportModal, setShowExportModal] = useState(false);
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [activeTab, setActiveTab] = useState("builder");
+
+  const handleLoadTemplate = (templateBlocks) => {
+    setBlocks(templateBlocks); // ✅ directly sets the blocks into the editor
+    setSelectedBlockId(null);
+    setShowTemplateModal(false);
+  };
 
   const addBlock = useCallback((type) => {
     const newBlock = {
@@ -25,26 +30,10 @@ export default function EmailBuilder() {
     setBlocks((prev) => [...prev, newBlock]);
   }, []);
 
-  const EmailBuilder = forwardRef((props, ref) => {
-  const [blocks, setBlocks] = useState([]);
-  const [selectedBlockId, setSelectedBlockId] = useState(null);
-  const [activeTab, setActiveTab] = useState("builder");
-   useImperativeHandle(ref, () => ({
-    loadTemplateBlocks: (templateBlocks) => {
-      setBlocks(templateBlocks);
-      setSelectedBlockId(null); // Optional: clear selection
-    },
-    getExportData: () => ({
-      html: generateHTML(blocks),
-      json: generateJSON(blocks),
-    }),
-  }));
-
-  // ... rest of builder code ...
-});
-
   const updateBlock = useCallback((id, updates) => {
-    setBlocks((prev) => prev.map((block) => (block.id === id ? { ...block, ...updates } : block)));
+    setBlocks((prev) =>
+      prev.map((block) => (block.id === id ? { ...block, ...updates } : block))
+    );
   }, []);
 
   const deleteBlock = useCallback(
@@ -67,15 +56,10 @@ export default function EmailBuilder() {
     });
   }, []);
 
-  const loadSampleTemplate = useCallback(() => {
-    setBlocks(sampleTemplate.blocks);
-    setSelectedBlockId(null);
-  }, []);
-
   const exportData = useCallback(() => {
     const html = generateHTML(blocks);
     const json = generateJSON(blocks);
-    console.log("📤 Exported HTML:\n", html); // ✅ log to console
+    console.log("📤 Exported HTML:\n", html);
     return { html, json };
   }, [blocks]);
 
@@ -94,19 +78,18 @@ export default function EmailBuilder() {
 
         <div className="p-4 border-t space-y-2">
           <button
-            onClick={loadSampleTemplate}
+            onClick={() => setShowTemplateModal(true)} // ✅ fixed re-render issue
             className="w-full px-3 py-2 border rounded text-sm hover:bg-gray-100"
           >
-             Load Sample Template
+            Load Sample Template
           </button>
           <button
             onClick={() => {
-              exportData(); // ✅ log HTML here
-             
+              exportData(); // ✅ export HTML/JSON
             }}
             className="w-full px-3 py-2 bg-black text-white rounded text-sm hover:bg-gray-800"
           >
-             Export Template
+            Export Template
           </button>
         </div>
       </div>
@@ -121,7 +104,7 @@ export default function EmailBuilder() {
               activeTab === "builder" ? "bg-black text-white" : "text-gray-600 border"
             }`}
           >
-           Builder
+            Builder
           </button>
           <button
             onClick={() => setActiveTab("preview")}
@@ -129,11 +112,18 @@ export default function EmailBuilder() {
               activeTab === "preview" ? "bg-black text-white" : "text-gray-600 border"
             }`}
           >
-             Preview
+            Preview
           </button>
         </div>
 
-        {/* Tab content */}
+        {/* Template Modal */}
+        <TemplateSelectModal
+          isOpen={showTemplateModal}
+          onClose={() => setShowTemplateModal(false)}
+          onLoad={handleLoadTemplate}
+        />
+
+        {/* Editor or Preview */}
         <div className="flex-1 overflow-hidden">
           {activeTab === "builder" && (
             <Canvas
@@ -156,11 +146,23 @@ export default function EmailBuilder() {
 function getDefaultContent(type) {
   switch (type) {
     case "text":
-      return { text: "Enter your text here...", fontSize: 16, color: "#000", fontWeight: "normal", textAlign: "left" };
+      return {
+        text: "Enter your text here...",
+        fontSize: 16,
+        color: "#000",
+        fontWeight: "normal",
+        textAlign: "left",
+      };
     case "image":
       return { src: "https://via.placeholder.com/600x300", alt: "Image", width: "100%" };
     case "button":
-      return { text: "Click Me", href: "#", backgroundColor: "#007bff", textColor: "#fff", borderRadius: 4 };
+      return {
+        text: "Click Me",
+        href: "#",
+        backgroundColor: "#007bff",
+        textColor: "#fff",
+        borderRadius: 4,
+      };
     case "divider":
       return { color: "#ccc", height: 1 };
     case "spacer":
@@ -176,16 +178,4 @@ function getDefaultStyles(type) {
     margin: "0px",
     backgroundColor: "transparent",
   };
-}
-
-function downloadFile(content, filename) {
-  const blob = new Blob([content], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 }

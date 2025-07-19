@@ -43,92 +43,125 @@ import Tooltip from "../../components/ToolTip";
 import Table from "../../components/Table";
 import { EmailComposer } from "../../components/shared/EmailComposer";
 import BreadCrumb from "../../components/BreadCrumb";
+import useFetchData from "../../hooks/useFetchData";
+import { apiSummary } from "../../common/apiSummary";
+import toast from "react-hot-toast";
+import { axiosPrivate } from "../../utils/axios";
+import DeleteConfirmationDialog from "../../components/ConfirmDeleteModel";
+
+const accountsColumnsConfig = {
+    accountName: {
+        label: "Account Name",
+        render: ({ row }) => {
+            const account = row.original;
+            return (
+                <div className="flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
+                        <User className="h-4 w-4 text-gray-500" />
+                    </div>
+                    <div>{account.accountName}</div>
+                </div>
+            );
+        },
+    },
+    phone: {
+        label: "Phone",
+        render: ({ row }) => row.original.phone || "-",
+    },
+    website: {
+        label: "Website",
+        render: ({ row }) => row.original.website || "-",
+    },
+    industry: {
+        label: "Industry",
+        render: ({ row }) => row.original.industry || "-",
+    },
+    annualRevenue: {
+        label: "Revenue",
+        render: ({ row }) => row.original.annualRevenue?.toLocaleString() || "-",
+    },
+    accountOwner: {
+        label: "Owner",
+        render: ({ row }) => row.original.accountOwner || "-",
+    },
+};
+const availableAccountColumns = {
+    accountName: true,
+    phone: true,
+    website: true,
+    industry: true,
+    annualRevenue: true,
+    accountOwner: true,
+};
 export default function AccountsPage() {
-    const [leads, setLeads] = useState([]);
+    const [accounts, setAccounts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [recordsPerPage, setRecordsPerPage] = useState("25");
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectMultipleLead, setSelectMultipleLead] = useState([]);
-    const [selectSingleLead, setSelectSingleLead] = useState([]);
+    const [selectMultipleAccount, setSelectMultipleAccount] = useState([]);
+    const [selectSingleAccount, setSelectSingleAccount] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-    const [filteredLeads, setFilteredLeads] = useState([]);
+    const [filteredAccounts, setFilteredAccounts] = useState([]);
     const [totalRecord, setTotalRecords] = useState(0);
     const [emailModel, setEmailModel] = useState(false);
     const [isMassEmail, setIsMassEmail] = useState(false);
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
-
-    const leadsData = {
-        totalRecords: 2,
-        data:  [
-  {
-    id: 1,
-    accountName: "Acme Corp",
-    email: "info@acmecorp.com",
-    mobile: "+91-9123456780",
-    website: "https://www.acmecorp.com",
-    accountOwner: "Rahul Verma",
-  },
-  {
-    id: 2,
-    accountName: "Globex Pvt Ltd",
-    email: "contact@globex.com",
-    mobile: "+91-9876543211",
-    website: "https://www.globex.com",
-    accountOwner: "Sneha Mehta",
-  },
-  {
-    id: 3,
-    accountName: "Initech",
-    email: "support@initech.in",
-    mobile: "+91-9000012345",
-    website: "https://www.initech.in",
-    accountOwner: "Amit Sharma",
-  },
-        ],
-    };
-
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+    const [accountToDelete, setAccountToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [accountsData, refetchData, loading] = useFetchData(apiSummary.crm.getAccounts);
+    const [visibleColumns, setVisibleColumns] = useState(availableAccountColumns);
+    const [showColumnSelector, setShowColumnSelector] = useState(false);
     useEffect(() => {
-        setLeads(leadsData.data);
-        setFilteredLeads(leadsData.data);
-        setTotalRecords(leadsData.totalRecords);
+        setAccounts(accountsData.data);
+        setFilteredAccounts(accountsData.data);
+        setTotalRecords(accountsData.totalRecords);
         setCurrentPage(1);
-    }, []);
+    }, [accountsData]);
 
     useEffect(() => {
         const term = searchTerm.toLowerCase();
-        setFilteredLeads(
-            leads.filter(
-                (lead) =>
-                    lead.accountName.toLowerCase().includes(term) ||
-                    lead.email.toLowerCase().includes(term) ||
-                    lead.mobile.toLowerCase().includes(term) ||
-                    lead.accountOwner.toLowerCase().includes(term ) ||
-                     lead.website.toLowerCase().includes(term),
+        setFilteredAccounts(
+            accounts.filter(
+                (account) =>
+                    account.accountName?.toLowerCase().includes(term) ||
+                    account.phone?.toLowerCase().includes(term) ||
+                    account.accountOwner?.toLowerCase().includes(term) ||
+                    account.website?.toLowerCase().includes(term),
             ),
         );
         setCurrentPage(1);
-    }, [searchTerm,leads]);
+    }, [searchTerm]);
 
     const recordsPerPageValue = parseInt(recordsPerPage);
     const indexOfLastRecord = currentPage * recordsPerPageValue;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPageValue;
     const totalPages = Math.ceil(totalRecord / recordsPerPageValue);
 
-    const handleContactSelect = (lead) => {
-        setSelectMultipleLead((prev) => (prev.some((item) => item.id === lead.id) ? prev.filter((item) => item.id !== lead.id) : [...prev, lead]));
+    const handleContactSelect = (account) => {
+        setSelectMultipleAccount((prev) =>
+            prev.some((item) => item.id === account.id) ? prev.filter((item) => item.id !== account.id) : [...prev, account],
+        );
     };
 
     const handleSelectAll = () => {
-        setSelectMultipleLead(selectMultipleLead.length === leadsData.data.length ? [] : leadsData.data);
+        setSelectMultipleLead(selectMultipleAccount.length === accounts.length ? [] : accounts);
     };
 
     const handleSort = (key) => {
         setSortConfig((prev) => (prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }));
     };
-const currentContacts=filteredLeads
-    const columns = useMemo(
-        () => [
+    const columns = useMemo(() => {
+        const dynamicCols = Object.entries(accountsColumnsConfig)
+            .filter(([key]) => visibleColumns[key])
+            .map(([key, { label, render }]) => ({
+                accessorKey: key,
+                header: label,
+                cell: render,
+            }));
+
+        return [
             {
                 id: "select",
                 header: ({ table }) => (
@@ -145,101 +178,89 @@ const currentContacts=filteredLeads
                         checked={row.getIsSelected()}
                         onCheckedChange={(value) => {
                             row.toggleSelected(!!value);
-                            let lead = row.original;
-                            handleContactSelect(lead);
+                            handleContactSelect(row.original);
                         }}
                     />
                 ),
             },
+            ...dynamicCols,
             {
-                accessorKey: "accountName",
-                header: "Account Name",
+                id: "actions",
+                header: "Actions",
                 cell: ({ row }) => {
-                    const lead = row.original;
+                    const account = row.original;
                     return (
-                        <div className="flex items-center gap-2">
-                            
-                            <div>{row.original.accountName}</div>
+                        <div className="flex items-center justify-center gap-1">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                                onClick={() => {
+                                    setSelectSingleLead([row.original]);
+                                    setEmailModel(true);
+                                }}
+                            >
+                                <Mail className="h-4 w-4 text-gray-600" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                            >
+                                <Phone className="h-4 w-4 text-gray-600" />
+                            </Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-8 w-8 p-0"
+                                    >
+                                        <MoreVertical className="h-4 w-4 text-gray-600" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem>
+                                        <User className="mr-2 h-4 w-4" />
+                                        View Profile
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Edit className="mr-2 h-4 w-4" />
+                                        Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => {
+                                            setAccountToDelete(account);
+                                            setShowConfirmDelete(true);
+                                        }}
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4 text-red-600" />
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     );
                 },
             },
-            {
-                accessorKey: "email",
-                header: "Email",
-            },
-            {
-                accessorKey: "mobile",
-                header: "Phone",
-            },
-            {
-                accessorKey: "website",
-                header: "Website",
-                cell: ({ row }) => (
-                    <div>
-                        <div className="text-xs">{row.original.website}</div>
-                    </div>
-                ),
-            },
-            {
-                accessorKey: "accountOwner",
-                header: "Owner",
-            },
-            {
-                id: "actions",
-                header: "Actions",
-                cell: ({ row }) => (
-                    <div className="flex items-center justify-center gap-1">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                            onClick={() => {
-                                setSelectSingleLead([row.original]);
-                                setEmailModel(true);
-                            }}
-                        >
-                            <Mail className="h-4 w-4 text-gray-600" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                        >
-                            <Phone className="h-4 w-4 text-gray-600" />
-                        </Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0"
-                                >
-                                    <MoreVertical className="h-4 w-4 text-gray-600" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                    <User className="mr-2 h-4 w-4" />
-                                    View Profile
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    Edit
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Trash2 className="mr-2 h-4 w-4 text-red-600" />
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                ),
-            },
-        ],
-        [],
-    );
-
+        ];
+    }, [visibleColumns]);
+    const handleDelete = async (id) => {
+        try {
+            const resp = await axiosPrivate({
+                ...apiSummary.crm.deleteAccount(id),
+            });
+            toast.success("Lead Deleted SuccussFully");
+            refetchData();
+            setCurrentPage(1);
+        } catch (error) {
+            toast.error("Delation Failed");
+        } finally {
+            setIsDeleting(false);
+            setIsDeleting(false);
+            setShowConfirmDelete(false);
+        }
+    };
     return (
         <div className="flex-1 bg-white">
             <div className="flex items-center justify-between border-b px-6 py-4">
@@ -248,11 +269,47 @@ const currentContacts=filteredLeads
                     <BreadCrumb />
                 </div>
                 <div className="flex items-center gap-3">
-                    <div  className="flex items-center" onClick={() => setFilterModelOpen(true)}>
+                    <div
+                        className="flex items-center"
+                        onClick={() => setFilterModelOpen(true)}
+                    >
                         <Tooltip text={"Filter"}>
                             <LuFilter />
                         </Tooltip>
                     </div>
+                    <DropdownMenu
+                        open={showColumnSelector}
+                        onOpenChange={setShowColumnSelector}
+                    >
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            align="end"
+                            className="h-80 w-56 overflow-auto"
+                        >
+                            {Object.keys(accountsColumnsConfig).map((key) => (
+                                <DropdownMenuItem
+                                    key={key}
+                                    onSelect={(e) => e.preventDefault()}
+                                    className="flex items-center justify-between"
+                                >
+                                    <span className="text-sm">{accountsColumnsConfig[key].label}</span>
+                                    <Checkbox
+                                        checked={visibleColumns[key]}
+                                        onCheckedChange={() =>
+                                            setVisibleColumns((prev) => ({
+                                                ...prev,
+                                                [key]: !prev[key],
+                                            }))
+                                        }
+                                    />
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="primary">
@@ -267,11 +324,11 @@ const currentContacts=filteredLeads
                             </DropdownMenuItem>
                             <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                                 <Users className="mr-2 h-4 w-4" />
-                                Mass Transfer 
+                                Mass Transfer
                             </DropdownMenuItem>
                             <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                                 <Edit className="mr-2 h-4 w-4" />
-                                Update Multiple 
+                                Update Multiple
                             </DropdownMenuItem>
                             <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                                 <Trash2 className="mr-2 h-4 w-4" />
@@ -333,12 +390,13 @@ const currentContacts=filteredLeads
 
             <Table
                 columns={columns}
-                data={currentContacts}
+                data={filteredAccounts}
+                loading={loading}
             />
 
             <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-4">
                 <div className="text-sm text-gray-600">
-                    Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredLeads.length)} of {filteredLeads.length} results
+                    Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredAccounts.length)} of {totalRecord} results
                 </div>
                 <div className="flex items-center gap-2">
                     <Button
@@ -380,6 +438,17 @@ const currentContacts=filteredLeads
                     />
                 </Model>
             )}
+            <DeleteConfirmationDialog
+                open={showConfirmDelete}
+                setOpen={setShowConfirmDelete}
+                isLoading={isDeleting}
+                title={`Delete ${accountToDelete?.accountName} ?`}
+                description="This lead will be permanently deleted. Are you sure?"
+                onConfirm={async () => {
+                    setIsDeleting(true);
+                    await handleDelete(accountToDelete.accountId);
+                }}
+            />
         </div>
     );
 }

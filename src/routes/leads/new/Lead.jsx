@@ -52,6 +52,78 @@ import BreadCrumb from "../../../components/BreadCrumb";
 import toast from "react-hot-toast";
 import DeleteConfirmationDialog from "../../../components/ConfirmDeleteModel";
 import StatusBadge from "../../../components/StatusBadge";
+import FilterSidebar from "./Filter";
+const avaliableColumns = {
+    firstName: true,
+    email: true,
+    mobile: true,
+    company: true,
+    leadOwner: true,
+    leadStatus: true,
+    company: false,
+    website: false,
+    industry: false,
+    followUp: false,
+    comments: false,
+};
+const columnsConfig = {
+  firstName: {
+    label: "Name",
+    render: ({ row }) => {
+      const lead = row.original;
+      return (
+        <div className="flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
+            <User className="h-4 w-4 text-gray-500" />
+          </div>
+          <div>{lead.firstName + " " + lead.lastName}</div>
+        </div>
+      );
+    },
+  },
+  email: {
+    label: "Email",
+    render: ({ row }) => row.original.email,
+  },
+  mobile: {
+    label: "Phone",
+    render: ({ row }) => row.original.mobile,
+  },
+  company: {
+    label: "Company",
+    render: ({ row }) => (
+      <div>
+        <div>{row.original.company}</div>
+        <div className="text-xs text-gray-500">{row.original.title}</div>
+      </div>
+    ),
+  },
+  leadOwner: {
+    label: "Owner",
+    render: ({ row }) => row.original.leadOwner,
+  },
+  leadStatus: {
+    label: "Status",
+    render: ({ row }) => <StatusBadge status={row.original.leadStatus} />,
+  },
+  website: {
+    label: "Website",
+    render: ({ row }) => row.original.website || "-",
+  },
+  industry: {
+    label: "Industry",
+    render: ({ row }) => row.original.industry || "-",
+  },
+  followUp: {
+    label: "Follow Up",
+    render: ({ row }) => row.original.followUp || "-",
+  },
+  comments: {
+    label: "Comments",
+    render: ({ row }) => row.original.comments || "-",
+  },
+};
+
 export default function LeadPage() {
     const [leads, setLeads] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -67,21 +139,22 @@ export default function LeadPage() {
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-const [leadToDelete, setLeadToDelete] = useState(null);
-const [isDeleting, setIsDeleting] = useState(false);
+    const [leadToDelete, setLeadToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
-
-    const [leadsData,refetchData,loading] = useFetchData(apiSummary.crm.getLeads)
+    const [leadsData, refetchData, loading] = useFetchData(apiSummary.crm.getLeads);
+    const [visibleColumns, setVisibleColumns] = useState(avaliableColumns);
+    const [showColumnSelector, setShowColumnSelector] = useState(false);
 
     useEffect(() => {
         setLeads(leadsData?.data?.data || []);
-        setFilteredLeads(leadsData?.data?.data|| []);
+        setFilteredLeads(leadsData?.data?.data || []);
         setTotalRecords(leadsData?.data?.totalRecords);
         setCurrentPage(1);
     }, [leadsData]);
     useEffect(() => {
-        const handleFilter=()=>{
-            if(leads.length==0) return;
+        const handleFilter = () => {
+            if (leads.length == 0) return;
             const term = searchTerm.toLowerCase();
             setFilteredLeads(
                 leads.filter(
@@ -93,8 +166,8 @@ const [isDeleting, setIsDeleting] = useState(false);
                 ),
             );
             setCurrentPage(1);
-        }
-        handleFilter()
+        };
+        handleFilter();
     }, [searchTerm]);
 
     const recordsPerPageValue = parseInt(recordsPerPage);
@@ -114,86 +187,53 @@ const [isDeleting, setIsDeleting] = useState(false);
         setSortConfig((prev) => (prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }));
     };
 
-    const currentLeads = filteredLeads
+    const currentLeads = filteredLeads;
 
-    const columns = useMemo(
-        () => [
-            {
-                id: "select",
-                header: ({ table }) => (
-                    <Checkbox
-                        checked={table.getIsAllRowsSelected()}
-                        onCheckedChange={(value) => {
-                            table.toggleAllRowsSelected(!!value);
-                            handleSelectAll();
-                        }}
-                    />
-                ),
-                cell: ({ row }) => (
-                    <Checkbox
-                        checked={row.getIsSelected()}
-                        onCheckedChange={(value) => {
-                            row.toggleSelected(!!value);
-                            let lead = row.original;
-                            handleContactSelect(lead);
-                        }}
-                    />
-                ),
-            },
-            {
-                accessorKey: "firstName",
-                header: "Name",
-                cell: ({ row }) => {
-                    const lead = row.original;
-                    return (
-                        <div className="flex items-center gap-2">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
-                                <User className="h-4 w-4 text-gray-500" />
-                            </div>
-                            <div>{lead.firstName + " " + lead.lastName}</div>
-                        </div>
-                    );
-                },
-            },
-            {
-                accessorKey: "email",
-                header: "Email",
-            },
-            {
-                accessorKey: "mobile",
-                header: "Phone",
-            },
-            {
-                accessorKey: "company",
-                header: "Company",
-                cell: ({ row }) => (
-                    <div>
-                        <div>{row.original.company}</div>
-                        <div className="text-xs text-gray-500">{row.original.title}</div>
-                    </div>
-                ),
-            },
-            {
-                accessorKey: "leadOwner",
-                header: "Owner",
-            },
-            {
-                accessorKey: "leadStatus",
-                header: "Status",
-                cell: ({ row }) => {
-                    
-                    const lead = row.original;
-                    return (
-                    <StatusBadge status={lead.leadStatus}/>
-                )}
-            },
-            {
-                id: "actions",
-                header: "Actions",
-                cell: ({ row }) => {
-                    const lead = row.original;
-                     return (
-                    <div className="flex items-center justify-center gap-3">
+   const columns = useMemo(() => {
+  const dynamicColumns = [];
+
+  // Select Checkbox Column
+  dynamicColumns.push({
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllRowsSelected()}
+        onCheckedChange={(value) => {
+          table.toggleAllRowsSelected(!!value);
+          handleSelectAll();
+        }}
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => {
+          row.toggleSelected(!!value);
+          handleContactSelect(row.original);
+        }}
+      />
+    ),
+  });
+
+  // Dynamically add columns based on visibility
+  Object.keys(columnsConfig).forEach((key) => {
+    if (visibleColumns[key]) {
+      dynamicColumns.push({
+        accessorKey: key,
+        header: columnsConfig[key].label,
+        cell: columnsConfig[key].render,
+      });
+    }
+  });
+
+  // Actions column
+  dynamicColumns.push({
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) =>{
+        const lead=row.original
+        return (
+              <div className="flex items-center justify-center gap-3">
                         <Button
                             variant="outline"
                             size="sm"
@@ -241,42 +281,43 @@ const [isDeleting, setIsDeleting] = useState(false);
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                )
-               }
-            },
-        ],
-        [],
-    );
-const handleDelete=async(id)=>{
-    try {
-        const resp=await axiosPrivate({
-            ...apiSummary.crm.deleteLead(id)
-        })
-        toast.success("Lead Deleted SuccussFully");
-        refetchData()
-        setCurrentPage(1);
-    } catch (error) {
-        toast.error("Delation Failed")
+        )
     }
-}
-const handleMultipleDelete=async()=>{
-     if(selectMultipleLead.length<=0)
-    {
-        return
-    }
-    try {
-        const ids=selectMultipleLead.map((lead)=>lead.id)
-        const resp=await axiosPrivate({
-            ...apiSummary.deleteLead,
-            data:{
-                deleteIds:ids
-            }
-        })
-        setRefresh(!refresh)
-    } catch (error) {
-        console.log(error)
-    }
-}
+  });
+
+  return dynamicColumns;
+}, [visibleColumns]);
+
+
+    const handleDelete = async (id) => {
+        try {
+            const resp = await axiosPrivate({
+                ...apiSummary.crm.deleteLead(id),
+            });
+            toast.success("Lead Deleted SuccussFully");
+            refetchData();
+            setCurrentPage(1);
+        } catch (error) {
+            toast.error("Delation Failed");
+        }
+    };
+    const handleMultipleDelete = async () => {
+        if (selectMultipleLead.length <= 0) {
+            return;
+        }
+        try {
+            const ids = selectMultipleLead.map((lead) => lead.id);
+            const resp = await axiosPrivate({
+                ...apiSummary.deleteLead,
+                data: {
+                    deleteIds: ids,
+                },
+            });
+            setRefresh(!refresh);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <div className="flex-1 bg-white">
             <div className="flex items-center justify-between border-b px-6 py-4">
@@ -285,11 +326,49 @@ const handleMultipleDelete=async()=>{
                     <BreadCrumb />
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="flex items-center" onClick={() => setFilterModelOpen(true)}>
+                    <div
+                        className="flex items-center"
+                        onClick={() => setFilterModelOpen(true)}
+                    >
                         <Tooltip text={"Filter"}>
                             <LuFilter />
                         </Tooltip>
                     </div>
+                       <DropdownMenu
+                        open={showColumnSelector}
+                        onOpenChange={setShowColumnSelector}
+                    >
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            align="end"
+                            className="h-80 w-56 overflow-auto"
+                        >
+                            {Object.keys(visibleColumns).map((key) => (
+                                <DropdownMenuItem
+                                    key={key}
+                                    onSelect={(e) => e.preventDefault()}
+                                    className="flex items-center justify-between"
+                                >
+                                    <span className="capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
+
+                                    <Checkbox
+                                        checked={visibleColumns[key]}
+                                        onCheckedChange={() =>
+                                            setVisibleColumns((prev) => ({
+                                                ...prev,
+                                                [key]: !prev[key],
+                                            }))
+                                        }
+                                    />
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="primary">
@@ -310,7 +389,10 @@ const handleMultipleDelete=async()=>{
                                 <Edit className="mr-2 h-4 w-4" />
                                 Update Multiple Leads
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900" onClick={handleDelete}>
+                            <DropdownMenuItem
+                                className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
+                                onClick={handleDelete}
+                            >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Delete Selected
                             </DropdownMenuItem>
@@ -400,8 +482,11 @@ const handleMultipleDelete=async()=>{
                     </Button>
                 </div>
             </div>
-
-            {filterModelOpen && <FiltersPopUp onClose={() => setFilterModelOpen(false)} />}
+            <FilterSidebar
+                isOpen={filterModelOpen}
+                onClose={() => setFilterModelOpen(false)}
+            />
+            {/* {filterModelOpen && <FiltersPopUp onClose={() => setFilterModelOpen(false)} />} */}
             {emailModel && (
                 <Model>
                     <EmailComposer
@@ -419,19 +504,18 @@ const handleMultipleDelete=async()=>{
                 </Model>
             )}
             <DeleteConfirmationDialog
-    open={showConfirmDelete}
-    setOpen={setShowConfirmDelete}
-    isLoading={isDeleting}
-    title={`Delete ${leadToDelete?.firstName} ${leadToDelete?.lastName}?`}
-    description="This lead will be permanently deleted. Are you sure?"
-    onConfirm={async () => {
-        setIsDeleting(true);
-        await handleDelete(leadToDelete.id);
-        setIsDeleting(false);
-        setShowConfirmDelete(false);
-    }}
-/>
-
+                open={showConfirmDelete}
+                setOpen={setShowConfirmDelete}
+                isLoading={isDeleting}
+                title={`Delete ${leadToDelete?.firstName} ${leadToDelete?.lastName}?`}
+                description="This lead will be permanently deleted. Are you sure?"
+                onConfirm={async () => {
+                    setIsDeleting(true);
+                    await handleDelete(leadToDelete.id);
+                    setIsDeleting(false);
+                    setShowConfirmDelete(false);
+                }}
+            />
         </div>
     );
 }

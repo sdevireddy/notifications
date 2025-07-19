@@ -2,7 +2,9 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiCamera, FiUser, FiMail, FiBriefcase, FiMapPin, FiArrowLeft } from "react-icons/fi";
 import "../leads/LeadCreationForm.css";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
+import { apiSummary } from "../../common/apiSummary";
+import { axiosPrivate } from "../../utils/axios";
 
 const initialFormState = {
     dealOwner:"",
@@ -11,8 +13,8 @@ const initialFormState = {
     type:"",
     leadSource:"",
     contactName:"",
-    ammount:"",
-    closedate:"",
+    amount:"",
+    closingDate:"",
     stage:"",
     probability:"",
     campaignSource:"",
@@ -21,7 +23,6 @@ const initialFormState = {
 
 const DealCreationForm = () => {
     const navigate = useNavigate();
-    const [leadImage, setLeadImage] = useState(null);
     const [formData, setFormData] = useState(initialFormState);
 
     const submitActionRef = useRef("save");
@@ -51,92 +52,26 @@ const DealCreationForm = () => {
 
     const resetForm = () => {
         setFormData(initialFormState);
-        setLeadImage(null);
-        //toast.info("Form reset to default values");
     };
-
-    const saveLead = async () => {
-        try {
-          const formdata = new FormData();
-          Object.entries(formData).map((el) => {
-              formdata.append(el[0], el[1]);
-          });
-            const response = await fetch("http://localhost:8081/api/leads", {
-                method: "POST",
-                headers: { "Content-Type": "multipart/form-data" },
-                body: formdata,
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error("Failed to save lead");
-            }
-
-            toast.success("Lead saved successfully!");
-            console.log("Lead Saved:", data);
-            return true;
-        } catch (error) {
-            toast.error(error.message || "Failed to save lead. Please try again.");
-            console.error("Error saving lead:", error);
-            return false;
-        }
-    };
-
-    const convertLead = async () => {
-        try {
-            const response = await fetch("/api/leads/convert", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...formData }),
-            });
-            const data = await response.json();
-            console.log("Lead Converted:", data);
-        } catch (error) {
-            console.error("Error converting lead:", error);
-        }
-    };
-
-    const cancelLead = async () => {
-        try {
-            await fetch("http://localhost:8080/api/leads/cancel", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "cancelled", lead: formData }),
-            });
-        } catch (error) {
-            console.error("Cancel API error:", error);
-        } finally {
-            navigate(-1);
-        }
-    };
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e,ref) => {
         e.preventDefault();
-      for (let pair of formdata.entries()) {
-  console.log(pair[0], pair[1]);
-}
-        // const success = await saveLead();
-
-        if (success) {
-            if (submitActionRef.current === "saveAndNew") {
-                resetForm();
-            } else if (submitActionRef.current === "save") {
-                resetForm();
-                navigate("/leads");
-            }
-        }
+        try {
+                 const resp=await axiosPrivate({
+                   ...apiSummary.crm.createDeals,
+                   data:formData
+                 })
+                   toast.success("Deal Saved Successfully!");
+                   if(ref==="save")
+                   {
+                       navigate("/deals")
+                   }
+                   resetForm()
+               } catch (error) {
+                   toast.error("Deal Creation Failed");
+                   console.error("Error saving lead:", error);
+                   return false;
+               }
     };
-
-    const handleSaveAndNew = async () => {
-        const success = await saveLead();
-        if (success) {
-            setFormData(initialFormState);
-            setLeadImage(null);
-            toast.success("Lead saved. You can add a new one now!");
-        }
-    };
-
     return (
         <div className=" w-[calc(100%-10px)] text-sm">
             <form
@@ -169,7 +104,7 @@ const DealCreationForm = () => {
                         <button
                             type="submit"
                             className="rounded  px-4 py-2 hover:bg-gray-100 border border-primary transition-all ease-in-out duration-200 shadow-md"
-                            onClick={() => (submitActionRef.current = "saveAndNew")}
+                            onClick={(e) => handleSubmit(e,"saveAndNew")}
                         >
                             Save And New
                         </button>
@@ -177,7 +112,7 @@ const DealCreationForm = () => {
                         <button
                             type="submit"
                             className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover shadow-sm"
-                            onClick={() => (submitActionRef.current = "save")}
+                            onClick={(e) => handleSubmit(e,"save")}
                         >
                             Save
                         </button>
@@ -192,7 +127,7 @@ const DealCreationForm = () => {
                 >
                     <Select
                         label="Deal Owner"
-                        name="delaOwner"
+                        name="dealOwner"
                         value={formData.dealOwner}
                         onChange={handleChange}
                         options={["praveen", "sivasenkar", "vikram", "kalyan"]}
@@ -212,11 +147,12 @@ const DealCreationForm = () => {
                         onChange={handleChange}
                         required
                     />
-                    <Input
+                    <Select
                         label="Type"
                         name="type"
                         value={formData.type}
                         onChange={handleChange}
+                        options={["NEW_BUSINESS", "Contacted", "Qualified", "Lost"]}
                         required
                     />
                     <Select
@@ -224,7 +160,7 @@ const DealCreationForm = () => {
                         name="leadSource"
                         value={formData.leadSource}
                         onChange={handleChange}
-                        options={["praveen", "sivasenkar", "vikram", "kalyan"]}
+                        options={["WEBSITE", "Refers"]}
                         required
                     />
                      <Input
@@ -237,14 +173,15 @@ const DealCreationForm = () => {
                     <Input
                         label="Amount"
                         name="amount"
-                        value={formData.ammount}
+                        type="number"
+                        value={formData.amount}
                         onChange={handleChange}
                         required
                     />
                     <Input
                         label="Closing Date"
-                        name="closedate"
-                        value={formData.closedate}
+                        name="closingDate"
+                        value={formData.closingDate}
                         onChange={handleChange}
                         required
                     />
@@ -253,7 +190,7 @@ const DealCreationForm = () => {
                         name="stage"
                         value={formData.stage}
                         onChange={handleChange}
-                        options={["New", "Contacted", "Qualified", "Lost"]}
+                        options={["PROPOSAL", "Contacted", "Qualified", "Lost"]}
                         required
                     />
                     <Input
