@@ -113,6 +113,7 @@ export default function AccountsPage() {
     const [accountsData, refetchData, loading] = useFetchData(apiSummary.crm.getAccounts,currentPage,recordsPerPage);
     const [visibleColumns, setVisibleColumns] = useState(availableAccountColumns);
     const [showColumnSelector, setShowColumnSelector] = useState(false);
+    const [actionOpen, setActionOpen] = useState(false);
     useEffect(() => {
         setAccounts(accountsData.data);
         setFilteredAccounts(accountsData.data);
@@ -282,7 +283,7 @@ export default function AccountsPage() {
                         onOpenChange={setShowColumnSelector}
                     >
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
+                            <Button variant="primary" className={` ${showColumnSelector ? "bg-primary text-white" : ""}`}>
                                 Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -310,9 +311,10 @@ export default function AccountsPage() {
                             ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <DropdownMenu>
+                    <DropdownMenu  open={actionOpen}
+                        onOpenChange={setActionOpen}>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="primary">
+                            <Button variant="primary" className={` ${actionOpen ? "bg-primary text-white" : ""}`}>
                                 Actions <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>

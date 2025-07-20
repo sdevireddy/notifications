@@ -342,7 +342,7 @@ export default function LeadPage() {
                         onOpenChange={setShowColumnSelector}
                     >
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
+                            <Button variant="primary" className={` ${showColumnSelector ? "bg-primary text-white" : ""}`}>
                                 Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
