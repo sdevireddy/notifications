@@ -1,7 +1,6 @@
 "use client"
 import { LuFilter } from "react-icons/lu"
 import { DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-
 import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,12 +15,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { ChevronDown, MoreVertical, Plus, Search, User, Download, Edit, Clock, Calendar } from "lucide-react"
-import Tooltip from './../../../components/ToolTip';
-import Table from './../../../components/Table';
-import BreadCrumb from './../../../components/BreadCrumb';
-import { MarkAttendanceModal } from './../../../components/mark-attendance-modal';
+import { useNavigate } from "react-router-dom"
+import Tooltip from "./../../../components/ToolTip"
+import Table from "./../../../components/Table"
+import BreadCrumb from "./../../../components/BreadCrumb"
 
 export default function AttendancePage() {
+  const navigate = useNavigate()
   const [attendance, setAttendance] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [recordsPerPage, setRecordsPerPage] = useState("25")
@@ -30,74 +30,90 @@ export default function AttendancePage() {
   const [filteredAttendance, setFilteredAttendance] = useState([])
   const [totalRecord, setTotalRecords] = useState(0)
   const [filterModelOpen, setFilterModelOpen] = useState(false)
-  const [isMarkAttendanceModalOpen, setIsMarkAttendanceModalOpen] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-  const attendanceData = {
-    totalRecords: 5,
-    data: [
-      {
-        id: 1,
-        employeeId: "EMP001",
-        employeeName: "John Doe",
-        date: "2024-01-20",
-        checkIn: "09:00 AM",
-        checkOut: "06:00 PM",
-        workingHours: "9h 0m",
-        status: "Present",
-        overtime: "0h 0m",
-      },
-      {
-        id: 2,
-        employeeId: "EMP002",
-        employeeName: "Sarah Johnson",
-        date: "2024-01-20",
-        checkIn: "09:15 AM",
-        checkOut: "06:30 PM",
-        workingHours: "9h 15m",
-        status: "Present",
-        overtime: "0h 15m",
-      },
-      {
-        id: 3,
-        employeeId: "EMP003",
-        employeeName: "Mike Davis",
-        date: "2024-01-20",
-        checkIn: "10:00 AM",
-        checkOut: "07:00 PM",
-        workingHours: "9h 0m",
-        status: "Late",
-        overtime: "1h 0m",
-      },
-      {
-        id: 4,
-        employeeId: "EMP004",
-        employeeName: "Emily Chen",
-        date: "2024-01-20",
-        checkIn: "-",
-        checkOut: "-",
-        workingHours: "0h 0m",
-        status: "Absent",
-        overtime: "0h 0m",
-      },
-      {
-        id: 5,
-        employeeId: "EMP005",
-        employeeName: "David Wilson",
-        date: "2024-01-20",
-        checkIn: "09:30 AM",
-        checkOut: "05:30 PM",
-        workingHours: "8h 0m",
-        status: "Half Day",
-        overtime: "0h 0m",
-      },
-    ],
+  // TODO: Replace with actual API call
+  const fetchAttendanceData = async () => {
+    try {
+      setLoading(true)
+      // const response = await fetch('/api/attendance')
+      // const data = await response.json()
+
+      // Mock data - remove when API is ready
+      const attendanceData = {
+        totalRecords: 5,
+        data: [
+          {
+            id: 1,
+            employeeId: "EMP001",
+            employeeName: "John Doe",
+            date: "2024-01-20",
+            checkIn: "09:00 AM",
+            checkOut: "06:00 PM",
+            workingHours: "9h 0m",
+            status: "Present",
+            overtime: "0h 0m",
+          },
+          {
+            id: 2,
+            employeeId: "EMP002",
+            employeeName: "Sarah Johnson",
+            date: "2024-01-20",
+            checkIn: "09:15 AM",
+            checkOut: "06:30 PM",
+            workingHours: "9h 15m",
+            status: "Present",
+            overtime: "0h 15m",
+          },
+          {
+            id: 3,
+            employeeId: "EMP003",
+            employeeName: "Mike Davis",
+            date: "2024-01-20",
+            checkIn: "10:00 AM",
+            checkOut: "07:00 PM",
+            workingHours: "9h 0m",
+            status: "Late",
+            overtime: "1h 0m",
+          },
+          {
+            id: 4,
+            employeeId: "EMP004",
+            employeeName: "Emily Chen",
+            date: "2024-01-20",
+            checkIn: "-",
+            checkOut: "-",
+            workingHours: "0h 0m",
+            status: "Absent",
+            overtime: "0h 0m",
+          },
+          {
+            id: 5,
+            employeeId: "EMP005",
+            employeeName: "David Wilson",
+            date: "2024-01-20",
+            checkIn: "09:30 AM",
+            checkOut: "05:30 PM",
+            workingHours: "8h 0m",
+            status: "Half Day",
+            overtime: "0h 0m",
+          },
+        ],
+      }
+
+      setAttendance(attendanceData.data)
+      setFilteredAttendance(attendanceData.data)
+      setTotalRecords(attendanceData.totalRecords)
+      setCurrentPage(1)
+    } catch (error) {
+      console.error("Error fetching attendance data:", error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
-    setAttendance(attendanceData.data)
-    setFilteredAttendance(attendanceData.data)
-    setTotalRecords(attendanceData.totalRecords)
-    setCurrentPage(1)
+    fetchAttendanceData()
   }, [])
 
   useEffect(() => {
@@ -125,9 +141,7 @@ export default function AttendancePage() {
   }
 
   const handleSelectAll = () => {
-    setSelectMultipleAttendance(
-      selectMultipleAttendance.length === attendanceData.data.length ? [] : attendanceData.data,
-    )
+    setSelectMultipleAttendance(selectMultipleAttendance.length === attendance.length ? [] : attendance)
   }
 
   const currentAttendance = filteredAttendance
@@ -257,15 +271,15 @@ export default function AttendancePage() {
     [],
   )
 
-  const handleSaveAttendance = (attendanceData) => {
-    const newAttendance = {
-      ...attendanceData,
-      id: attendance.length + 1,
-      employeeName: "Selected Employee", // This would come from employee lookup
-    }
-    setAttendance((prev) => [...prev, newAttendance])
-    setFilteredAttendance((prev) => [...prev, newAttendance])
-    setIsMarkAttendanceModalOpen(false)
+  if (loading) {
+    return (
+      <div className="min-h-screen flex-1 bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading attendance data...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -305,7 +319,7 @@ export default function AttendancePage() {
           </DropdownMenu>
           <Button
             className="bg-buttonprimary text-white hover:bg-buttonprimary-hover"
-            onClick={() => setIsMarkAttendanceModalOpen(true)}
+            onClick={() => navigate("/hr/mark-attendance")}
           >
             <Plus className="mr-2 h-4 w-4" /> Mark Attendance
           </Button>
@@ -370,12 +384,6 @@ export default function AttendancePage() {
           </Button>
         </div>
       </div>
-      {/* Mark Attendance Modal */}
-      <MarkAttendanceModal
-        isOpen={isMarkAttendanceModalOpen}
-        onClose={() => setIsMarkAttendanceModalOpen(false)}
-        onSave={handleSaveAttendance}
-      />
     </div>
   )
 }
