@@ -58,7 +58,6 @@ export default function CreateListPage() {
 
     // Example:
     // await axios.post("/api/lists", payload);
->>>>>>> Dev
 
     navigate("/marketing/users");
   };
