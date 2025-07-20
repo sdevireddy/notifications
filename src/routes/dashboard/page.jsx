@@ -249,7 +249,7 @@ export default function CRMDashboard() {
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="value" fill="#818cf8" />
+                <Bar dataKey="value" fill="#2563eb" />
               </BarChart>
             </ResponsiveContainer>
           </div>

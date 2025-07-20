@@ -65,9 +65,13 @@ export default function TemplateSelectModal({ isOpen, onClose, onLoad }) {
               <div className="p-3 border-t text-right">
                 <button
                   onClick={() => {
-                    onLoad(template.json);
-                    onClose();
-                  }}
+  onLoad({
+    name: template.name,
+    html: template.html,
+  });
+  onClose();
+}}
+
                   className="bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700"
                 >
                   Load Template
