@@ -142,7 +142,7 @@ export default function LeadPage() {
     const [leadToDelete, setLeadToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [actionOpen, setActionOpen] = useState(false);
-    const [leadsData, refetchData, loading] = useFetchData(apiSummary.crm.getLeads);
+    const [leadsData, refetchData, loading] = useFetchData(apiSummary.crm.getLeads, currentPage, recordsPerPage);
     const [visibleColumns, setVisibleColumns] = useState(avaliableColumns);
     const [showColumnSelector, setShowColumnSelector] = useState(false);
 
