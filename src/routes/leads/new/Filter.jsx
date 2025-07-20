@@ -1,223 +1,272 @@
-import React, { useState } from "react";
-import FilterModel from "../FilterModel";
-import { IoClose } from "react-icons/io5";
+"use client";
 
-const FilterSidebar = ({ isOpen, onClose }) => {
-    const [dateFilter, setDateFilter] = useState("");
-    const [customFiltersVisible, setCustomFiltersVisible] = useState(false);
-    const [addedColumns, setAddedColumns] = useState([]);
-    const [selectedColumn, setSelectedColumn] = useState("");
-    const [columnValues, setColumnValues] = useState({});
-    const [fromDate, setFromDate] = useState("");
-    const [toDate, setToDate] = useState("");
+import { useState, useEffect } from "react";
+import { X, Filter, Calendar } from "lucide-react";
 
-    const handleDateChange = (e) => {
-        const value = e.target.value;
-        setDateFilter(value);
-        const isCustom = value === "custom";
-        setCustomFiltersVisible(isCustom);
+const FilterModel = [
+    { name: "firstName", label: "First Name", type: "text" },
+    { name: "lastName", label: "Last Name", type: "text" },
+    { name: "email", label: "Email", type: "text" },
+    { name: "company", label: "Company", type: "text" },
+    { name: "phone", label: "Phone", type: "text" },
+    {
+        name: "leadOwner",
+        label: "Lead Owner",
+        type: "select",
+        options: ["John Doe", "Jane Smith", "Mike Johnson", "Sarah Wilson"],
+    },
+    { name: "status", label: "Status", type: "select", options: ["New", "Contacted", "Qualified", "Lost", "Won"] },
+    { name: "priority", label: "Priority", type: "select", options: ["Low", "Medium", "High", "Critical"] },
+    { name: "revenue", label: "Revenue", type: "number" },
+    {
+        name: "industry",
+        label: "Industry",
+        type: "select",
+        options: ["Technology", "Healthcare", "Finance", "Education", "Manufacturing"],
+    },
+];
 
-        if (!isCustom) {
-            // Reset all custom filter states
-            setFromDate("");
-            setToDate("");
-            setAddedColumns([]);
-            setSelectedColumn("");
-            setColumnValues({});
+const conditionOptions = [
+    { value: "contains", label: "Contains" },
+    { value: "startsWith", label: "Starts with" },
+    { value: "endsWith", label: "Ends with" },
+    { value: "equals", label: "Equals" },
+    { value: "greaterThan", label: "Greater than" },
+    { value: "lessThan", label: "Less than" },
+];
+
+export default function FilterSidebar({ isOpen, onClose }) {
+    const [filters, setFilters] = useState({
+        dateRange: "last7days",
+        customFilters: {},
+    });
+    const [queryText, setQueryText] = useState("");
+    const [showCustomFields, setShowCustomFields] = useState(false);
+    const [customDateRange, setCustomDateRange] = useState({ start: "", end: "" });
+    useEffect(() => {
+        if (!isOpen) {
+            setFilters({ dateRange: "last7days", customFilters: {} });
+            setShowCustomFields(false);
         }
+    }, [isOpen]);
+
+    const handleDateRangeChange = (value) => {
+        setFilters((prev) => ({ ...prev, dateRange: value }));
+        setShowCustomFields(value === "custom");
     };
 
-    const handleAddColumn = () => {
-        if (selectedColumn && !addedColumns.includes(selectedColumn)) {
-            setAddedColumns([...addedColumns, selectedColumn]);
-            setSelectedColumn("");
-        }
+    const handleCustomFilterChange = (fieldName, type, newValue) => {
+        setFilters((prev) => ({
+            ...prev,
+            customFilters: {
+                ...prev.customFilters,
+                [fieldName]: {
+                    ...prev.customFilters[fieldName],
+                    [type]: newValue,
+                },
+            },
+        }));
     };
 
-    const handleColumnValueChange = (fieldName, value) => {
-        setColumnValues((prev) => ({ ...prev, [fieldName]: value }));
+    const handleResetFilters = () => {
+        setFilters({
+            dateRange: "last7days",
+            customFilters: {},
+        });
+        setShowCustomFields(false);
     };
 
     const handleApplyFilters = () => {
-        const appliedFilters = {
-            dateRange: dateFilter,
-            from: fromDate,
-            to: toDate,
-            ...columnValues,
-        };
-        console.log("Applied Filters:", appliedFilters);
-        alert("Filters Applied!");
+        console.log("Applied filters:", filters);
         onClose();
     };
 
     return (
         <>
-            {/* Background Blur Overlay */}
+            {/* Overlay */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+                    className="fixed inset-0 z-40 bg-black/50"
                     onClick={onClose}
-                ></div>
+                />
             )}
 
-            {/* Sidebar */}
+            {/* Sidebar Panel */}
             <div
-                className={`fixed right-0 top-0 z-50 h-full w-[40%] transform bg-white shadow-lg transition-transform duration-300 ease-in-out ${
+                className={`fixed right-0 top-0 z-50 h-full w-full transform border-l bg-white shadow-xl transition-transform duration-300 ease-in-out sm:w-96 ${
                     isOpen ? "translate-x-0" : "translate-x-full"
                 }`}
             >
-                {/* Header */}
-                <div className="flex items-center justify-between border-b px-4 py-3">
-                    <h2 className="text-lg font-semibold">Filter</h2>
-                    <button onClick={onClose}>
-                        <IoClose className="h-6 w-6" />
-                    </button>
-                </div>
-
-                {/* Content */}
-                <div className="h-[calc(100%-60px)] space-y-5 overflow-y-auto p-4 pb-24">
-                    {/* Date Range Filter */}
-                    <div>
-                        <label className="mb-1 block font-medium">Filter By</label>
-                        <select
-                            value={dateFilter}
-                            onChange={handleDateChange}
-                            className="w-full rounded-md border px-3 py-2"
+                <div className="flex h-full flex-col">
+                    {/* Header */}
+                    <div className="flex items-center justify-between border-b p-4">
+                        <div className="flex items-center gap-2 text-lg font-semibold">
+                            <Filter className="h-5 w-5" />
+                            Filters
+                        </div>
+                        <button
+                            onClick={onClose}
+                            className="p-2"
                         >
-                            <option value="">Select Range</option>
-                            <option value="last_week">Last 1 Week</option>
-                            <option value="last_month">Last 1 Month</option>
-                            <option value="last_year">Last 1 Year</option>
-                            <option value="date">Date</option>
-                            <option value="custom">Custom</option>
-                        </select>
+                            <X className="h-4 w-4" />
+                        </button>
                     </div>
-                    {dateFilter === "date" && (
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="mb-1 block text-sm font-medium">From Date</label>
-                                <input
-                                    type="date"
-                                    value={fromDate}
-                                    onChange={(e) => setFromDate(e.target.value)}
-                                    className="w-full rounded-md border px-3 py-2"
-                                />
+
+                    {/* Body */}
+                    <div className="flex-1 overflow-y-auto p-4">
+                        {/* Date Range */}
+                        <div className="flex flex-col justify-start">
+                            <div className="mb-2 flex gap-2 text-sm font-medium">
+                                <Calendar className="h-4 w-4" />
+                                Date Range
                             </div>
-                            <div>
-                                <label className="mb-1 block text-sm font-medium">To Date</label>
-                                <input
-                                    type="date"
-                                    value={toDate}
-                                    onChange={(e) => setToDate(e.target.value)}
-                                    className="w-full rounded-md border px-3 py-2"
-                                />
+                            <div className="mb-4 pl-5">
+                                {["last7days", "last30days", "lastyear", "range", "custom","query"].map((value) => (
+                                    <label
+                                        key={value}
+                                        className="flex items-center gap-2 text-sm"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="dateRange"
+                                            value={value}
+                                            checked={filters.dateRange === value}
+                                            onChange={() => handleDateRangeChange(value)}
+                                            className="w-5"
+                                        />
+                                        <span className="capitalize">{value.replace(/last/, "Last ").replace(/(\d+)/, "$1 ")}</span>
+                                    </label>
+                                ))}
                             </div>
                         </div>
-                    )}
-                    {/* Show calendar only for custom */}
-                    {customFiltersVisible && (
-                        <>
-                            {/* From - To Date Calendar Inputs */}
+                       {filters.dateRange === "query" && (
+    <div className="mb-4">
+        <label className="text-sm font-medium block mb-1">Enter your query</label>
+        <textarea
+            className="w-full h-24 rounded border px-2 py-1 text-sm"
+            placeholder="Type your query here..."
+            value={queryText}
+            onChange={(e) => setQueryText(e.target.value)}
+        />
+    </div>
+)}
 
-                            {/* Add Column Section */}
-                            <div className="space-y-2">
-                                <label className="block font-medium">Add Column</label>
-                                <div className="flex items-center gap-2">
-                                    <select
-                                        value={selectedColumn}
-                                        onChange={(e) => setSelectedColumn(e.target.value)}
-                                        className="w-full rounded-md border px-3 py-2"
-                                    >
-                                        <option value="">Select Column</option>
-                                        {FilterModel.filter((f) => !addedColumns.includes(f.name)).map((field) => (
-                                            <option
-                                                key={field.name}
-                                                value={field.name}
-                                            >
-                                                {field.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <button
-                                        type="button"
-                                        onClick={handleAddColumn}
-                                        disabled={!selectedColumn}
-                                        className="rounded-md bg-blue-600 px-3 py-2 text-sm text-white disabled:opacity-50"
-                                    >
-                                        Add
-                                    </button>
-                                </div>
+                        {filters.dateRange === "range" && (
+                            <div className="flex flex-col gap-2">
+                                <label
+                                    className="text-sm font-medium"
+                                    htmlFor="start-date"
+                                >
+                                    Start Date
+                                </label>
+                                <input
+                                    id="start-date"
+                                    type="date"
+                                    className="h-8 rounded border px-2 text-sm"
+                                    value={customDateRange.start}
+                                    onChange={(e) => setCustomDateRange({ ...customDateRange, start: e.target.value })}
+                                />
+
+                                <label
+                                    className="text-sm font-medium"
+                                    htmlFor="end-date"
+                                >
+                                    End Date
+                                </label>
+                                <input
+                                    id="end-date"
+                                    type="date"
+                                    className="h-8 rounded border px-2 text-sm"
+                                    value={customDateRange.end}
+                                    onChange={(e) => setCustomDateRange({ ...customDateRange, end: e.target.value })}
+                                />
                             </div>
-
-                            {/* Render Added Fields */}
-                            {addedColumns.map((fieldName) => {
-                                const field = FilterModel.find((f) => f.name === fieldName);
-                                if (!field) return null;
-
-                                return (
+                        )}
+                        {/* Advanced Filters */}
+                        {showCustomFields && (
+                            <div className="space-y-4 transition-all duration-300 ease-in-out">
+                                <h3 className="text-sm font-semibold">Advanced Filters</h3>
+                                {FilterModel.map((field, index) => (
                                     <div
                                         key={field.name}
-                                        className="group relative"
+                                        className="space-y-1"
                                     >
-                                        <label className="mb-1 block text-sm font-medium">{field.label}</label>
-                                        <button
-                                            className="absolute right-0 top-0 hidden text-red-500 group-hover:block"
-                                            onClick={() => {
-                                                setAddedColumns((prev) => prev.filter((col) => col !== field.name));
-                                                setColumnValues((prev) => {
-                                                    const newVals = { ...prev };
-                                                    delete newVals[field.name];
-                                                    return newVals;
-                                                });
-                                            }}
-                                            title="Remove"
+                                        <label className="text-sm font-medium">{field.label}</label>
+
+                                        {/* Condition Dropdown */}
+                                        <select
+                                            className="h-8 w-full rounded border px-2 text-sm"
+                                            value={filters.customFilters[field.name]?.condition || "contains"}
+                                            onChange={(e) => handleCustomFilterChange(field.name, "condition", e.target.value)}
                                         >
-                                            ❌
-                                        </button>
+                                            {conditionOptions
+                                                .filter((option) => {
+                                                    if (field.type === "number") {
+                                                        return ["equals", "greaterThan", "lessThan"].includes(option.value);
+                                                    }
+                                                    return ["contains", "startsWith", "endsWith", "equals"].includes(option.value);
+                                                })
+                                                .map((option) => (
+                                                    <option
+                                                        key={option.value}
+                                                        value={option.value}
+                                                    >
+                                                        {option.label}
+                                                    </option>
+                                                ))}
+                                        </select>
+
+                                        {/* Value Field */}
                                         {field.type === "select" ? (
                                             <select
-                                                value={columnValues[field.name] || ""}
-                                                onChange={(e) => handleColumnValueChange(field.name, e.target.value)}
-                                                className="w-full rounded-md border px-3 py-2"
+                                                className="h-8 w-full rounded border px-2 text-sm"
+                                                value={filters.customFilters[field.name]?.value || ""}
+                                                onChange={(e) => handleCustomFilterChange(field.name, "value", e.target.value)}
                                             >
                                                 <option value="">Select {field.label}</option>
-                                                {field.options?.map((opt) => (
+                                                {field.options?.map((option) => (
                                                     <option
-                                                        key={opt.value}
-                                                        value={opt.value}
+                                                        key={option}
+                                                        value={option}
                                                     >
-                                                        {opt.label}
+                                                        {option}
                                                     </option>
                                                 ))}
                                             </select>
                                         ) : (
                                             <input
                                                 type={field.type}
-                                                value={columnValues[field.name] || ""}
-                                                onChange={(e) => handleColumnValueChange(field.name, e.target.value)}
-                                                className="w-full rounded-md border px-3 py-2"
+                                                className="h-8 w-full rounded border px-2 text-sm"
                                                 placeholder={`Enter ${field.label}`}
+                                                value={filters.customFilters[field.name]?.value || ""}
+                                                onChange={(e) => handleCustomFilterChange(field.name, "value", e.target.value)}
                                             />
                                         )}
-                                    </div>
-                                );
-                            })}
-                        </>
-                    )}
-                </div>
 
-                {/* Sticky Footer */}
-                <div className="absolute bottom-0 left-0 w-full border-t bg-white p-4">
-                    <button
-                        className="w-full rounded-md bg-blue-600 py-2 font-medium text-white"
-                        onClick={handleApplyFilters}
-                    >
-                        Apply Filters
-                    </button>
+                                        {index < FilterModel.length - 1 && <hr className="my-3" />}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Footer */}
+                    <div className="flex gap-2 border-t bg-gray-50 p-4">
+                        <button
+                            onClick={handleApplyFilters}
+                            className="flex-1 rounded bg-blue-600 py-2 text-sm text-white hover:bg-blue-700"
+                        >
+                            Apply Filters
+                        </button>
+                        <button
+                            onClick={handleResetFilters}
+                            className="flex-1 rounded border bg-white py-2 text-sm"
+                        >
+                            Reset
+                        </button>
+                    </div>
                 </div>
             </div>
         </>
     );
-};
-
-export default FilterSidebar;
+}
