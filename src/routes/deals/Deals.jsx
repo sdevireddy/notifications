@@ -141,6 +141,7 @@ export default function DealsPage() {
     const [dealsData, refetchData, loading] = useFetchData(apiSummary.crm.getDeals,currentPage,recordsPerPage);
     const [visibleColumns, setVisibleColumns] = useState(availableDealColumns);
     const [showColumnSelector, setShowColumnSelector] = useState(false);
+    const [actionOpen, setActionOpen] = useState(false);
     useEffect(() => {
         setDeals(dealsData?.data || []);
         setFilteredDeals(dealsData?.data || []);
@@ -309,7 +310,7 @@ export default function DealsPage() {
                         onOpenChange={setShowColumnSelector}
                     >
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
+                            <Button variant="primary"  className={` ${showColumnSelector ? "bg-primary text-white" : ""}`}>
                                 Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -338,9 +339,12 @@ export default function DealsPage() {
                         </DropdownMenuContent>
                     </DropdownMenu>
 
-                    <DropdownMenu>
+                    <DropdownMenu
+                   open={actionOpen}
+                    onOpenChange={setActionOpen}
+                    >
                         <DropdownMenuTrigger asChild>
-                            <Button variant="primary">
+                            <Button variant="primary"  className={` ${actionOpen ? "bg-primary text-white" : ""}`}>
                                 Actions <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
