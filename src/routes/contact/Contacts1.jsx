@@ -137,7 +137,7 @@ export default function ContactPage() {
     const [visibleColumns, setVisibleColumns] = useState(availableContactColumns);
      const [showColumnSelector, setShowColumnSelector] = useState(false);
 
-    const [constactData, refetchContacts, loading] = useFetchData(apiSummary.crm.getContacts);
+    const [constactData, refetchContacts, loading] = useFetchData(apiSummary.crm.getContacts,currentPage,recordsPerPage);
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [contactToDelete, setContactToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);

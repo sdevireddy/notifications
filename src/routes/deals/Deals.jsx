@@ -138,7 +138,7 @@ export default function DealsPage() {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [dealToDelete, setDealToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [dealsData, refetchData, loading] = useFetchData(apiSummary.crm.getDeals);
+    const [dealsData, refetchData, loading] = useFetchData(apiSummary.crm.getDeals,currentPage,recordsPerPage);
     const [visibleColumns, setVisibleColumns] = useState(availableDealColumns);
     const [showColumnSelector, setShowColumnSelector] = useState(false);
     useEffect(() => {
