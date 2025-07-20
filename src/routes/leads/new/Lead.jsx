@@ -35,6 +35,7 @@ import {
     XIcon,
     ArrowUp,
     ArrowDown,
+    Import,
 } from "lucide-react";
 import { ContactDetailsModal } from "@/components/contact-details-modal";
 import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar";
@@ -67,61 +68,61 @@ const avaliableColumns = {
     comments: false,
 };
 const columnsConfig = {
-  firstName: {
-    label: "Name",
-    render: ({ row }) => {
-      const lead = row.original;
-      return (
-        <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
-            <User className="h-4 w-4 text-gray-500" />
-          </div>
-          <div>{lead.firstName + " " + lead.lastName}</div>
-        </div>
-      );
+    firstName: {
+        label: "Name",
+        render: ({ row }) => {
+            const lead = row.original;
+            return (
+                <div className="flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
+                        <User className="h-4 w-4 text-gray-500" />
+                    </div>
+                    <div>{lead.firstName + " " + lead.lastName}</div>
+                </div>
+            );
+        },
     },
-  },
-  email: {
-    label: "Email",
-    render: ({ row }) => row.original.email,
-  },
-  mobile: {
-    label: "Phone",
-    render: ({ row }) => row.original.mobile,
-  },
-  company: {
-    label: "Company",
-    render: ({ row }) => (
-      <div>
-        <div>{row.original.company}</div>
-        <div className="text-xs text-gray-500">{row.original.title}</div>
-      </div>
-    ),
-  },
-  leadOwner: {
-    label: "Owner",
-    render: ({ row }) => row.original.leadOwner,
-  },
-  leadStatus: {
-    label: "Status",
-    render: ({ row }) => <StatusBadge status={row.original.leadStatus} />,
-  },
-  website: {
-    label: "Website",
-    render: ({ row }) => row.original.website || "-",
-  },
-  industry: {
-    label: "Industry",
-    render: ({ row }) => row.original.industry || "-",
-  },
-  followUp: {
-    label: "Follow Up",
-    render: ({ row }) => row.original.followUp || "-",
-  },
-  comments: {
-    label: "Comments",
-    render: ({ row }) => row.original.comments || "-",
-  },
+    email: {
+        label: "Email",
+        render: ({ row }) => row.original.email,
+    },
+    mobile: {
+        label: "Phone",
+        render: ({ row }) => row.original.mobile,
+    },
+    company: {
+        label: "Company",
+        render: ({ row }) => (
+            <div>
+                <div>{row.original.company}</div>
+                <div className="text-xs text-gray-500">{row.original.title}</div>
+            </div>
+        ),
+    },
+    leadOwner: {
+        label: "Owner",
+        render: ({ row }) => row.original.leadOwner,
+    },
+    leadStatus: {
+        label: "Status",
+        render: ({ row }) => <StatusBadge status={row.original.leadStatus} />,
+    },
+    website: {
+        label: "Website",
+        render: ({ row }) => row.original.website || "-",
+    },
+    industry: {
+        label: "Industry",
+        render: ({ row }) => row.original.industry || "-",
+    },
+    followUp: {
+        label: "Follow Up",
+        render: ({ row }) => row.original.followUp || "-",
+    },
+    comments: {
+        label: "Comments",
+        render: ({ row }) => row.original.comments || "-",
+    },
 };
 
 export default function LeadPage() {
@@ -141,8 +142,8 @@ export default function LeadPage() {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [leadToDelete, setLeadToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
-
-    const [leadsData, refetchData, loading] = useFetchData(apiSummary.crm.getLeads);
+    const [actionOpen, setActionOpen] = useState(false);
+    const [leadsData, refetchData, loading] = useFetchData(apiSummary.crm.getLeads, currentPage, recordsPerPage);
     const [visibleColumns, setVisibleColumns] = useState(avaliableColumns);
     const [showColumnSelector, setShowColumnSelector] = useState(false);
 
@@ -189,57 +190,57 @@ export default function LeadPage() {
 
     const currentLeads = filteredLeads;
 
-   const columns = useMemo(() => {
-  const dynamicColumns = [];
+    const columns = useMemo(() => {
+        const dynamicColumns = [];
 
-  // Select Checkbox Column
-  dynamicColumns.push({
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllRowsSelected()}
-        onCheckedChange={(value) => {
-          table.toggleAllRowsSelected(!!value);
-          handleSelectAll();
-        }}
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => {
-          row.toggleSelected(!!value);
-          handleContactSelect(row.original);
-        }}
-      />
-    ),
-  });
+        // Select Checkbox Column
+        dynamicColumns.push({
+            id: "select",
+            header: ({ table }) => (
+                <Checkbox
+                    checked={table.getIsAllRowsSelected()}
+                    onCheckedChange={(value) => {
+                        table.toggleAllRowsSelected(!!value);
+                        handleSelectAll();
+                    }}
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => {
+                        row.toggleSelected(!!value);
+                        handleContactSelect(row.original);
+                    }}
+                />
+            ),
+        });
 
-  // Dynamically add columns based on visibility
-  Object.keys(columnsConfig).forEach((key) => {
-    if (visibleColumns[key]) {
-      dynamicColumns.push({
-        accessorKey: key,
-        header: columnsConfig[key].label,
-        cell: columnsConfig[key].render,
-      });
-    }
-  });
+        // Dynamically add columns based on visibility
+        Object.keys(columnsConfig).forEach((key) => {
+            if (visibleColumns[key]) {
+                dynamicColumns.push({
+                    accessorKey: key,
+                    header: columnsConfig[key].label,
+                    cell: columnsConfig[key].render,
+                });
+            }
+        });
 
-  // Actions column
-  dynamicColumns.push({
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) =>{
-        const lead=row.original
-        return (
-              <div className="flex items-center justify-center gap-3">
+        // Actions column
+        dynamicColumns.push({
+            id: "actions",
+            header: "Actions",
+            cell: ({ row }) => {
+                const lead = row.original;
+                return (
+                    <div className="flex items-center justify-center gap-3">
                         <Button
                             variant="outline"
                             size="sm"
                             className={"hover:bg-primary hover:text-white"}
                         >
-                           Convert
+                            Convert
                         </Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -260,34 +261,37 @@ export default function LeadPage() {
                                     <Edit className="mr-2 h-4 w-4" />
                                     Edit
                                 </DropdownMenuItem>
-                                 <DropdownMenuItem>
-                                   <Phone className=" mr-2 h-4 w-4" />
+                                <DropdownMenuItem>
+                                    <Phone className="mr-2 h-4 w-4" />
                                     Phone
                                 </DropdownMenuItem>
-                                 <DropdownMenuItem  onClick={() => {
-                                setSelectSingleLead([row.original]);
-                                setEmailModel(true);
-                            }}>
-                                    <Mail className="mr-2 h-4 w-4 " />
+                                <DropdownMenuItem
+                                    onClick={() => {
+                                        setSelectSingleLead([row.original]);
+                                        setEmailModel(true);
+                                    }}
+                                >
+                                    <Mail className="mr-2 h-4 w-4" />
                                     Mail
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => {
-        setLeadToDelete(lead);
-        setShowConfirmDelete(true);
-    }}>
+                                <DropdownMenuItem
+                                    onClick={() => {
+                                        setLeadToDelete(lead);
+                                        setShowConfirmDelete(true);
+                                    }}
+                                >
                                     <Trash2 className="mr-2 h-4 w-4 text-red-600" />
                                     Delete
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-        )
-    }
-  });
+                );
+            },
+        });
 
-  return dynamicColumns;
-}, [visibleColumns]);
-
+        return dynamicColumns;
+    }, [visibleColumns]);
 
     const handleDelete = async (id) => {
         try {
@@ -334,12 +338,12 @@ export default function LeadPage() {
                             <LuFilter />
                         </Tooltip>
                     </div>
-                       <DropdownMenu
+                    <DropdownMenu
                         open={showColumnSelector}
                         onOpenChange={setShowColumnSelector}
                     >
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
+                            <Button variant="primary" className={` ${showColumnSelector ? "bg-primary text-white" : ""}`}>
                                 Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -351,10 +355,8 @@ export default function LeadPage() {
                                 <DropdownMenuItem
                                     key={key}
                                     onSelect={(e) => e.preventDefault()}
-                                    className="flex items-center justify-between"
+                                    className="flex items-center gap-5"
                                 >
-                                    <span className="capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
-
                                     <Checkbox
                                         checked={visibleColumns[key]}
                                         onCheckedChange={() =>
@@ -364,14 +366,21 @@ export default function LeadPage() {
                                             }))
                                         }
                                     />
+                                    <span className="capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
                                 </DropdownMenuItem>
                             ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
 
-                    <DropdownMenu>
+                    <DropdownMenu
+                        open={actionOpen}
+                        onOpenChange={setActionOpen}
+                    >
                         <DropdownMenuTrigger asChild>
-                            <Button variant="primary">
+                            <Button
+                                variant="primary"
+                                className={` ${actionOpen ? "bg-primary text-white" : ""}`}
+                            >
                                 Actions <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -399,6 +408,10 @@ export default function LeadPage() {
                             <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                                 <Tag className="mr-2 h-4 w-4" />
                                 Tag Leads
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900" onClick={()=>navigate('/import/leads')}>
+                                <Import className="mr-2 h-4 w-4" />
+                                Import Leads
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                         </DropdownMenuContent>

@@ -1,193 +1,245 @@
+// app/dashboard/marketing/page.tsx
 "use client";
+
 import { useState } from "react";
-import {
-  Send,
-  BarChart2,
-  MailOpen,
-  MousePointerClick,
-} from "lucide-react";
 import {
   LineChart,
   Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-
-import CountCard from "../../components/CountCard";
+import { DollarSign, Mail, MessageSquareText, ThumbsUp } from "lucide-react";
 import Table from "../../components/Table";
+import CountCard from "../../components/CountCard";
 
-// === 1. Stats Data ===
-const statsData = [
-  {
-    label: "Total Campaigns",
-    icon: <BarChart2 className="h-4 w-4 text-blue-500" />,
-    value: 76,
-    growth: "+5 this month",
-  },
-  {
-    label: "Emails Sent",
-    icon: <Send className="h-4 w-4 text-green-500" />,
-    value: 15230,
-    growth: "+12% since last month",
-  },
-  {
-    label: "Open Rate",
-    icon: <MailOpen className="h-4 w-4 text-yellow-500" />,
-    value: 42.5,
-    growth: "Stable",
-  },
-  {
-    label: "Click Rate",
-    icon: <MousePointerClick className="h-4 w-4 text-purple-500" />,
-    value: 17.8,
-    growth: "+2.1%",
-  },
-];
+const marketingChannels = ["Email", "SMS", "Social Media"];
 
-// === 2. Chart Data ===
 const dataMap = {
-  "Emails Sent": [
-    { month: "Jan", value: 3000 },
-    { month: "Feb", value: 2800 },
-    { month: "Mar", value: 3200 },
-    { month: "Apr", value: 3100 },
-    { month: "May", value: 3400 },
-    { month: "Jun", value: 3730 },
+  Email: [
+    { month: "Jan", value: 300 },
+    { month: "Feb", value: 420 },
+    { month: "Mar", value: 380 },
+    { month: "Apr", value: 450 },
+    { month: "May", value: 500 },
+    { month: "Jun", value: 650 },
   ],
-  "Open Rate": [
-    { month: "Jan", value: 38 },
-    { month: "Feb", value: 40 },
-    { month: "Mar", value: 43 },
-    { month: "Apr", value: 41 },
-    { month: "May", value: 44 },
-    { month: "Jun", value: 42.5 },
+  SMS: [
+    { month: "Jan", value: 150 },
+    { month: "Feb", value: 230 },
+    { month: "Mar", value: 200 },
+    { month: "Apr", value: 280 },
+    { month: "May", value: 310 },
+    { month: "Jun", value: 370 },
   ],
-  "Click Rate": [
-    { month: "Jan", value: 14 },
-    { month: "Feb", value: 15.5 },
-    { month: "Mar", value: 17 },
-    { month: "Apr", value: 16.3 },
-    { month: "May", value: 18 },
-    { month: "Jun", value: 17.8 },
+  "Social Media": [
+    { month: "Jan", value: 500 },
+    { month: "Feb", value: 550 },
+    { month: "Mar", value: 600 },
+    { month: "Apr", value: 750 },
+    { month: "May", value: 900 },
+    { month: "Jun", value: 1200 },
   ],
 };
 
-const recentCampaigns = [
-  {
-    name: "Summer Sale 2025",
-    date: "2025-06-01",
-    sent: 5000,
-    openRate: "45%",
-    status: "Completed",
-  },
-  {
-    name: "New Product Launch",
-    date: "2025-06-15",
-    sent: 4200,
-    openRate: "39%",
-    status: "Completed",
-  },
-  {
-    name: "July Newsletter",
-    date: "2025-07-01",
-    sent: 4030,
-    openRate: "42%",
-    status: "Scheduled",
-  },
+const statsByChannel = {
+  Email: [
+    {
+      label: "Emails Sent",
+      icon: <Mail className="h-4 w-4 text-blue-500" />,
+      value: 2045,
+      growth: "+14% from last month",
+    },
+    {
+      label: "Open Rate",
+      icon: <Mail className="h-4 w-4 text-green-500" />,
+      value: "34%",
+      growth: "+2% from last month",
+    },
+    {
+      label: "Click Rate",
+      icon: <Mail className="h-4 w-4 text-purple-500" />,
+      value: "12%",
+      growth: "+1.5% from last month",
+    },
+    {
+      label: "Unsubscribed",
+      icon: <Mail className="h-4 w-4 text-red-500" />,
+      value: 34,
+      growth: "-5% from last month",
+    },
+  ],
+  SMS: [
+    {
+      label: "SMS Sent",
+      icon: <MessageSquareText className="h-4 w-4 text-blue-500" />,
+      value: 1340,
+      growth: "+18% from last month",
+    },
+    {
+      label: "Delivery Rate",
+      icon: <MessageSquareText className="h-4 w-4 text-green-500" />,
+      value: "98%",
+      growth: "+1% from last month",
+    },
+    {
+      label: "Click Rate",
+      icon: <MessageSquareText className="h-4 w-4 text-purple-500" />,
+      value: "9%",
+      growth: "+0.5% from last month",
+    },
+    {
+      label: "Replies",
+      icon: <MessageSquareText className="h-4 w-4 text-orange-500" />,
+      value: 89,
+      growth: "+10% from last month",
+    },
+  ],
+  "Social Media": [
+    {
+      label: "Posts",
+      icon: <ThumbsUp className="h-4 w-4 text-blue-500" />,
+      value: 98,
+      growth: "+6% from last month",
+    },
+    {
+      label: "Engagement",
+      icon: <ThumbsUp className="h-4 w-4 text-green-500" />,
+      value: "7.8k",
+      growth: "+12% from last month",
+    },
+    {
+      label: "Followers",
+      icon: <ThumbsUp className="h-4 w-4 text-purple-500" />,
+      value: 15400,
+      growth: "+5% from last month",
+    },
+    {
+      label: "Mentions",
+      icon: <ThumbsUp className="h-4 w-4 text-orange-500" />,
+      value: 230,
+      growth: "+9% from last month",
+    },
+  ],
+};
+
+// Dummy data examples for tables (customize as needed)
+const emailTableData = [
+  { campaign: "Welcome Series", sent: 620, open: "40%", click: "16%" },
+  { campaign: "Product Update", sent: 480, open: "26%", click: "10%" },
 ];
 
-const MarketingDashboard = () => {
-  const [selectedMetric, setSelectedMetric] = useState("Emails Sent");
+const smsTableData = [
+  { campaign: "Flash Sale", sent: 300, delivery: "99%", clicks: "12%" },
+  { campaign: "Promo Alert", sent: 250, delivery: "97%", clicks: "9%" },
+];
 
-  const campaignColumns = [
-    {
-      header: "Campaign Name",
-      accessorKey: "name",
-    },
-    {
-      header: "Date",
-      accessorKey: "date",
-    },
-    {
-      header: "Emails Sent",
-      accessorKey: "sent",
-    },
-    {
-      header: "Open Rate",
-      accessorKey: "openRate",
-    },
-    {
-      header: "Status",
-      accessorKey: "status",
-      cell: ({ getValue }) => {
-        const status = getValue();
-        const color =
-          status === "Completed"
-            ? "text-green-600"
-            : status === "Scheduled"
-            ? "text-yellow-600"
-            : "text-gray-600";
-        return <span className={`text-xs font-medium ${color}`}>{status}</span>;
-      },
-    },
-  ];
+const socialTableData = [
+  { platform: "Instagram", posts: 32, eng: "2.1k", reach: "14k" },
+  { platform: "Twitter", posts: 28, eng: "1.5k", reach: "11.5k" },
+];
+
+// Columns for tables
+const emailColumns = [
+  { header: "Campaign", accessorKey: "campaign" },
+  { header: "Sent", accessorKey: "sent" },
+  { header: "Open Rate", accessorKey: "open" },
+  { header: "Click Rate", accessorKey: "click" },
+];
+
+const smsColumns = [
+  { header: "Campaign", accessorKey: "campaign" },
+  { header: "Sent", accessorKey: "sent" },
+  { header: "Delivery", accessorKey: "delivery" },
+  { header: "Clicks", accessorKey: "clicks" },
+];
+
+const socialColumns = [
+  { header: "Platform", accessorKey: "platform" },
+  { header: "Posts", accessorKey: "posts" },
+  { header: "Engagement", accessorKey: "eng" },
+  { header: "Reach", accessorKey: "reach" },
+];
+
+export default function MarketingDashboard() {
+  const [selected, setSelected] = useState("Email");
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="border-b bg-white px-6 py-4">
-        <h1 className="text-2xl font-bold">Email Campaigns Dashboard</h1>
+      <header className="flex items-center justify-between border-b bg-white px-6 py-4">
+        <h1 className="text-2xl font-bold">Marketing Dashboard</h1>
       </header>
 
       <main className="space-y-8 p-6">
+        {/* Channel Selector */}
+        <div className="flex space-x-4">
+          {marketingChannels.map((channel) => (
+            <button
+              key={channel}
+              className={`px-4 py-2 rounded ${
+                selected === channel
+                  ? "bg-blue-600 text-white"
+                  : "bg-white border text-gray-800"
+              } text-sm font-medium shadow-sm`}
+              onClick={() => setSelected(channel)}
+            >
+              {channel}
+            </button>
+          ))}
+        </div>
+
         {/* Stat Cards */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {statsData.map((stat, index) => (
+          {statsByChannel[selected].map((stat, index) => (
             <CountCard key={index} stat={stat} />
           ))}
         </div>
 
-        {/* Chart */}
+        {/* Charts */}
         <div className="rounded bg-white p-6 shadow">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">{selectedMetric} Overview</h2>
-            <select
-              value={selectedMetric}
-              onChange={(e) => setSelectedMetric(e.target.value)}
-              className="rounded border px-3 py-1 text-sm"
-            >
-              <option value="Emails Sent">Emails Sent</option>
-              <option value="Open Rate">Open Rate</option>
-              <option value="Click Rate">Click Rate</option>
-            </select>
+          <h2 className="text-lg font-semibold mb-4">{selected} Performance</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={dataMap[selected]}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#3b82f6"
+                  strokeWidth={2}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={dataMap[selected]}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#818cf8" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dataMap[selectedMetric]}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="value"
-                stroke="#6366f1"
-                strokeWidth={2}
-                activeDot={{ r: 8 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
         </div>
 
-        {/* Recent Campaigns Table */}
-        <div className="rounded bg-white p-4 shadow">
-          <h3 className="mb-4 text-lg font-semibold">Recent Campaigns</h3>
-          <Table columns={campaignColumns} data={recentCampaigns} />
+        {/* Table */}
+        <div className="rounded bg-white p-6 shadow">
+          <h3 className="mb-4 text-lg font-semibold">{selected} Campaigns</h3>
+          {selected === "Email" && <Table columns={emailColumns} data={emailTableData} />}
+          {selected === "SMS" && <Table columns={smsColumns} data={smsTableData} />}
+          {selected === "Social Media" && (
+            <Table columns={socialColumns} data={socialTableData} />
+          )}
         </div>
       </main>
     </div>
   );
-};
-
-export default MarketingDashboard;
+}
