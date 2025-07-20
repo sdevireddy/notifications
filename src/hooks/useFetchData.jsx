@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { axiosPrivate } from '../utils/axios'
 
-const useFetchData = (urldata) => {
+const useFetchData = (urldata,page,limit) => {
     const [data,setData]=useState([])
     const [refresh,setRefresh]=useState(true)
     const [loading,setLoading]=useState(false)
     const fetchData=async()=>{
         try {
             setLoading(true)
+            let {url,method}=urldata
+            url=`${url}?page=${page}&size=${limit}`
             const resp=await axiosPrivate({
-                ...urldata
+                url,method
             })
             setData(resp?.data)
         } catch (error) {
@@ -21,7 +23,7 @@ const useFetchData = (urldata) => {
     }
     useEffect(()=>{
         fetchData()
-    },[refresh])
+    },[refresh,page,limit])
     const refetchData=()=>{
         setRefresh(!refresh)
     }
