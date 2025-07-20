@@ -35,6 +35,7 @@ import {
     XIcon,
     ArrowUp,
     ArrowDown,
+    Import,
 } from "lucide-react";
 import { ContactDetailsModal } from "@/components/contact-details-modal";
 import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar";
@@ -110,9 +111,10 @@ export default function AccountsPage() {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [accountToDelete, setAccountToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [accountsData, refetchData, loading] = useFetchData(apiSummary.crm.getAccounts);
+    const [accountsData, refetchData, loading] = useFetchData(apiSummary.crm.getAccounts,currentPage,recordsPerPage);
     const [visibleColumns, setVisibleColumns] = useState(availableAccountColumns);
     const [showColumnSelector, setShowColumnSelector] = useState(false);
+    const [actionOpen, setActionOpen] = useState(false);
     useEffect(() => {
         setAccounts(accountsData.data);
         setFilteredAccounts(accountsData.data);
@@ -282,7 +284,7 @@ export default function AccountsPage() {
                         onOpenChange={setShowColumnSelector}
                     >
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
+                            <Button variant="primary" className={` ${showColumnSelector ? "bg-primary text-white" : ""}`}>
                                 Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -310,9 +312,10 @@ export default function AccountsPage() {
                             ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <DropdownMenu>
+                    <DropdownMenu  open={actionOpen}
+                        onOpenChange={setActionOpen}>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="primary">
+                            <Button variant="primary" className={` ${actionOpen ? "bg-primary text-white" : ""}`}>
                                 Actions <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -337,6 +340,10 @@ export default function AccountsPage() {
                             <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                                 <Tag className="mr-2 h-4 w-4" />
                                 Tag Contacts
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900" onClick={()=>navigate('/import/accounts')}>
+                                <Import className="mr-2 h-4 w-4" />
+                                Import Accounts
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                         </DropdownMenuContent>
