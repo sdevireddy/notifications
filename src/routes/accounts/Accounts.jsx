@@ -110,7 +110,7 @@ export default function AccountsPage() {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [accountToDelete, setAccountToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [accountsData, refetchData, loading] = useFetchData(apiSummary.crm.getAccounts);
+    const [accountsData, refetchData, loading] = useFetchData(apiSummary.crm.getAccounts,currentPage,recordsPerPage);
     const [visibleColumns, setVisibleColumns] = useState(availableAccountColumns);
     const [showColumnSelector, setShowColumnSelector] = useState(false);
     useEffect(() => {
