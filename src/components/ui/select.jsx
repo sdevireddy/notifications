@@ -86,12 +86,12 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-lg py-3 pl-14 pr-4 text-sm outline-none transition-all duration-150 focus:bg-blue-50 focus:text-blue-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 enhanced-dropdown-item",
+      "relative flex gap-4 w-full cursor-default select-none items-center rounded-lg py-3 pl-14 pr-10 text-sm outline-none transition-all duration-150 focus:bg-blue-50 focus:text-blue-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 enhanced-dropdown-item",
       className,
     )}
     {...props}
   >
-    <span className="absolute left-6 flex h-4 w-4 items-center justify-center">
+    <span className="absolute left-10 flex h-4 w-4 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
         <Check className="h-4 w-4 text-blue-600 font-semibold" />
       </SelectPrimitive.ItemIndicator>
@@ -100,6 +100,7 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
     <SelectPrimitive.ItemText className="font-medium">{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 ))
+
 SelectItem.displayName = SelectPrimitive.Item.displayName
 
 const SelectSeparator = React.forwardRef(({ className, ...props }, ref) => (
