@@ -141,6 +141,7 @@ export default function ContactPage() {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [contactToDelete, setContactToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
+     const [actionOpen, setActionOpen] = useState(false);
     useEffect(() => {
         setContacts(constactData?.data || []);
         setFilteredContacts(constactData?.data || []);
@@ -290,7 +291,7 @@ export default function ContactPage() {
 
 <DropdownMenu open={showColumnSelector} onOpenChange={setShowColumnSelector}>
   <DropdownMenuTrigger asChild>
-    <Button variant="outline">
+    <Button variant="primary"  className={` ${showColumnSelector ? "bg-primary text-white" : ""}`}>
       Columns <ChevronDown className="ml-2 h-4 w-4" />
     </Button>
   </DropdownMenuTrigger>
@@ -319,9 +320,10 @@ export default function ContactPage() {
 </DropdownMenu>
 
 
-                    <DropdownMenu>
+                    <DropdownMenu  open={actionOpen}
+                        onOpenChange={setActionOpen}>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="primary">
+                            <Button variant="primary"  className={` ${actionOpen ? "bg-primary text-white" : ""}`}>
                                 Actions <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
