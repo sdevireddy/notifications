@@ -35,6 +35,7 @@ import {
     XIcon,
     ArrowUp,
     ArrowDown,
+    Import,
 } from "lucide-react";
 import { ContactDetailsModal } from "@/components/contact-details-modal";
 import { BulkActionsToolbar } from "@/components/bulk-actions-toolbar";
@@ -339,6 +340,10 @@ export default function AccountsPage() {
                             <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900">
                                 <Tag className="mr-2 h-4 w-4" />
                                 Tag Contacts
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900" onClick={()=>navigate('/import/accounts')}>
+                                <Import className="mr-2 h-4 w-4" />
+                                Import Accounts
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                         </DropdownMenuContent>

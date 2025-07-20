@@ -1,4 +1,5 @@
 import React from 'react';
+import { FiArrowLeft } from 'react-icons/fi';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const crms = [
@@ -19,10 +20,19 @@ export default function CRMSelectionImport() {
     const {source}=useParams()
   return (
     <div className="p-6 space-y-4 bg-white h-full">
+    <div className='flex gap-5 items-center'>
+        <button
+                          onClick={() => navigate(-1)}
+                          type="button"
+                          className="rounded p-2 hover:bg-gray-200"
+                      >
+                          <FiArrowLeft size={20} />
+                      </button>
       <p className="text-gray-700 text-sm">
         Easily import records from your existing CRM with our migration tools.
         Select your existing CRM below to get started.
       </p>
+    </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 py-4">
         {crms.map((crm) => (
