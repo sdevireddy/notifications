@@ -169,7 +169,7 @@ export default function EmailMarketing() {
         <div className="flex items-center gap-3">
           <Button
             onClick={() => navigate("/marketing/email-campaigns/create")}
-            className="bg-buttonprimary text-white hover:bg-buttonprimary-hover"
+            className="bg-primary text-white hover:bg-opacity-90"
           >
             <Plus className="mr-2 h-4 w-4" /> New Campaign
           </Button>
