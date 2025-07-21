@@ -1,18 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { Bell, ChevronsLeft, Moon, Sun, Grid, Briefcase, Users, BookOpen, Megaphone, Mail, HelpCircle } from "lucide-react";
+import { Bell, ChevronsLeft, Moon, Sun, Grid, Briefcase, Users, BookOpen, Megaphone, Mail, HelpCircle, Settings2 } from "lucide-react";
 import profileImg from "@/assets/profile-image.jpg";
 import PropTypes from "prop-types";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import ThemeSideBar from "../sidebar/ThemeSideBar";
 
 export const Header = ({ collapsed, setCollapsed, setActiveModule }) => {
     const navigate = useNavigate();
     const [showModules, setShowModules] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
+    const [showThemeSideBar,setShowThemeSideBar]=useState(false)
     const { theme, setTheme } = useTheme();
     const moduleRef = useRef(null);
     const profileRef = useRef(null);
-
+    const {name,profile,email}=useSelector(state=>state?.user)
     const modules = [
         {
             name: "CRM",
@@ -110,7 +113,9 @@ const handleLogout=()=>{
                 <button className="btn-ghost size-10">
                     <Bell size={20} />
                 </button>
-
+                <button className="btn-ghost size-10" onClick={()=>setShowThemeSideBar(true)}>
+                    <Settings2 size={20} />
+                </button>
                 <div
                     className="relative"
                     ref={moduleRef}
@@ -151,7 +156,7 @@ const handleLogout=()=>{
                         onClick={() => setShowProfile(!showProfile)}
                     >
                         <img
-                            src={profileImg}
+                            src={profile}
                             alt="profile"
                             className="size-full object-cover"
                         />
@@ -160,13 +165,13 @@ const handleLogout=()=>{
                         <div className="absolute right-0 top-14 z-50 w-56 rounded-md bg-white p-3 shadow-lg">
                             <div className="mb-3 flex items-center gap-3 border-b pb-3">
                                 <img
-                                    src={profileImg}
+                                    src={profile}
                                     alt="profile"
                                     className="h-10 w-10 rounded-full object-cover"
                                 />
                                 <div>
-                                    <p className="text-sm font-semibold text-gray-800">John Doe</p>
-                                    <p className="text-xs text-gray-500">john.doe@example.com</p>
+                                    <p className="text-sm font-semibold text-gray-800">{name}</p>
+                                    <p className="text-xs text-gray-500">{email}</p>
                                 </div>
                             </div>
                             <button
@@ -185,6 +190,7 @@ const handleLogout=()=>{
                     )}
                 </div>
             </div>
+            <ThemeSideBar isOpen={showThemeSideBar} onClose={()=>setShowThemeSideBar(false)}/>
         </header>
     );
 };
