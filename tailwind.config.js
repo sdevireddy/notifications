@@ -5,17 +5,8 @@ export default {
     theme: {
         extend: {
             colors: {
-                buttonprimary: {
-                    DEFAULT: "#2563EB", // base
-                    hover: "#1D4ED8",
-                },
-                buttonsecondary: {
-                    DEFAULT: "#22C55E",
-                    hover: "#475569",
-                },
-                primary: {
-                    DEFAULT: "#2563EB", // base
-                },
+                sidebar: "var(--color-sidebar)",
+                primary: "var(--color-primary)",
             },
         },
     },

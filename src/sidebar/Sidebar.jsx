@@ -83,7 +83,7 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
     return (
         <div
             ref={sidebarRef}
-            className={`h-full border-r border-gray-200 bg-blue-900 transition-all duration-300 dark:border-gray-700 dark:bg-slate-900 ${
+            className={`h-full border-r border-gray-200 bg-sidebar transition-all duration-300 dark:border-gray-700 dark:bg-slate-900 ${
                 collapsed ? "w-[70px]" : "w-56"
             }`}
             onMouseEnter={() => ref?.current?.scrollTo?.({ top: 0 })}

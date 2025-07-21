@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { Bell, ChevronsLeft, Moon, Sun, Grid, Briefcase, Users, BookOpen, Megaphone, Mail, HelpCircle } from "lucide-react";
+import { Bell, ChevronsLeft, Moon, Sun, Grid, Briefcase, Users, BookOpen, Megaphone, Mail, HelpCircle, Settings2 } from "lucide-react";
 import profileImg from "@/assets/profile-image.jpg";
 import PropTypes from "prop-types";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import ThemeSideBar from "../sidebar/ThemeSideBar";
 
 export const Header = ({ collapsed, setCollapsed, setActiveModule }) => {
     const navigate = useNavigate();
     const [showModules, setShowModules] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
+    const [showThemeSideBar,setShowThemeSideBar]=useState(false)
     const { theme, setTheme } = useTheme();
     const moduleRef = useRef(null);
     const profileRef = useRef(null);
@@ -111,7 +113,9 @@ const handleLogout=()=>{
                 <button className="btn-ghost size-10">
                     <Bell size={20} />
                 </button>
-
+                <button className="btn-ghost size-10" onClick={()=>setShowThemeSideBar(true)}>
+                    <Settings2 size={20} />
+                </button>
                 <div
                     className="relative"
                     ref={moduleRef}
@@ -186,6 +190,7 @@ const handleLogout=()=>{
                     )}
                 </div>
             </div>
+            <ThemeSideBar isOpen={showThemeSideBar} onClose={()=>setShowThemeSideBar(false)}/>
         </header>
     );
 };
