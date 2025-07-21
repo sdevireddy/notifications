@@ -30,6 +30,7 @@ import "@/sidebar/Sidebar.css";
 import "@/sidebar/sidebar-theme.css";
 import "@/sidebar/sidebar-search.css";
 import "@/sidebar/sidebar-nav.css";
+import { useSelector } from "react-redux";
 // Define links per module
 const moduleLinks = {
     CRM: [
@@ -74,6 +75,7 @@ const moduleLinks = {
 
 
 export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
+    const {logo,name}=useSelector(state=>state?.organization)
     const [search, setSearch] = useState("");
     const [crmExpanded, setCrmExpanded] = useState(true);
     const sidebarRef = useRef(null);
@@ -81,19 +83,19 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
     return (
         <div
             ref={sidebarRef}
-            className={`h-full border-r border-gray-200 bg-blue-900 transition-all duration-300 dark:border-gray-700 dark:bg-slate-900 ${
+            className={`h-full border-r border-gray-200 bg-sidebar transition-all duration-300 dark:border-gray-700 dark:bg-slate-900 ${
                 collapsed ? "w-[70px]" : "w-56"
             }`}
             onMouseEnter={() => ref?.current?.scrollTo?.({ top: 0 })}
         >
             <div >
-                <Link to={"/"} className="flex items-center gap-x-3 px-6 py-3">
+                <Link to={"/"} className="flex items-center gap-x-3 px-6 py-5 w-20 h-10">
                 <img
-                    src={logoDark}
+                    src={logo}
                     alt="Logo"
-                    className=""
+                    className="object-scale-down w-full rounded-md"
                 />
-                {!collapsed && <p className="text-lg font-medium text-white">Logoipsum</p>}
+                {!collapsed && <p className="text-lg font-medium text-white">{name.toUpperCase()}</p>}
                 </Link>
             </div>
 

@@ -89,11 +89,11 @@ export default function CreateEmailCampaign() {
         />
         <Select value={recipientList} onValueChange={setRecipientList}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select Recipient List" />
+            <SelectValue placeholder="Select Users List" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="list1">Summer List</SelectItem>
-            <SelectItem value="list2">Cart Dropouts</SelectItem>
+            <SelectItem value="list1">Product Demo Leads</SelectItem>
+            <SelectItem value="list2">Newsletter Subscribers</SelectItem>
             <SelectItem value="list3">All Users</SelectItem>
           </SelectContent>
         </Select>
@@ -124,7 +124,7 @@ export default function CreateEmailCampaign() {
           )}
       {/* Submit & Schedule Section */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4">
-        <Button onClick={handleSubmit} className="bg-buttonprimary text-white px-6">
+        <Button onClick={handleSubmit} className="bg-primary text-white px-6">
           {isScheduled ? "Schedule Send" : "Send Now"}
         </Button>
 

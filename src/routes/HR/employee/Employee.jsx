@@ -355,7 +355,7 @@ export default function EmployeePage() {
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
-            className="bg-buttonprimary text-white hover:bg-buttonprimary-hover"
+            className="bg-primary text-white hover:bg-opacity-90"
             onClick={() => setIsAddEmployeeModalOpen(true)}
           >
             <Plus className="mr-2 h-4 w-4" /> Add Employee
