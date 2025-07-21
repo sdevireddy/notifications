@@ -19,7 +19,7 @@ const rolesData = [
           },
         ],
       },
-       {
+      {
         name: 'Manager',
         children: [
           {
@@ -87,7 +87,7 @@ const RolesPage = () => {
         </div>
         <Button
                         onClick={() => navigate("/roles/create")}
-                        className="bg-buttonprimary text-white hover:bg-buttonprimary-hover"
+                        className="bg-primary text-white hover:bg-opacity-90"
                     >
                         <Plus className="mr-2 h-4 w-4" /> Create Role
                     </Button>

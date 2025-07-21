@@ -124,7 +124,7 @@ export default function CreateEmailCampaign() {
           )}
       {/* Submit & Schedule Section */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4">
-        <Button onClick={handleSubmit} className="bg-buttonprimary text-white px-6">
+        <Button onClick={handleSubmit} className="bg-primary text-white px-6">
           {isScheduled ? "Schedule Send" : "Send Now"}
         </Button>
 
