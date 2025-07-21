@@ -158,7 +158,7 @@ const AccountCreationForm = () => {
   
                           <button
                               type="submit"
-                              className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover shadow-sm"
+                              className="rounded bg-primary px-4 py-2 text-white  shadow-sm"
                              onClick={(e) => handleSubmit(e,"save")}
                           >
                               Save

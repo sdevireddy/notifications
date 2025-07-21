@@ -156,7 +156,7 @@ export default function CreateListPage() {
           <div className="flex justify-end pt-4">
             <Button
               onClick={handleSubmit}
-              className="bg-buttonprimary text-white hover:bg-buttonprimary-hover"
+              className="bg-primary text-white hover:bg-opacity-90"
             >
               <Upload className="mr-2 h-4 w-4" />
               Save List

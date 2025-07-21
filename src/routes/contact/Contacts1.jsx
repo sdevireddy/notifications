@@ -359,7 +359,7 @@ export default function ContactPage() {
                     </DropdownMenu>
                     <Button
                         onClick={() => navigate("/contacts/create")}
-                        className="bg-buttonprimary text-white hover:bg-buttonprimary-hover"
+                        className="bg-primary text-white hover:bg-opacity-90"
                     >
                         <Plus className="mr-2 h-4 w-4" /> Create Contact
                     </Button>

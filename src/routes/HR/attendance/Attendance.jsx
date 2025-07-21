@@ -304,7 +304,7 @@ export default function AttendancePage() {
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
-            className="bg-buttonprimary text-white hover:bg-buttonprimary-hover"
+            className="bg-primary text-white hover:bg-opacity-90"
             onClick={() => setIsMarkAttendanceModalOpen(true)}
           >
             <Plus className="mr-2 h-4 w-4" /> Mark Attendance
