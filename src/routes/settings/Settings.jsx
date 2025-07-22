@@ -8,7 +8,7 @@ const settingOptions = [
   { label: 'Email Templates', path: '/templates', icon: <Mail /> },
   { label: 'Roles', path: '/roles', icon: <Notebook />},
    { label: 'Org Profile', path: '/org/profile', icon: <FaUser /> },
-  { label: 'Profile', path: '/settings/profile', icon: <FaUser /> },
+  { label: 'Profile', path: '/user/profile', icon: <FaUser /> },
   { label: 'Account', path: '/settings/account', icon: <FaCogs /> },
   { label: 'Privacy', path: '/settings/privacy', icon: <FaLock /> },
   { label: 'Notifications', path: '/settings/notifications', icon: <FaBell /> },
