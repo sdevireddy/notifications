@@ -49,6 +49,8 @@ import UsersPage from "./routes/Marketing/Users/Users"
 import CreateListPage from "./routes/Marketing/Users/CreateList"
 import OrganizationProfile from "./routes/OrgProfile.jsx/OrgProfile";
 import UserProfile from "./routes/user/UserProfile";
+import MarketingSettings from "./routes/Marketing/MarketingSettings";
+import CredentialForm from "./routes/Marketing/CredentialsForm";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -109,6 +111,14 @@ const router = createBrowserRouter([
               { path: "email-campaigns/create", element: <CreateEmailCampaign /> },
               { path: "SocialMediaMarketing", element: <SmsMarketing /> },
               { path: "SmsMarketing", element: <SmsMarketing /> },
+              { path: "socialmarketing", element: <SocialMediaMarketing /> },
+              { path: "settings/social/facebook", element:<CredentialForm platform="facebook" /> },
+              { path: "settings/social/twitter", element:<CredentialForm platform="twitter" /> },
+              { path: "settings/social/instagram", element:<CredentialForm platform="instagram" /> },
+              { path: "settings/social/linkedin", element:<CredentialForm platform="linkedin" /> },
+
+
+              { path: "Settings", element: <MarketingSettings /> },
             ],
           },
         ],

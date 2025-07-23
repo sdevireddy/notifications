@@ -230,7 +230,6 @@ export default function MarketingDashboard() {
           </div>
         </div>
 
-        {/* Table */}
         <div className="rounded bg-white p-6 shadow">
           <h3 className="mb-4 text-lg font-semibold">{selected} Campaigns</h3>
           {selected === "Email" && <Table columns={emailColumns} data={emailTableData} />}
