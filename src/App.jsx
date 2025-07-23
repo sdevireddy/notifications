@@ -48,6 +48,7 @@ import TemplateCreation from "./routes/Marketing/emailmarketing/TemplateCreation
 import UsersPage from "./routes/Marketing/Users/Users"
 import CreateListPage from "./routes/Marketing/Users/CreateList"
 import OrganizationProfile from "./routes/OrgProfile.jsx/OrgProfile";
+import UserProfile from "./routes/user/UserProfile";
 import MarketingSettings from "./routes/Marketing/MarketingSettings";
 import CredentialForm from "./routes/Marketing/CredentialsForm";
 const router = createBrowserRouter([
@@ -83,6 +84,7 @@ const router = createBrowserRouter([
           { path: "templates/:id", element: <ViewFullTemplate /> },
           { path: "templates/create", element: <EmailTemplate /> },
           { path: "roles", element: <Roles /> },
+           { path: "user/profile", element: <UserProfile/> },
            { path: "roles/create", element: <CreateRole /> },
            { path:"org/profile",element:<OrganizationProfile/>},
           {
