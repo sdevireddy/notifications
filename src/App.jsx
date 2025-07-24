@@ -53,6 +53,8 @@ import AddEmployeePage from "./components/add-employee-modal";
 import MarkAttendancePage from "./components/mark-attendance";
 import MarketingSettings from "./routes/Marketing/MarketingSettings";
 import CredentialForm from "./routes/Marketing/CredentialsForm";
+import CreateSocialMediaCampaign from "./routes/Marketing/socialmediamarketing/CreateSocialMediaCampaign"
+import CreateSMSCampaign from "./routes/Marketing/smsmarketing/CreateSMSCampaign"
 const router = createBrowserRouter([
   {
     path: "/",
@@ -113,9 +115,10 @@ const router = createBrowserRouter([
               { path: "users/create", element: <CreateListPage /> },
               { path: "emailmarketing", element: <EmailMarketing /> },
               { path: "email-campaigns/create", element: <CreateEmailCampaign /> },
-              { path: "SocialMediaMarketing", element: <SmsMarketing /> },
+              { path: "SocialMediaMarketing", element: <SocialMediaMarketing /> },
+              { path: "social-campaigns/create", element: <CreateSocialMediaCampaign /> },
               { path: "SmsMarketing", element: <SmsMarketing /> },
-              { path: "socialmarketing", element: <SocialMediaMarketing /> },
+              {path : "sms-campaigns/create", element:<CreateSMSCampaign/>},
               { path: "settings/social/facebook", element:<CredentialForm platform="facebook" /> },
               { path: "settings/social/twitter", element:<CredentialForm platform="twitter" /> },
               { path: "settings/social/instagram", element:<CredentialForm platform="instagram" /> },
