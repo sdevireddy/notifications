@@ -6,6 +6,8 @@ import { Upload, Building, DeleteIcon, Delete, Trash2 } from "lucide-react";
 import { setOrgState } from "../../store/orgSlice";
 import { FiDelete } from "react-icons/fi";
 import { LuDelete } from "react-icons/lu";
+import { Link } from "react-router-dom";
+import AddBranch from "./branch/AddBranch";
 
 export default function OrganizationProfile() {
     const dispatch = useDispatch();
@@ -221,13 +223,10 @@ const handleDeleteBranch=(index)=>{
                             </div>
                         ))}
                     </div>
-                    <button
-                        type="button"
-                        onClick={handleAddBranch}
-                        className="mt-2 text-sm text-blue-600 hover:underline"
-                    >
-                        + Add Another Branch
-                    </button>
+                    <div className="py-3">
+
+                    <AddBranch/>
+                    </div>
                 </div>
             </div>
 
