@@ -48,6 +48,11 @@ import TemplateCreation from "./routes/Marketing/emailmarketing/TemplateCreation
 import UsersPage from "./routes/Marketing/Users/Users"
 import CreateListPage from "./routes/Marketing/Users/CreateList"
 import OrganizationProfile from "./routes/OrgProfile.jsx/OrgProfile";
+import UserProfile from "./routes/user/UserProfile";
+import AddEmployeePage from "./components/add-employee-modal";
+import MarkAttendancePage from "./components/mark-attendance";
+import MarketingSettings from "./routes/Marketing/MarketingSettings";
+import CredentialForm from "./routes/Marketing/CredentialsForm";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -81,6 +86,7 @@ const router = createBrowserRouter([
           { path: "templates/:id", element: <ViewFullTemplate /> },
           { path: "templates/create", element: <EmailTemplate /> },
           { path: "roles", element: <Roles /> },
+           { path: "user/profile", element: <UserProfile/> },
            { path: "roles/create", element: <CreateRole /> },
            { path:"org/profile",element:<OrganizationProfile/>},
           {
@@ -88,7 +94,9 @@ const router = createBrowserRouter([
             children: [
               { path: "", element: <HrDashboard /> },
               { path: "employees", element: <Employee /> },
+              { path: "add-employee", element: <AddEmployeePage />},
               { path: "attendance", element: <Attendance /> },
+              { path: "mark-attendance", element: <MarkAttendancePage />},
               { path: "payroll", element: <Payroll /> },
               { path: "recruitment", element: <Recruitment /> },
               { path: "leave", element: <Leave /> },
@@ -107,6 +115,14 @@ const router = createBrowserRouter([
               { path: "email-campaigns/create", element: <CreateEmailCampaign /> },
               { path: "SocialMediaMarketing", element: <SmsMarketing /> },
               { path: "SmsMarketing", element: <SmsMarketing /> },
+              { path: "socialmarketing", element: <SocialMediaMarketing /> },
+              { path: "settings/social/facebook", element:<CredentialForm platform="facebook" /> },
+              { path: "settings/social/twitter", element:<CredentialForm platform="twitter" /> },
+              { path: "settings/social/instagram", element:<CredentialForm platform="instagram" /> },
+              { path: "settings/social/linkedin", element:<CredentialForm platform="linkedin" /> },
+
+
+              { path: "Settings", element: <MarketingSettings /> },
             ],
           },
         ],

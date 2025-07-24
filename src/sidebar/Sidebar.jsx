@@ -48,11 +48,11 @@ const moduleLinks = {
     Marketing: [
         { to: "marketing/users", label: "Users", icon: <Users size={20} /> },
         { to: "marketing/templates", label: "Templates", icon: <GalleryHorizontalEnd size={20} /> },
-
         { to: "marketing/emailmarketing", label: "Email Marketing", icon: <Mail size={20} /> },
         { to: "marketing/SMSMarketing", label: "SMS Marketing", icon: <MessageCircle size={20} /> },
         { to: "marketing/SocialMediaMarketing", label: "Social media marketing", icon:<Megaphone size={20} /> },
-        
+        { to: "marketing/settings", label: "Settings", icon: <Settings size={20} /> },
+
     ],
     Campaigns: [
         { to: "/email-campaigns", label: "Email Campaigns", icon: <Mail size={20} /> }
@@ -88,12 +88,12 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
             }`}
             onMouseEnter={() => ref?.current?.scrollTo?.({ top: 0 })}
         >
-            <div >
-                <Link to={"/"} className="flex items-center gap-x-3 px-6 py-5 w-20 h-10">
+            <div className="pt-2">
+                <Link to={"/"} className="flex items-center gap-3 w-10 h-10 ml-4">
                 <img
                     src={logo}
                     alt="Logo"
-                    className="object-scale-down w-full rounded-md"
+                    className="object-cover w-full h-full rounded-[100%]"
                 />
                 {!collapsed && <p className="text-lg font-medium text-white">{name.toUpperCase()}</p>}
                 </Link>
