@@ -1,6 +1,7 @@
 "use client"
 import { LuFilter } from "react-icons/lu"
 import { useState, useEffect, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -27,14 +28,15 @@ import {
   Edit,
   Send,
   Users,
+  Loader2,
 } from "lucide-react"
-import Tooltip from './../../../components/ToolTip';
-import Table from './../../../components/Table';
-import BreadCrumb from './../../../components/BreadCrumb';
-import { EmployeeProfileModal } from './../../../components/employee-profile-modal';
-import { AddEmployeeModal } from './../../../components/add-employee-modal';
+import Tooltip from "./../../../components/ToolTip"
+import Table from "./../../../components/Table"
+import BreadCrumb from "./../../../components/BreadCrumb"
+import { EmployeeProfileModal } from "./../../../components/employee-profile-modal"
 
 export default function EmployeePage() {
+  const navigate = useNavigate()
   const [employees, setEmployees] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [recordsPerPage, setRecordsPerPage] = useState("25")
@@ -45,85 +47,102 @@ export default function EmployeePage() {
   const [filterModelOpen, setFilterModelOpen] = useState(false)
   const [selectedEmployee, setSelectedEmployee] = useState(null)
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
-  const [isAddEmployeeModalOpen, setIsAddEmployeeModalOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-  const employeesData = {
-    totalRecords: 5,
-    data: [
-      {
-        id: 1,
-        employeeId: "EMP001",
-        firstName: "John",
-        lastName: "Doe",
-        email: "john.doe@company.com",
-        mobile: "+91-9876543210",
-        department: "Engineering",
-        designation: "Software Engineer",
-        joiningDate: "2023-01-15",
-        status: "Active",
-        manager: "Jane Smith",
-      },
-      {
-        id: 2,
-        employeeId: "EMP002",
-        firstName: "Sarah",
-        lastName: "Johnson",
-        email: "sarah.johnson@company.com",
-        mobile: "+91-9876543211",
-        department: "Marketing",
-        designation: "Marketing Manager",
-        joiningDate: "2022-08-20",
-        status: "Active",
-        manager: "Mike Wilson",
-      },
-      {
-        id: 3,
-        employeeId: "EMP003",
-        firstName: "Mike",
-        lastName: "Davis",
-        email: "mike.davis@company.com",
-        mobile: "+91-9876543212",
-        department: "Sales",
-        designation: "Sales Executive",
-        joiningDate: "2023-03-10",
-        status: "Active",
-        manager: "Lisa Brown",
-      },
-      {
-        id: 4,
-        employeeId: "EMP004",
-        firstName: "Emily",
-        lastName: "Chen",
-        email: "emily.chen@company.com",
-        mobile: "+91-9876543213",
-        department: "HR",
-        designation: "HR Specialist",
-        joiningDate: "2022-11-05",
-        status: "Active",
-        manager: "Robert Kim",
-      },
-      {
-        id: 5,
-        employeeId: "EMP005",
-        firstName: "David",
-        lastName: "Wilson",
-        email: "david.wilson@company.com",
-        mobile: "+91-9876543214",
-        department: "Finance",
-        designation: "Financial Analyst",
-        joiningDate: "2023-02-28",
-        status: "Inactive",
-        manager: "Anna Lee",
-      },
-    ],
+  // Mock data - replace with API call
+  const fetchEmployees = async () => {
+    setLoading(true)
+    try {
+      // TODO: Replace with actual API call
+      // const response = await fetch('/api/employees')
+      // const data = await response.json()
+
+      // Mock data for now
+      const employeesData = {
+        totalRecords: 5,
+        data: [
+          {
+            id: 1,
+            employeeId: "EMP001",
+            firstName: "John",
+            lastName: "Doe",
+            email: "john.doe@company.com",
+            mobile: "+91-9876543210",
+            department: "Engineering",
+            designation: "Software Engineer",
+            joiningDate: "2023-01-15",
+            status: "Active",
+            manager: "Jane Smith",
+          },
+          {
+            id: 2,
+            employeeId: "EMP002",
+            firstName: "Sarah",
+            lastName: "Johnson",
+            email: "sarah.johnson@company.com",
+            mobile: "+91-9876543211",
+            department: "Marketing",
+            designation: "Marketing Manager",
+            joiningDate: "2022-08-20",
+            status: "Active",
+            manager: "Mike Wilson",
+          },
+          {
+            id: 3,
+            employeeId: "EMP003",
+            firstName: "Mike",
+            lastName: "Davis",
+            email: "mike.davis@company.com",
+            mobile: "+91-9876543212",
+            department: "Sales",
+            designation: "Sales Executive",
+            joiningDate: "2023-03-10",
+            status: "Active",
+            manager: "Lisa Brown",
+          },
+          {
+            id: 4,
+            employeeId: "EMP004",
+            firstName: "Emily",
+            lastName: "Chen",
+            email: "emily.chen@company.com",
+            mobile: "+91-9876543213",
+            department: "HR",
+            designation: "HR Specialist",
+            joiningDate: "2022-11-05",
+            status: "Active",
+            manager: "Robert Kim",
+          },
+          {
+            id: 5,
+            employeeId: "EMP005",
+            firstName: "David",
+            lastName: "Wilson",
+            email: "david.wilson@company.com",
+            mobile: "+91-9876543214",
+            department: "Finance",
+            designation: "Financial Analyst",
+            joiningDate: "2023-02-28",
+            status: "Inactive",
+            manager: "Anna Lee",
+          },
+        ],
+      }
+
+      setEmployees(employeesData.data)
+      setFilteredEmployees(employeesData.data)
+      setTotalRecords(employeesData.totalRecords)
+      setCurrentPage(1)
+    } catch (error) {
+      console.error("Error fetching employees:", error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
-    setEmployees(employeesData.data)
-    setFilteredEmployees(employeesData.data)
-    setTotalRecords(employeesData.totalRecords)
-    setCurrentPage(1)
+    fetchEmployees()
   }, [])
 
   useEffect(() => {
@@ -155,7 +174,7 @@ export default function EmployeePage() {
   }
 
   const handleSelectAll = () => {
-    setSelectMultipleEmployee(selectMultipleEmployee.length === employeesData.data.length ? [] : employeesData.data)
+    setSelectMultipleEmployee(selectMultipleEmployee.length === employees.length ? [] : employees)
   }
 
   const currentEmployees = filteredEmployees
@@ -285,30 +304,38 @@ export default function EmployeePage() {
         ),
       },
     ],
-    [],
+    [employees],
   )
 
-  const handleDeleteEmployee = (employee) => {
+  const handleDeleteEmployee = async (employee) => {
     if (window.confirm(`Are you sure you want to delete ${employee.firstName} ${employee.lastName}?`)) {
-      setEmployees((prev) => prev.filter((emp) => emp.id !== employee.id))
-      setFilteredEmployees((prev) => prev.filter((emp) => emp.id !== employee.id))
-    }
-  }
+      try {
+        // TODO: Replace with actual API call
+        // await fetch(`/api/employees/${employee.id}`, { method: 'DELETE' })
 
-  const handleSaveEmployee = (employeeData) => {
-    const newEmployee = {
-      ...employeeData,
-      id: employees.length + 1,
-      status: "Active",
+        setEmployees((prev) => prev.filter((emp) => emp.id !== employee.id))
+        setFilteredEmployees((prev) => prev.filter((emp) => emp.id !== employee.id))
+        console.log("Employee deleted:", employee)
+      } catch (error) {
+        console.error("Error deleting employee:", error)
+      }
     }
-    setEmployees((prev) => [...prev, newEmployee])
-    setFilteredEmployees((prev) => [...prev, newEmployee])
-    setIsAddEmployeeModalOpen(false)
   }
 
   const handleEditEmployee = (employee) => {
     // Handle edit functionality
     setIsProfileModalOpen(false)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex-1 bg-white flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading employees...</span>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -355,8 +382,8 @@ export default function EmployeePage() {
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
-            className="bg-primary text-white hover:bg-opacity-90"
-            onClick={() => setIsAddEmployeeModalOpen(true)}
+            className="bg-blue-600 text-white hover:bg-blue-700"
+            onClick={() => navigate("/hr/add-employee")}
           >
             <Plus className="mr-2 h-4 w-4" /> Add Employee
           </Button>
@@ -421,6 +448,7 @@ export default function EmployeePage() {
           </Button>
         </div>
       </div>
+
       {/* Employee Profile Modal */}
       <EmployeeProfileModal
         employee={selectedEmployee}
@@ -432,13 +460,6 @@ export default function EmployeePage() {
         }}
         onEdit={handleEditEmployee}
         onDelete={handleDeleteEmployee}
-      />
-
-      {/* Add Employee Modal */}
-      <AddEmployeeModal
-        isOpen={isAddEmployeeModalOpen}
-        onClose={() => setIsAddEmployeeModalOpen(false)}
-        onSave={handleSaveEmployee}
       />
     </div>
   )
