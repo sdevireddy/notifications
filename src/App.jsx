@@ -49,6 +49,7 @@ import UsersPage from "./routes/Marketing/Users/Users"
 import CreateListPage from "./routes/Marketing/Users/CreateList"
 import OrganizationProfile from "./routes/OrgProfile.jsx/OrgProfile";
 import UserProfile from "./routes/user/UserProfile";
+import AddBranch from "./routes/OrgProfile.jsx/branch/AddBranch";
 const router = createBrowserRouter([
   {
     path: "/",
