@@ -28,7 +28,7 @@ export default function AddBranch() {
     <Dialog>
       {/* Button to open modal */}
       <DialogTrigger asChild>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        <button className="px-4 py-2 bg-primary text-white rounded ">
           Add Branch
         </button>
       </DialogTrigger>
@@ -114,7 +114,7 @@ export default function AddBranch() {
           </DialogClose>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-primary text-white rounded hover:opacity-90"
           >
             Save Branch
           </button>
