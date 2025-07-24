@@ -28,6 +28,7 @@ import {
   Edit,
   Send,
   Users,
+  Loader2,
 } from "lucide-react"
 import Tooltip from "./../../../components/ToolTip"
 import Table from "./../../../components/Table"
@@ -49,21 +50,18 @@ export default function EmployeePage() {
   const [isEditMode, setIsEditMode] = useState(false)
   const [loading, setLoading] = useState(true)
 
-  // Fetch employees data - ready for API integration
+  // Mock data - replace with API call
   const fetchEmployees = async () => {
+    setLoading(true)
     try {
-      setLoading(true)
-
-      // TODO: Replace with actual API call when backend is ready
+      // TODO: Replace with actual API call
       // const response = await fetch('/api/employees')
       // const data = await response.json()
-      // setEmployees(data.employees)
-      // setTotalRecords(data.totalRecords)
 
-      // Mock data - remove when API is ready
-      const mockData = {
+      // Mock data for now
+      const employeesData = {
         totalRecords: 5,
-        employees: [
+        data: [
           {
             id: 1,
             employeeId: "EMP001",
@@ -132,9 +130,9 @@ export default function EmployeePage() {
         ],
       }
 
-      setEmployees(mockData.employees)
-      setTotalRecords(mockData.totalRecords)
-      setFilteredEmployees(mockData.employees)
+      setEmployees(employeesData.data)
+      setFilteredEmployees(employeesData.data)
+      setTotalRecords(employeesData.totalRecords)
       setCurrentPage(1)
     } catch (error) {
       console.error("Error fetching employees:", error)
@@ -306,18 +304,18 @@ export default function EmployeePage() {
         ),
       },
     ],
-    [],
+    [employees],
   )
 
   const handleDeleteEmployee = async (employee) => {
     if (window.confirm(`Are you sure you want to delete ${employee.firstName} ${employee.lastName}?`)) {
       try {
-        // TODO: Replace with actual API call when backend is ready
+        // TODO: Replace with actual API call
         // await fetch(`/api/employees/${employee.id}`, { method: 'DELETE' })
 
         setEmployees((prev) => prev.filter((emp) => emp.id !== employee.id))
         setFilteredEmployees((prev) => prev.filter((emp) => emp.id !== employee.id))
-        console.log("Employee deleted:", employee.id)
+        console.log("Employee deleted:", employee)
       } catch (error) {
         console.error("Error deleting employee:", error)
       }
@@ -325,15 +323,16 @@ export default function EmployeePage() {
   }
 
   const handleEditEmployee = (employee) => {
+    // Handle edit functionality
     setIsProfileModalOpen(false)
   }
 
   if (loading) {
     return (
       <div className="min-h-screen flex-1 bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading employees...</p>
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading employees...</span>
         </div>
       </div>
     )
@@ -383,13 +382,14 @@ export default function EmployeePage() {
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
-            className="bg-buttonprimary text-white hover:bg-buttonprimary-hover"
+            className="bg-blue-600 text-white hover:bg-blue-700"
             onClick={() => navigate("/hr/add-employee")}
           >
             <Plus className="mr-2 h-4 w-4" /> Add Employee
           </Button>
         </div>
       </div>
+
       <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-4">
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -418,7 +418,9 @@ export default function EmployeePage() {
           </Select>
         </div>
       </div>
+
       <Table columns={columns} data={currentEmployees} />
+
       <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-4">
         <div className="text-sm text-gray-600">
           Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredEmployees.length)} of{" "}
@@ -446,6 +448,8 @@ export default function EmployeePage() {
           </Button>
         </div>
       </div>
+
+      {/* Employee Profile Modal */}
       <EmployeeProfileModal
         employee={selectedEmployee}
         isOpen={isProfileModalOpen}

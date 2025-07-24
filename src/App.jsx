@@ -47,6 +47,8 @@ import CreateEmailCampaign from "./routes/Marketing/emailmarketing/CreateEmailCa
 import TemplateCreation from "./routes/Marketing/emailmarketing/TemplateCreation";
 import UsersPage from "./routes/Marketing/Users/Users"
 import CreateListPage from "./routes/Marketing/Users/CreateList"
+import OrganizationProfile from "./routes/OrgProfile.jsx/OrgProfile";
+import UserProfile from "./routes/user/UserProfile";
 import AddEmployeePage from "./components/add-employee-modal";
 import MarkAttendancePage from "./components/mark-attendance";
 const router = createBrowserRouter([
@@ -82,7 +84,9 @@ const router = createBrowserRouter([
           { path: "templates/:id", element: <ViewFullTemplate /> },
           { path: "templates/create", element: <EmailTemplate /> },
           { path: "roles", element: <Roles /> },
+           { path: "user/profile", element: <UserProfile/> },
            { path: "roles/create", element: <CreateRole /> },
+           { path:"org/profile",element:<OrganizationProfile/>},
           {
             path: "hr",
             children: [

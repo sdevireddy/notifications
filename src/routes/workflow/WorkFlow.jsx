@@ -118,7 +118,7 @@ export default function WorkflowPage() {
                   </DropdownMenu>
               </div>
               <Button
-                  className={"bg-buttonprimary hover:bg-buttonprimary-hover text-white"}
+                  className={"bg-primary hover:bg-opacity-90 text-white"}
                   onClick={() => navigate("/workflow/create")}
               >
                   <Plus className="mr-2 h-4 w-4" />

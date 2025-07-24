@@ -331,7 +331,7 @@ export default function PayrollPage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button className="bg-buttonprimary text-white hover:bg-buttonprimary-hover">
+          <Button className="bg-primary text-white hover:bg-opacity-90">
             <Plus className="mr-2 h-4 w-4" /> Add Payroll
           </Button>
         </div>
