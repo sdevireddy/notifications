@@ -51,6 +51,7 @@ import OrganizationProfile from "./routes/OrgProfile.jsx/OrgProfile";
 import UserProfile from "./routes/user/UserProfile";
 import AddEmployeePage from "./components/add-employee-modal";
 import MarkAttendancePage from "./components/mark-attendance";
+import RoleEditPage from "./routes/roles/EditRole";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -86,6 +87,7 @@ const router = createBrowserRouter([
           { path: "roles", element: <Roles /> },
            { path: "user/profile", element: <UserProfile/> },
            { path: "roles/create", element: <CreateRole /> },
+             { path: "roles/edit", element: <RoleEditPage /> },
            { path:"org/profile",element:<OrganizationProfile/>},
           {
             path: "hr",
