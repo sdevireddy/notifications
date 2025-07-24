@@ -80,7 +80,7 @@ export default function WorkflowPage() {
       <div className="h-full w-full rounded bg-white shadow-md">
          <div className="flex items-center justify-between border-b px-6 py-4">
                 <div className="flex items-center gap-4">
-                    <h1 className="text-2xl font-semibold text-gray-900">WorkFlow</h1>
+                    <h1 className="text-xl font-semibold text-gray-900">WorkFlow</h1>
                     <BreadCrumb />
                 </div>
             </div>

@@ -65,7 +65,7 @@ const RoleEditPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between border-b px-3 py-4">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-semibold text-gray-900">Edit Role</h1>
+          <h1 className="text-xl font-semibold text-gray-900">Edit Role</h1>
           <BreadCrumb />
         </div>
       </div>

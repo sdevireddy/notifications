@@ -171,7 +171,7 @@ export default function MarketingDashboard() {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="flex items-center justify-between border-b bg-white px-6 py-4">
-        <h1 className="text-2xl font-bold">Marketing Dashboard</h1>
+        <h1 className="text-xl font-bold">Marketing Dashboard</h1>
       </header>
 
       <main className="space-y-8 p-6">
