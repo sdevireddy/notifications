@@ -176,9 +176,10 @@ export default function ApplyLeavePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-4 text-sm text-gray-700">
-      <div className="bg-white border-b px-6 py-4">
-        <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-gray-50">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-10 bg-white border-b">
+        <div className="flex items-center gap-4 px-6 py-4">
           <Button variant="ghost" onClick={() => navigate("/hr/leave")} className="p-2">
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -187,284 +188,286 @@ export default function ApplyLeavePage() {
               <Calendar className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-gray-900">Apply for Leave</h1>
-              <p className="text-xs text-gray-500">Submit your leave application</p>
+              <h1 className="text-xl font-semibold text-gray-900">Apply for Leave</h1>
+              <p className="text-sm text-gray-500">Submit your leave application</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="p-6 w-full">
-        <div className="bg-white rounded-lg shadow-sm border">
-          {/* Basic Information Section */}
-          <div className="p-6 border-b">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <User className="h-5 w-5 text-blue-600" />
+      {/* Basic Information Section */}
+      <div className="bg-white border-b">
+        <div className="px-6 py-6">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <User className="h-5 w-5 text-blue-600" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900">Basic Information</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                Employee <span className="text-red-500">*</span>
+              </Label>
+              <Select value={formData.employeeId} onValueChange={(value) => handleInputChange("employeeId", value)}>
+                <SelectTrigger className="h-10 border-gray-300">
+                  <SelectValue placeholder="Select Employee" />
+                </SelectTrigger>
+                <SelectContent>
+                  {employees.map((emp) => (
+                    <SelectItem key={emp.id} value={emp.id}>
+                      {emp.name} - {emp.id}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                Leave Type <span className="text-red-500">*</span>
+              </Label>
+              <Select value={formData.leaveType} onValueChange={(value) => handleInputChange("leaveType", value)}>
+                <SelectTrigger className="h-10 border-gray-300">
+                  <SelectValue placeholder="Select Leave Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {leaveTypes.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">Total Days</Label>
+              <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
+                <span className="text-sm font-medium text-gray-900">
+                  {calculatedDays} {calculatedDays === 1 ? "day" : "days"}
+                </span>
               </div>
-              <h2 className="text-lg font-semibold text-gray-900">Basic Information</h2>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                Start Date <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                type="date"
+                value={formData.startDate}
+                onChange={(e) => handleInputChange("startDate", e.target.value)}
+                min={new Date().toISOString().split("T")[0]}
+                className="h-10 border-gray-300"
+              />
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                End Date <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                type="date"
+                value={formData.endDate}
+                onChange={(e) => handleInputChange("endDate", e.target.value)}
+                min={formData.startDate || new Date().toISOString().split("T")[0]}
+                className="h-10 border-gray-300"
+              />
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">Available Balance</Label>
+              <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
+                <span className="text-sm font-medium text-gray-900">{getSelectedLeaveBalance()} days</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Half Day Option */}
+          <div className="mt-6 flex items-center justify-end">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="halfDay"
+                checked={formData.halfDay}
+                onChange={(e) => {
+                  handleInputChange("halfDay", e.target.checked)
+                  if (e.target.checked) {
+                    handleInputChange("endDate", formData.startDate)
+                  }
+                }}
+                className="rounded border-gray-300"
+              />
+              <Label htmlFor="halfDay" className="text-sm font-medium text-gray-700">
+                Half Day Leave
+              </Label>
+            </div>
+          </div>
+
+          {formData.halfDay && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mt-4">
+              <button
+                type="button"
+                className={`p-3 rounded-md border text-left ${
+                  formData.halfDayPeriod === "morning"
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-300 hover:border-blue-400"
+                }`}
+                onClick={() => handleInputChange("halfDayPeriod", "morning")}
+              >
+                <div className="font-medium text-sm">Morning</div>
+                <div className="text-xs text-gray-500">First Half</div>
+              </button>
+              <button
+                type="button"
+                className={`p-3 rounded-md border text-left ${
+                  formData.halfDayPeriod === "afternoon"
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-300 hover:border-blue-400"
+                }`}
+                onClick={() => handleInputChange("halfDayPeriod", "afternoon")}
+              >
+                <div className="font-medium text-sm">Afternoon</div>
+                <div className="text-xs text-gray-500">Second Half</div>
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Employee Information Section */}
+      {selectedEmployee && (
+        <div className="bg-white border-b">
+          <div className="px-6 py-6">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <Building className="h-5 w-5 text-green-600" />
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900">Employee Information</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                  Employee <span className="text-red-500">*</span>
-                </Label>
-                <Select value={formData.employeeId} onValueChange={(value) => handleInputChange("employeeId", value)}>
-                  <SelectTrigger className="h-10">
-                    <SelectValue placeholder="Select Employee" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {employees.map((emp) => (
-                      <SelectItem key={emp.id} value={emp.id}>
-                        {emp.name} - {emp.id}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                  Leave Type <span className="text-red-500">*</span>
-                </Label>
-                <Select value={formData.leaveType} onValueChange={(value) => handleInputChange("leaveType", value)}>
-                  <SelectTrigger className="h-10">
-                    <SelectValue placeholder="Select Leave Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {leaveTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2 block">Total Days</Label>
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">Department</Label>
                 <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
-                  <span className="text-sm font-medium text-gray-900">
-                    {calculatedDays} {calculatedDays === 1 ? "day" : "days"}
-                  </span>
+                  <span className="text-sm text-gray-900">{selectedEmployee.department}</span>
                 </div>
               </div>
 
               <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                  Start Date <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  type="date"
-                  value={formData.startDate}
-                  onChange={(e) => handleInputChange("startDate", e.target.value)}
-                  min={new Date().toISOString().split("T")[0]}
-                  className="h-10"
-                />
-              </div>
-
-              <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                  End Date <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  type="date"
-                  value={formData.endDate}
-                  onChange={(e) => handleInputChange("endDate", e.target.value)}
-                  min={formData.startDate || new Date().toISOString().split("T")[0]}
-                  className="h-10"
-                />
-              </div>
-
-              <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2 block">Available Balance</Label>
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">Position</Label>
                 <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
-                  <span className="text-sm font-medium text-gray-900">{getSelectedLeaveBalance()} days</span>
+                  <span className="text-sm text-gray-900">{selectedEmployee.position}</span>
                 </div>
               </div>
-            </div>
 
-            {/* Half Day Option */}
-            <div className="mt-4">
-              <div className="flex items-center space-x-2 mb-2 ml">
-                <input
-                  type="checkbox"
-                  id="halfDay"
-                  checked={formData.halfDay}
-                  onChange={(e) => {
-                    handleInputChange("halfDay", e.target.checked)
-                    if (e.target.checked) {
-                      handleInputChange("endDate", formData.startDate)
-                    }
-                  }}
-                  className="rounded px-5 border-gray-300"
-                />
-                <Label htmlFor="halfDay" className="text-sm gap-0 pd-0 font-medium text-gray-700">
-                  Half Day Leave
-                </Label>
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">Manager</Label>
+                <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
+                  <span className="text-sm text-gray-900">{selectedEmployee.manager}</span>
+                </div>
               </div>
 
-              {formData.halfDay && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-0 max-w-md mt-2">
-                  <button
-                    type="button"
-                    className={`p-2 rounded-md border text-left ${
-                      formData.halfDayPeriod === "morning"
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-300 hover:border-blue-400"
-                    }`}
-                    onClick={() => handleInputChange("halfDayPeriod", "morning")}
-                  >
-                    <div className="font-medium text-sm">Morning</div>
-                    <div className="text-xs text-gray-500">First Half</div>
-                  </button>
-                  <button
-                    type="button"
-                    className={`p-2 rounded-md border text-left ${
-                      formData.halfDayPeriod === "afternoon"
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-300 hover:border-blue-400"
-                    }`}
-                    onClick={() => handleInputChange("halfDayPeriod", "afternoon")}
-                  >
-                    <div className="font-medium text-sm">Afternoon</div>
-                    <div className="text-xs text-gray-500">Second Half</div>
-                  </button>
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">Annual Leave</Label>
+                <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
+                  <span className="text-sm text-gray-900">{selectedEmployee.leaveBalance.annual} days</span>
                 </div>
-              )}
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">Sick Leave</Label>
+                <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
+                  <span className="text-sm text-gray-900">{selectedEmployee.leaveBalance.sick} days</span>
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium text-gray-700 mb-2 block">Casual Leave</Label>
+                <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
+                  <span className="text-sm text-gray-900">{selectedEmployee.leaveBalance.casual} days</span>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Employee Information Section */}
-          {selectedEmployee && (
-            <div className="p-6 border-b">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <Building className="h-5 w-5 text-green-600" />
-                </div>
-                <h2 className="text-lg font-semibold text-gray-900">Employee Information</h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Department</Label>
-                  <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
-                    <span className="text-sm text-gray-900">{selectedEmployee.department}</span>
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Position</Label>
-                  <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
-                    <span className="text-sm text-gray-900">{selectedEmployee.position}</span>
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Manager</Label>
-                  <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
-                    <span className="text-sm text-gray-900">{selectedEmployee.manager}</span>
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Annual Leave</Label>
-                  <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
-                    <span className="text-sm text-gray-900">{selectedEmployee.leaveBalance.annual} days</span>
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Sick Leave</Label>
-                  <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
-                    <span className="text-sm text-gray-900">{selectedEmployee.leaveBalance.sick} days</span>
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Casual Leave</Label>
-                  <div className="h-10 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
-                    <span className="text-sm text-gray-900">{selectedEmployee.leaveBalance.casual} days</span>
-                  </div>
-                </div>
-              </div>
+      {/* Additional Information Section */}
+      <div className="bg-white">
+        <div className="px-6 py-6">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+              <FileText className="h-5 w-5 text-purple-600" />
             </div>
-          )}
+            <h2 className="text-lg font-semibold text-gray-900">Additional Information</h2>
+          </div>
 
-          {/* Additional Information Section */}
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <FileText className="h-5 w-5 text-purple-600" />
-              </div>
-              <h2 className="text-lg font-semibold text-gray-900">Additional Information</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2 block">Emergency Contact</Label>
-                <Input
-                  value={formData.emergencyContact}
-                  onChange={(e) => handleInputChange("emergencyContact", e.target.value)}
-                  placeholder="Emergency contact number"
-                  className="h-10"
-                />
-              </div>
-
-              <div>
-                <Label className="text-sm font-medium text-gray-700 mb-2 block">Work Handover To</Label>
-                <Input
-                  value={formData.workHandover}
-                  onChange={(e) => handleInputChange("workHandover", e.target.value)}
-                  placeholder="Colleague name for work handover"
-                  className="h-10"
-                />
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                Reason for Leave <span className="text-red-500">*</span>
-              </Label>
-              <Textarea
-                value={formData.reason}
-                onChange={(e) => handleInputChange("reason", e.target.value)}
-                placeholder="Please provide reason for leave..."
-                rows={4}
-                className="resize-none"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">Emergency Contact</Label>
+              <Input
+                value={formData.emergencyContact}
+                onChange={(e) => handleInputChange("emergencyContact", e.target.value)}
+                placeholder="Emergency contact number"
+                className="h-10 border-gray-300"
               />
             </div>
 
-            {/* Validation Message */}
-            {formData.leaveType && calculatedDays > 0 && (
-              <div className="mb-6">
-                {calculatedDays > getSelectedLeaveBalance() ? (
-                  <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
-                    <AlertCircle className="h-4 w-4 text-red-600" />
-                    <span className="text-sm text-red-600">
-                      Insufficient leave balance! You need {calculatedDays - getSelectedLeaveBalance()} more days.
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-md">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span className="text-sm text-green-600">Leave application is valid!</span>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Submit Button */}
-            <div className="flex justify-end">
-              <Button
-                onClick={handleSubmit}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2"
-                disabled={!isFormValid()}
-              >
-                Submit Leave Application
-              </Button>
+            <div>
+              <Label className="text-sm font-medium text-gray-700 mb-2 block">Work Handover To</Label>
+              <Input
+                value={formData.workHandover}
+                onChange={(e) => handleInputChange("workHandover", e.target.value)}
+                placeholder="Colleague name for work handover"
+                className="h-10 border-gray-300"
+              />
             </div>
+          </div>
+
+          <div className="mb-6">
+            <Label className="text-sm font-medium text-gray-700 mb-2 block">
+              Reason for Leave <span className="text-red-500">*</span>
+            </Label>
+            <Textarea
+              value={formData.reason}
+              onChange={(e) => handleInputChange("reason", e.target.value)}
+              placeholder="Please provide reason for leave..."
+              rows={4}
+              className="resize-none border-gray-300"
+            />
+          </div>
+
+          {/* Validation Message */}
+          {formData.leaveType && calculatedDays > 0 && (
+            <div className="mb-6">
+              {calculatedDays > getSelectedLeaveBalance() ? (
+                <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                  <span className="text-sm text-red-600">
+                    Insufficient leave balance! You need {calculatedDays - getSelectedLeaveBalance()} more days.
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-md">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-sm text-green-600">Leave application is valid!</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <div className="flex justify-end">
+            <Button
+              onClick={handleSubmit}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2"
+              disabled={!isFormValid()}
+            >
+              Submit Leave Application
+            </Button>
           </div>
         </div>
       </div>

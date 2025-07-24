@@ -49,7 +49,8 @@ import UsersPage from "./routes/Marketing/Users/Users"
 import CreateListPage from "./routes/Marketing/Users/CreateList"
 import OrganizationProfile from "./routes/OrgProfile.jsx/OrgProfile";
 import UserProfile from "./routes/user/UserProfile";
-import AddBranch from "./routes/OrgProfile.jsx/branch/AddBranch";
+import AddEmployeePage from "./components/add-employee-modal";
+import MarkAttendancePage from "./components/mark-attendance";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -91,7 +92,9 @@ const router = createBrowserRouter([
             children: [
               { path: "", element: <HrDashboard /> },
               { path: "employees", element: <Employee /> },
+              { path: "add-employee", element: <AddEmployeePage />},
               { path: "attendance", element: <Attendance /> },
+              { path: "mark-attendance", element: <MarkAttendancePage />},
               { path: "payroll", element: <Payroll /> },
               { path: "recruitment", element: <Recruitment /> },
               { path: "leave", element: <Leave /> },
