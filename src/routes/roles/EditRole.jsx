@@ -1,10 +1,15 @@
 "use client";
 import React, { useState } from "react";
 import BreadCrumb from "../../components/BreadCrumb";
-import { Select } from "../../components/ui/select";
+import { X } from "lucide-react";
+import { Select } from "../../components/ui/customSelect";
 
 const modules = ["Leads", "Contacts", "Deals"];
-const actions = ["View", "Create", "Edit", "Delete"];
+const actions = {
+  Leads: ["View", "Create", "Edit", "Delete"],
+  Contacts: ["View", "Create", "Edit", "Delete"],
+  Deals: ["View", "Create", "Edit", "Delete"],
+};
 
 const RoleEditPage = () => {
   const [formData, setFormData] = useState({
@@ -13,17 +18,12 @@ const RoleEditPage = () => {
     reportTo: "",
   });
 
-  const [permissions, setPermissions] = useState(
-    modules.reduce((acc, module) => {
-      acc[module] = actions.reduce((actionAcc, action) => {
-        actionAcc[action] = false;
-        return actionAcc;
-      }, {});
-      return acc;
-    }, {})
-  );
+  const [permissions, setPermissions] = useState({
+    Leads: [],
+    Deals: [],
+    Contacts: [],
+  });
 
-  // Handles input changes for roleName, description, reportTo
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -39,13 +39,19 @@ const RoleEditPage = () => {
     }));
   };
 
-  const handleToggle = (module, action) => {
+  const handleActionChange = (module, value) => {
     setPermissions((prev) => ({
       ...prev,
-      [module]: {
-        ...prev[module],
-        [action]: !prev[module][action],
-      },
+      [module]: value && !prev[module].includes(value)
+        ? [...prev[module], value]
+        : prev[module],
+    }));
+  };
+
+  const handlePermissionDelete = (module, value) => {
+    setPermissions((prev) => ({
+      ...prev,
+      [module]: prev[module].filter((item) => item !== value),
     }));
   };
 
@@ -56,12 +62,11 @@ const RoleEditPage = () => {
       permissions,
     };
     console.log("Role Submitted:", payload);
-    // You can send this to backend:
     // axios.post("/api/roles", payload)
   };
 
   return (
-    <div className="rounded-xl bg-white shadow-lg px-3">
+    <div className="rounded-xl bg-white px-3 shadow-lg">
       {/* Header */}
       <div className="flex items-center justify-between border-b px-3 py-4">
         <div className="flex items-center gap-4">
@@ -71,79 +76,86 @@ const RoleEditPage = () => {
       </div>
 
       {/* Form Start */}
-      <form onSubmit={handleSubmit} className="space-y-6 py-4 px-3">
+      <form onSubmit={handleSubmit} className="space-y-6 px-3 py-4">
         {/* Role Name */}
         <div>
-          <label className="block font-medium mb-1">Role Name</label>
+          <label className="mb-1 block font-medium">Role Name</label>
           <input
             type="text"
             name="roleName"
             value={formData.roleName}
             onChange={handleInputChange}
             placeholder="e.g. Sales Executive"
-            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
 
         {/* Description */}
         <div>
-          <label className="block font-medium mb-1">Description</label>
+          <label className="mb-1 block font-medium">Description</label>
           <input
             type="text"
             name="description"
             value={formData.description}
             onChange={handleInputChange}
             placeholder="Short summary of the role"
-            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         {/* Report To */}
         <div>
-          <Select
-            label="Report To"
-            name="reportTo"
-            value={formData.reportTo}
-            onChange={handleSelectChange}
-            options={["Admin", "Manager", "Supervisor"]}
-            required
-          />
+          <label className="mb-1 block font-medium">Report To</label>
+         <Select
+         onChange={(e)=>handleSelectChange(e.target.value)}
+         placeholder="reported to"
+         options={["praveen"]}
+         />
         </div>
 
         {/* Permissions Table */}
         <div>
-          <h3 className="text-lg font-semibold mb-3">Module Permissions</h3>
-          <div className="overflow-x-auto border rounded-lg">
-            <table className="w-full text-sm border-collapse">
-              <thead className="bg-gray-100 text-left">
-                <tr>
-                  <th className="p-3 border">Module</th>
-                  {actions.map((action) => (
-                    <th key={action} className="p-3 border text-center">
-                      {action}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {modules.map((module) => (
-                  <tr key={module} className="hover:bg-gray-50">
-                    <td className="p-3 border font-medium">{module}</td>
-                    {actions.map((action) => (
-                      <td key={action} className="p-3 border text-center">
-                        <input
-                          type="checkbox"
-                          checked={permissions[module][action]}
-                          onChange={() => handleToggle(module, action)}
-                          className="w-5 h-5 text-blue-600"
-                        />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <h3 className="mb-3 text-lg font-semibold">Module Permissions</h3>
+          <div className="space-y-4">
+            {modules.map((module) => (
+              <div
+                key={module}
+                className="rounded-md border p-4 space-y-3"
+              >
+                <div className="flex justify-between items-center">
+                  <p className="font-medium text-black">{module}</p>
+                  <Select
+                  className={"w-20"}
+                  name={module}
+                  onChange={(e)=>handleActionChange(module,e.target.value)}
+                  options={actions[module]}
+                  />
+                </div>
+
+                {/* Permission List with delete */}
+                <div className="flex flex-wrap gap-2">
+                  {permissions[module].length === 0 ? (
+                    <span className="italic text-gray-400">No actions selected</span>
+                  ) : (
+                    permissions[module].map((per) => (
+                      <span
+                        key={per}
+                        className="flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800"
+                      >
+                        {per}
+                        <button
+                          type="button"
+                          onClick={() => handlePermissionDelete(module, per)}
+                        >
+                          <X className="h-4 w-4 text-blue-600 hover:text-red-500" />
+                        </button>
+                      </span>
+                    ))
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -151,7 +163,7 @@ const RoleEditPage = () => {
         <div className="pt-4">
           <button
             type="submit"
-            className=" bg-primary text-white py-2 px-4 rounded hover:opacity-90 transition duration-200"
+            className="rounded bg-primary px-4 py-2 text-white transition duration-200 hover:opacity-90"
           >
             Save Changes
           </button>
