@@ -266,7 +266,7 @@ export default function LeaveManagementPage() {
       {/* Header */}
       <div className="flex items-center justify-between border-b px-6 py-4">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-semibold">Leave Management</h1>
+          <h1 className="text-xl font-semibold">Leave Management</h1>
           <BreadCrumb currentPath={["HR", "Leave Management"]} />
         </div>
         <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={handleApplyLeave}>
@@ -280,7 +280,7 @@ export default function LeaveManagementPage() {
           <Card key={item.type} className="text-center">
             <CardContent className="p-4">
               <p className="text-sm text-gray-500">Remaining</p>
-              <h3 className={`text-2xl font-bold ${item.color}`}>{item.count}</h3>
+              <h3 className={`text-xl font-bold ${item.color}`}>{item.count}</h3>
               <p className="text-md font-semibold text-gray-700 mt-1">{item.type}</p>
               {item.total && <p className="text-xs text-gray-400">of {item.total} total</p>}
             </CardContent>

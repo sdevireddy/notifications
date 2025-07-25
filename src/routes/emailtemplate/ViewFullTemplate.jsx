@@ -56,7 +56,7 @@ const ViewFullTemplate = () => {
   return (
     <div className=" px-4 py-8 bg-white">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">{template.name}</h1>
+        <h1 className="text-xl font-bold text-gray-800">{template.name}</h1>
         <Link
           to="/templates"
           className="text-sm text-blue-600 hover:underline"

@@ -42,7 +42,7 @@ export default function UserProfile() {
     <div className="bg-white shadow rounded-md px-4">
       <div className="flex items-center justify-between border-b px-2 py-4">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-semibold text-gray-900">User Profile</h1>
+          <h1 className="text-xl font-semibold text-gray-900">User Profile</h1>
         </div>
       </div>
 
