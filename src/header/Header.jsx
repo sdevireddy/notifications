@@ -3,11 +3,13 @@ import { Bell, ChevronsLeft, Moon, Sun, Grid, Briefcase, Users, BookOpen, Megaph
 import profileImg from "@/assets/profile-image.jpg";
 import PropTypes from "prop-types";
 import { useTheme } from "@/hooks/use-theme";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ThemeSideBar from "../sidebar/ThemeSideBar";
 
 export const Header = ({ collapsed, setCollapsed, setActiveModule }) => {
+     const {logo}=useSelector(state=>state?.organization)
+    const orgName=useSelector(state=>state?.organization.name)
     const navigate = useNavigate();
     const [showModules, setShowModules] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
@@ -102,12 +104,21 @@ const handleLogout=()=>{
     return (
         <header className="sticky top-0 z-10 flex h-[60px] items-center justify-between border-b-2 border-gray-300 bg-white px-4 transition-colors dark:bg-slate-900">
             <div className="flex items-center gap-x-3">
-                <button
-                    className="btn-ghost size-10"
-                    onClick={() => setCollapsed(!collapsed)}
+                 <Link
+                    to={"/"}
+                    className="flex items-center gap-3"
                 >
-                    <ChevronsLeft className={collapsed ? "rotate-180" : ""} />
-                </button>
+                    {collapsed && (
+                        <div className="text- flex items-center gap-3 text-lg font-medium">
+                            <img
+                                src={logo}
+                                alt="Logo"
+                                className="h-10 w-10 rounded-[100%] object-cover"
+                            />
+                            <p>{name.toUpperCase()}</p>
+                        </div>
+                    ) }
+                </Link>
             </div>
             <div className="flex items-center gap-x-3">
                 <button className="btn-ghost size-10">
