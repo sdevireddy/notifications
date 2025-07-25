@@ -125,16 +125,15 @@ const RoleEditPage = () => {
               >
                 <div className="flex justify-between items-center">
                   <p className="font-medium text-black">{module}</p>
+                  <div className="flex items-end flex-col gap-4">
+
                   <Select
                   className={"w-20"}
                   name={module}
                   onChange={(e)=>handleActionChange(module,e.target.value)}
                   options={actions[module]}
                   />
-                </div>
-
-                {/* Permission List with delete */}
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 md:max-w-[22rem] max-w-20">
                   {permissions[module].length === 0 ? (
                     <span className="italic text-gray-400">No actions selected</span>
                   ) : (
@@ -154,6 +153,10 @@ const RoleEditPage = () => {
                     ))
                   )}
                 </div>
+                    </div>
+                </div>
+
+                {/* Permission List with delete */}
               </div>
             ))}
           </div>

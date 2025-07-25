@@ -9,7 +9,7 @@ import {
     Building,
     ArrowLeftCircle,
     BookOpen,
-        Megaphone,
+    Megaphone,
     HelpCircle,
     Workflow,
     Settings,
@@ -20,7 +20,7 @@ import {
     ChartNoAxesCombined,
     Mail,
     GalleryHorizontalEnd,
-
+    PanelLeftOpen,
 } from "lucide-react";
 import logoLight from "@/assets/logo-light.svg";
 import logoDark from "@/assets/logo-dark.svg";
@@ -42,40 +42,30 @@ const moduleLinks = {
         { to: "/settings", label: "Settings", icon: <Settings size={20} /> },
         { to: "/users", label: "Users", icon: <UserPlus size={20} /> },
     ],
-    Books: [
-        { to: "/library", label: "Library", icon: <BookOpen size={20} /> }
-    ],
+    Books: [{ to: "/library", label: "Library", icon: <BookOpen size={20} /> }],
     Marketing: [
         { to: "marketing/users", label: "Users", icon: <Users size={20} /> },
         { to: "marketing/templates", label: "Templates", icon: <GalleryHorizontalEnd size={20} /> },
 
         { to: "marketing/emailmarketing", label: "Email Marketing", icon: <Mail size={20} /> },
         { to: "marketing/SMSMarketing", label: "SMS Marketing", icon: <MessageCircle size={20} /> },
-        { to: "marketing/SocialMediaMarketing", label: "Social media marketing", icon:<Megaphone size={20} /> },
-        
+        { to: "marketing/SocialMediaMarketing", label: "Social media marketing", icon: <Megaphone size={20} /> },
     ],
-    Campaigns: [
-        { to: "/email-campaigns", label: "Email Campaigns", icon: <Mail size={20} /> }
-    ],
-    People: [
-        { to: "/users", label: "Users", icon: <Users size={20} /> }
-    ],
-    TicketDesk: [
-        { to: "/tickets", label: "Tickets", icon: <HelpCircle size={20} /> }
-    ],
+    Campaigns: [{ to: "/email-campaigns", label: "Email Campaigns", icon: <Mail size={20} /> }],
+    People: [{ to: "/users", label: "Users", icon: <Users size={20} /> }],
+    TicketDesk: [{ to: "/tickets", label: "Tickets", icon: <HelpCircle size={20} /> }],
     HR: [
         { to: "hr/employees", label: "Employees", icon: <Users size={20} /> },
         { to: "hr/attendance", label: "Attendance", icon: <UserRoundSearch size={20} /> },
         { to: "hr/leave", label: "Leave Management", icon: <CalendarDays size={20} /> },
         { to: "hr/payroll", label: "Payroll", icon: <CircleDollarSign size={20} /> },
         { to: "hr/performance", label: "Performance", icon: <ChartNoAxesCombined size={20} /> },
-        { to: "hr/recruitment", label: "Recruitment", icon: <UserPlus size={20} /> }
-    ]
+        { to: "hr/recruitment", label: "Recruitment", icon: <UserPlus size={20} /> },
+    ],
 };
 
-
 export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
-    const {logo,name}=useSelector(state=>state?.organization)
+    const { logo, name } = useSelector((state) => state?.organization);
     const [search, setSearch] = useState("");
     const [crmExpanded, setCrmExpanded] = useState(true);
     const sidebarRef = useRef(null);
@@ -83,19 +73,31 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
     return (
         <div
             ref={sidebarRef}
-            className={`h-full border-r border-gray-200 bg-sidebar transition-all duration-300 dark:border-gray-700 dark:bg-slate-900 ${
+            className={`bg-sidebar h-full border-r border-gray-200 transition-all duration-300 dark:border-gray-700 dark:bg-slate-900 ${
                 collapsed ? "w-[70px]" : "w-56"
             }`}
             onMouseEnter={() => ref?.current?.scrollTo?.({ top: 0 })}
         >
             <div className="pt-2">
-                <Link to={"/"} className="flex items-center gap-3 w-10 h-10 ml-4">
-                <img
-                    src={logo}
-                    alt="Logo"
-                    className="object-cover w-full h-full rounded-[100%]"
-                />
-                {!collapsed && <p className="text-lg font-medium text-white">{name.toUpperCase()}</p>}
+                <Link
+                    to={"/"}
+                    className="ml-4 flex items-center gap-3"
+                >
+                    {!collapsed ? (
+                        <div className="text- flex items-center gap-3 text-lg font-medium">
+                            <img
+                                src={logo}
+                                alt="Logo"
+                                className="h-10 w-10 rounded-[100%] object-cover"
+                            />
+                            <p>{name.toUpperCase()}</p>
+                        </div>
+                    ) : (
+                        <PanelLeftOpen
+                            size={32}
+                            className="ml-2 text-white"
+                        />
+                    )}
                 </Link>
             </div>
 
@@ -117,7 +119,7 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
             </div>
 
             <div className="space-y-2 px-3">
-                <p className="ml-2 text-xs font-semibold text-gray-50 dark:text-gray-400 line-clamp-1">{activeModule}</p>
+                <p className="ml-2 line-clamp-1 text-xs font-semibold text-gray-50 dark:text-gray-400">{activeModule}</p>
                 {moduleLinks[activeModule]
                     ?.filter((link) => link.label.toLowerCase().includes(search.toLowerCase()))
                     .map((link, index) => (
