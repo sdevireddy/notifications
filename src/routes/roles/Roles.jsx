@@ -81,7 +81,7 @@ const RolesPage = () => {
   const navigate=useNavigate()
   return (
     <div className="flex-1 bg-white h-full">
-      <div className="flex items-center justify-between border-b px-6 py-4">
+      <div className="flex items-center justify-between border-b px-6 py-2">
         <div className="flex items-center gap-4">
           <h1 className="text-xl font-semibold text-gray-900">Roles</h1>
           <BreadCrumb />
@@ -94,7 +94,7 @@ const RolesPage = () => {
                     </Button>
       </div>
 
-      <div className="px-6 py-4">
+      <div className="px-6 py-2">
         {rolesData.map((role, index) => (
           <RoleNode key={index} role={role} isopen={true}/>
         ))}
