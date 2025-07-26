@@ -366,7 +366,7 @@ export default function ContactPage() {
                 </div>
             </div>
 
-            <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-4">
+            <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-2">
                 <div className="relative w-full max-w-md">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <Input
@@ -410,7 +410,7 @@ export default function ContactPage() {
                 loading={loading}
             />
 
-            <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-4">
+            <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-2">
                 <div className="text-sm text-gray-600">
                     Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredContacts.length)} of {totalRecord} results
                 </div>

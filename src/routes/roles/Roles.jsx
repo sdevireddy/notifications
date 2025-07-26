@@ -94,7 +94,7 @@ const RolesPage = () => {
                     </Button>
       </div>
 
-      <div className="px-6 py-4">
+      <div className="px-6 py-2">
         {rolesData.map((role, index) => (
           <RoleNode key={index} role={role} isopen={true}/>
         ))}

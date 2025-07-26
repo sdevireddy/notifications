@@ -390,7 +390,7 @@ export default function EmployeePage() {
         </div>
       </div>
 
-      <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-4">
+      <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-2">
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
