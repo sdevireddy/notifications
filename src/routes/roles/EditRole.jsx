@@ -7,6 +7,7 @@ import { Select } from "../../components/ui/customSelect";
 const modules = ["Leads", "Contacts", "Deals"];
 const actions = {
   Leads: ["View", "Create", "Edit", "Delete", "praveen"],
+
   Contacts: ["View", "Create", "Edit", "Delete"],
   Deals: ["View", "Create", "Edit", "Delete"],
 };
@@ -55,6 +56,7 @@ const RoleEditPage = () => {
       }
       return prev;
     });
+
   };
 
   const handlePermissionDelete = (module, value) => {
@@ -71,6 +73,7 @@ const RoleEditPage = () => {
       permissions,
     };
     console.log("Role Submitted:", payload);
+    // axios.post("/api/roles", payload)
   };
 
   return (
