@@ -165,6 +165,7 @@ export default function EmailMarketing() {
     <div className="min-h-screen flex-1 bg-white">
       {/* Header */}
       <div className="flex items-center justify-between border-b px-6 py-2">
+
         <h1 className="text-xl font-semibold text-gray-900">Email Campaigns</h1>
         <div className="flex items-center gap-3">
           <Button

@@ -49,9 +49,9 @@ const moduleLinks = {
         { to: "marketing/emailmarketing", label: "Email Marketing", icon: <Mail size={20} /> },
         { to: "marketing/SMSMarketing", label: "SMS Marketing", icon: <MessageCircle size={20} /> },
         { to: "marketing/SocialMediaMarketing", label: "Social media marketing", icon: <Megaphone size={20} /> },
+
         { to: "marketing/SocialMediaMarketing", label: "Social media marketing", icon:<Megaphone size={20} /> },
         { to: "marketing/settings", label: "Settings", icon: <Settings size={20} /> },
-
     ],
     Campaigns: [{ to: "/email-campaigns", label: "Email Campaigns", icon: <Mail size={20} /> }],
     People: [{ to: "/users", label: "Users", icon: <Users size={20} /> }],
