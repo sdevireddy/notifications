@@ -41,7 +41,7 @@ export default function DataMigrationUpload() {
                 </button>
 
                 <div className="flex items-center gap-4 px-2 py-2">
-                    <h1 className="text-2xl font-semibold text-gray-900">Import {source}</h1>
+                    <h1 className="text-xl font-semibold text-gray-900">Import {source}</h1>
                 </div>
             </div>
             <div className="flex justify-end items-center">

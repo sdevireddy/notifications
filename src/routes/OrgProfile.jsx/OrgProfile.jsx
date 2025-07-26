@@ -67,7 +67,7 @@ const handleDeleteBranch=(index)=>{
         <div className="rounded-md bg-white px-4 shadow">
             <div className="flex items-center justify-between border-b px-2 py-4">
                 <div className="flex items-center gap-4">
-                    <h1 className="text-2xl font-semibold text-gray-900">Organization Profile</h1>
+                    <h1 className="text-xl font-semibold text-gray-900">Organization Profile</h1>
                 </div>
             </div>
 
@@ -84,9 +84,9 @@ const handleDeleteBranch=(index)=>{
                     ) : (
                         <div className="flex h-16 w-16 items-center justify-center rounded border text-gray-400">No Logo</div>
                     )}
-                    <label className="flex cursor-pointer items-center gap-1 text-blue-600 hover:underline">
+                    <label className="flex cursor-pointer items-center gap-1 text-primary hover:underline">
                         <Upload className="h-4 w-4" />
-                        <span>Upload</span>
+                        <span >Upload</span>
                         <input
                             type="file"
                             name="logo"
@@ -232,7 +232,7 @@ const handleDeleteBranch=(index)=>{
 
             <button
                 onClick={handleSubmit}
-                className="mb-4 mt-6 rounded bg-blue-600 px-6 py-2 text-sm text-white hover:bg-blue-700"
+                className="mb-4 mt-6 rounded bg-primary px-6 py-2 text-sm text-white hover:opacity-90"
             >
                 Update Profile
             </button>

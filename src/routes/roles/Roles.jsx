@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowDown, ArrowRight, ChevronDown, ChevronRight, Pencil, Plus } from 'lucide-react';
 import BreadCrumb from '../../components/BreadCrumb'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/layout/ui/button';
 
 const rolesData = [
@@ -53,16 +53,17 @@ const RoleNode = ({ role,isopen }) => {
         </div>
 
         {/* Show only on hover of this specific item */}
-        <button
+        <Link
+        to={"/roles/edit"}
           className="text-gray-500 hover:text-blue-600 invisible group-hover:visible transition"
           title="Edit Role"
           onClick={(e) => {
             e.stopPropagation();
-            alert(`Edit role: ${role.name}`);
+            // alert(`Edit role: ${role.name}`);
           }}
         >
           <Pencil size={16} />
-        </button>
+        </Link>
       </div>
 
       {isOpen && role.children.length > 0 && (
@@ -82,7 +83,7 @@ const RolesPage = () => {
     <div className="flex-1 bg-white h-full">
       <div className="flex items-center justify-between border-b px-6 py-4">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-semibold text-gray-900">Roles</h1>
+          <h1 className="text-xl font-semibold text-gray-900">Roles</h1>
           <BreadCrumb />
         </div>
         <Button

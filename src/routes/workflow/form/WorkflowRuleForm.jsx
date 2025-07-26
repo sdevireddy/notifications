@@ -90,7 +90,7 @@ export default function WorkflowAutomation() {
   return (
     <div className="px-10 py-6 bg-gray-50 min-h-screen space-y-10">
        <div className="flex items-center gap-4">
-                    <h1 className="text-2xl font-semibold text-gray-900">Create WorkFlow</h1>
+                    <h1 className="text-xl font-semibold text-gray-900">Create WorkFlow</h1>
                     <BreadCrumb />
                 </div>
                   <div className="flex gap-4">
