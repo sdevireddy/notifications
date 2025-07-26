@@ -113,7 +113,7 @@ const HRDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="border-b bg-white px-6 py-4">
+      <header className="border-b bg-white px-6 py-2">
         <h1 className="text-xl font-bold">HR Dashboard</h1>
       </header>
 
