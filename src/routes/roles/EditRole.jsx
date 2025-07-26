@@ -88,6 +88,8 @@ const RoleEditPage = () => {
 
       {/* Form Start */}
       <form onSubmit={handleSubmit} className="space-y-6 px-3 py-4">
+        <div className="md:flex flex-row gap-3">
+
         {/* Role Name */}
         <div>
           <label className="mb-1 block font-medium">Role Name</label>
@@ -103,7 +105,7 @@ const RoleEditPage = () => {
         </div>
 
         {/* Description */}
-        <div>
+        <div className="flex-1">
           <label className="mb-1 block font-medium">Description</label>
           <input
             type="text"
@@ -116,13 +118,15 @@ const RoleEditPage = () => {
         </div>
 
         {/* Report To */}
-        <div>
+        <div className="md:w-[30%]">
           <label className="mb-1 block font-medium">Report To</label>
           <Select
+          className={"w-24"}
             onChange={(e) => handleSelectChange(e.target.value)}
             placeholder="Reported to"
             options={["praveen"]}
           />
+        </div>
         </div>
 
         {/* Permissions Table */}
