@@ -11,7 +11,7 @@ const BreadCrumb = () => {
   const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
   return (
-    <nav aria-label="breadcrumb" className="flex items-center text-[0.7rem] text-gray-600 px-3 py-2">
+    <nav aria-label="breadcrumb" className="flex items-center text-[0.8rem] text-gray-600 px-3 py-2">
       {isHRModule ? (
         // HR Module: Skip "Home"
         segments.map((seg, i) => {
