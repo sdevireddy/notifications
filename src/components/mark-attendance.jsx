@@ -93,7 +93,7 @@ export default function MarkAttendancePage() {
     <div className="min-h-screen bg-gray-50 text-sm text-gray-700">
       {/* Header */}
       <div className="bg-white border-b sticky top-0 z-10">
-        <div className="flex items-center justify-between px-6 py-4">
+        <div className="flex items-center justify-between px-6 py-2">
           <div className="flex items-center gap-4">
             <Button variant="ghost" onClick={() => navigate("/hr/attendance")} className="p-2">
               <ArrowLeft className="h-5 w-5" />
