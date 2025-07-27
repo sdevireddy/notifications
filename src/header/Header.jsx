@@ -102,7 +102,7 @@ const handleLogout=()=>{
 
 }
     return (
-        <header className="sticky top-0 z-10 flex h-[60px] items-center justify-between border-b-2 border-gray-300 bg-white px-4 transition-colors dark:bg-slate-900">
+        <header className="sticky top-0 z-30 flex h-[60px] items-center justify-between border-b-2 border-gray-300 bg-white px-4 transition-colors dark:bg-slate-900">
             <div className="flex items-center gap-x-3">
                  <Link
                     to={"/"}

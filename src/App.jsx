@@ -56,6 +56,7 @@ import MarketingSettings from "./routes/Marketing/MarketingSettings";
 import CredentialForm from "./routes/Marketing/CredentialsForm";
 import CreateSocialMediaCampaign from "./routes/Marketing/socialmediamarketing/CreateSocialMediaCampaign"
 import CreateSMSCampaign from "./routes/Marketing/smsmarketing/CreateSMSCampaign"
+import TemplateBuilder from "./routes/emailtemplate/Test";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -87,7 +88,7 @@ const router = createBrowserRouter([
           { path: "settings", element: <Settings /> },
           { path: "templates", element: <TemplateDisplay /> },
           { path: "templates/:id", element: <ViewFullTemplate /> },
-          { path: "templates/create", element: <EmailTemplate /> },
+          { path: "templates/create", element: <TemplateBuilder /> },
           { path: "roles", element: <Roles /> },
            { path: "user/profile", element: <UserProfile/> },
            { path: "roles/create", element: <CreateRole /> },
