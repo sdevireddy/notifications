@@ -17,7 +17,8 @@ import {
     FaClipboard,
     FaAlignLeft,
     FaAlignCenter,
-    FaAlignRight
+    FaAlignRight,
+    FaUpload
 } from "react-icons/fa";
 
 // --- Quill Editor Component ---
@@ -96,6 +97,8 @@ const QuillEditor = ({ value, onChange }) => {
 // --- Settings Panel Component ---
 // This component renders the editable properties for the selected component.
 const SettingsPanel = ({ component, updateComponentProps, unselectComponent }) => {
+    const fileInputRef = useRef(null);
+
     if (!component) return null;
 
     // Handles changes in the input fields and updates the component's state.
@@ -110,6 +113,21 @@ const SettingsPanel = ({ component, updateComponentProps, unselectComponent }) =
 
     const handleAlignmentChange = (alignment) => {
         updateComponentProps(component.id, { alignment });
+    };
+
+    const handleImageUploadClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                updateComponentProps(component.id, { src: reader.result });
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     // Renders the appropriate settings based on the component's type.
@@ -203,6 +221,21 @@ const SettingsPanel = ({ component, updateComponentProps, unselectComponent }) =
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600 mb-1">Image URL</label>
                             <input type="text" name="src" value={component.props.src} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md"/>
+                        </div>
+                        <div className="mb-4">
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                                className="hidden"
+                                accept="image/*"
+                            />
+                            <button
+                                onClick={handleImageUploadClick}
+                                className="w-full flex items-center justify-center gap-2 p-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+                            >
+                                <FaUpload /> Upload Image
+                            </button>
                         </div>
                          <div className="flex gap-4 mb-4">
                             <div>
@@ -643,6 +676,7 @@ const App = () => {
                         elementHtml = `<${Tag} style="${style}">${item.props.text}</${Tag}>`;
                         break;
                     case 'Image':
+                        // For base64 images, the src is already the full data URL
                         elementHtml = `<img src="${item.props.src}" style="${style}" alt="image" />`;
                         break;
                     case 'Divider':
