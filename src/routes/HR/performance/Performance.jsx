@@ -327,7 +327,7 @@ export default function PerformancePage() {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+              <Button variant="primary">
                 Actions <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -351,7 +351,7 @@ export default function PerformancePage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button className="bg-primary text-white hover:bg-opacity-90">
+          <Button className="bg-primary text-white">
             <Plus className="mr-2 h-4 w-4" /> Add Review
           </Button>
         </div>

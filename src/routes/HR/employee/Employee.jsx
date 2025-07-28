@@ -353,7 +353,7 @@ export default function EmployeePage() {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+              <Button variant="primary">
                 Actions <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -382,7 +382,7 @@ export default function EmployeePage() {
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
-            className="bg-blue-600 text-white hover:bg-blue-700"
+            className="bg-primary text-white"
             onClick={() => navigate("/hr/add-employee")}
           >
             <Plus className="mr-2 h-4 w-4" /> Add Employee
