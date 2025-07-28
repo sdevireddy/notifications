@@ -50,6 +50,7 @@ import CreateListPage from "./routes/Marketing/Users/CreateList"
 import OrganizationProfile from "./routes/OrgProfile.jsx/OrgProfile";
 import UserProfile from "./routes/user/UserProfile";
 import AddEmployeePage from "./components/add-employee-modal";
+import AddPerformancePage from "./components/add-performance";
 import MarkAttendancePage from "./components/mark-attendance";
 import RoleEditPage from "./routes/roles/EditRole";
 import MarketingSettings from "./routes/Marketing/MarketingSettings";
@@ -57,6 +58,7 @@ import CredentialForm from "./routes/Marketing/CredentialsForm";
 import CreateSocialMediaCampaign from "./routes/Marketing/socialmediamarketing/CreateSocialMediaCampaign"
 import CreateSMSCampaign from "./routes/Marketing/smsmarketing/CreateSMSCampaign"
 import TemplateBuilder from "./routes/emailtemplate/Test";
+import AddPayrollPage from "./components/add-payroll";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -103,10 +105,12 @@ const router = createBrowserRouter([
               { path: "attendance", element: <Attendance /> },
               { path: "mark-attendance", element: <MarkAttendancePage />},
               { path: "payroll", element: <Payroll /> },
+              { path: "add-payroll", element: <AddPayrollPage />},
               { path: "recruitment", element: <Recruitment /> },
               { path: "leave", element: <Leave /> },
               { path: "apply-leave", element: <ApplyLeavePage />},
               { path: "performance", element: <Performance /> },
+              { path: "add-performance", element: <AddPerformancePage />},
             ],
           },
           {

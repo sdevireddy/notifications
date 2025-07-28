@@ -1,6 +1,7 @@
 "use client"
 import { LuFilter } from "react-icons/lu"
 import { useState, useEffect, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -27,11 +28,12 @@ import {
   Target,
   Award,
 } from "lucide-react"
-import Tooltip from './../../../components/ToolTip';
-import Table from './../../../components/Table';
-import BreadCrumb from './../../../components/BreadCrumb';
+import Tooltip from "./../../../components/ToolTip"
+import Table from "./../../../components/Table"
+import BreadCrumb from "./../../../components/BreadCrumb"
 
 export default function PerformancePage() {
+  const navigate = useNavigate()
   const [performance, setPerformance] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [recordsPerPage, setRecordsPerPage] = useState("25")
@@ -314,9 +316,9 @@ export default function PerformancePage() {
 
   return (
     <div className="min-h-screen flex-1 bg-white">
-      <div className="flex items-center justify-between border-b px-6 py-2">
+      <div className="flex items-center justify-between border-b px-6 py-4">
         <div className="flex items-center gap-4">
-          <h1 className="text-xl font-semibold text-gray-900">Performance</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">Performance</h1>
           <BreadCrumb />
         </div>
         <div className="flex items-center gap-3">
@@ -327,7 +329,7 @@ export default function PerformancePage() {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="primary">
+              <Button variant="outline">
                 Actions <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -351,7 +353,10 @@ export default function PerformancePage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button className="bg-primary text-white">
+          <Button
+            className="bg-primary text-white"
+            onClick={() => navigate("/hr/add-performance")}
+          >
             <Plus className="mr-2 h-4 w-4" /> Add Review
           </Button>
         </div>
