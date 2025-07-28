@@ -28,7 +28,7 @@ const Settings = () => {
 
   return (
     <div className="px-6 bg-white h-full">
-      <div className="flex items-center justify-between border-b py-4">
+      <div className="flex items-center justify-between  py-4">
                 <div className="flex items-center gap-4">
                     <h1 className="text-xl font-semibold text-gray-900">Settings</h1>
                     <BreadCrumb />
