@@ -20,7 +20,10 @@ import {
     FaUpload,
     FaEye,
     FaEyeSlash,
-    FaClone
+    FaClone,
+    FaBold,
+    FaItalic,
+    FaUnderline
 } from "react-icons/fa";
 
 // --- Quill Editor Component ---
@@ -212,8 +215,14 @@ const SettingsPanel = ({ component, updateComponentProps, unselectComponent }) =
                 return (
                     <>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-600 mb-1">Heading Text</label>
-                            <input type="text" name="text" value={component.props.text} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md"/>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                                Heading Text
+                                <span className="text-xs text-gray-400 ml-2">(Edit directly on canvas)</span>
+                            </label>
+                             <div 
+                                className="w-full p-2 border border-gray-200 rounded-md bg-gray-50 min-h-[40px]"
+                                dangerouslySetInnerHTML={{ __html: component.props.text }}
+                             />
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600 mb-1">Heading Level</label>
@@ -290,12 +299,12 @@ const SettingsPanel = ({ component, updateComponentProps, unselectComponent }) =
                     </>
                 );
             default:
-                return unselectComponent()
+                return <p className="text-gray-500">No editable properties for this component.</p>;
         }
     };
 
     return (
-        <div className="absolute left-0 h-full w-[23rem] bg-white border-l border-gray-300 shadow-lg z-30">
+        <div className="absolute right-0 h-full w-[23rem] bg-white border-l border-gray-300 shadow-lg z-30">
             <div className="flex justify-between items-center p-4 border-b border-gray-200">
                 <h2 className="text-lg font-bold text-gray-800">{component.type} Settings</h2>
                 <button onClick={unselectComponent} className="p-1 text-gray-500 hover:text-gray-800">
@@ -316,8 +325,23 @@ const QuickAccessToolbar = ({ component, position, updateComponentProps, deleteC
     const handleAlignmentChange = (alignment) => {
         updateComponentProps(component.id, { alignment });
     };
+    
+    // Function to apply text formatting using document.execCommand
+    const handleTextFormat = (command) => {
+        document.execCommand(command, false, null);
+        // Manually trigger an input event on the focused element to update state
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            const element = range.commonAncestorContainer.parentElement;
+            if (element && element.isContentEditable) {
+                 element.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+    };
 
     const supportsAlignment = ['Button', 'Heading', 'Text', 'Image'].includes(component.type);
+    const supportsTextFormatting = ['Heading', 'Text'].includes(component.type);
 
     return (
         <div
@@ -327,12 +351,21 @@ const QuickAccessToolbar = ({ component, position, updateComponentProps, deleteC
         >
             <span className="text-xs font-bold px-2">{component.type}</span>
             <div className="w-px h-5 bg-slate-600 mx-1"></div>
+
+            {supportsTextFormatting && (
+                 <>
+                     <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleTextFormat('bold')} className="p-2 rounded-md hover:bg-slate-700" title="Bold"><FaBold /></button>
+                     <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleTextFormat('italic')} className="p-2 rounded-md hover:bg-slate-700" title="Italic"><FaItalic /></button>
+                     <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleTextFormat('underline')} className="p-2 rounded-md hover:bg-slate-700" title="Underline"><FaUnderline /></button>
+                     <div className="w-px h-5 bg-slate-600 mx-1"></div>
+                 </>
+            )}
             
             {supportsAlignment && (
                 <>
-                    <button onClick={() => handleAlignmentChange('left')} className={`p-2 rounded-md ${component.props.alignment === 'left' ? 'bg-blue-500' : 'hover:bg-slate-700'}`} title="Align Left"><FaAlignLeft /></button>
-                    <button onClick={() => handleAlignmentChange('center')} className={`p-2 rounded-md ${component.props.alignment === 'center' ? 'bg-blue-500' : 'hover:bg-slate-700'}`} title="Align Center"><FaAlignCenter /></button>
-                    <button onClick={() => handleAlignmentChange('right')} className={`p-2 rounded-md ${component.props.alignment === 'right' ? 'bg-blue-500' : 'hover:bg-slate-700'}`} title="Align Right"><FaAlignRight /></button>
+                    <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleAlignmentChange('left')} className={`p-2 rounded-md ${component.props.alignment === 'left' ? 'bg-blue-500' : 'hover:bg-slate-700'}`} title="Align Left"><FaAlignLeft /></button>
+                    <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleAlignmentChange('center')} className={`p-2 rounded-md ${component.props.alignment === 'center' ? 'bg-blue-500' : 'hover:bg-slate-700'}`} title="Align Center"><FaAlignCenter /></button>
+                    <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleAlignmentChange('right')} className={`p-2 rounded-md ${component.props.alignment === 'right' ? 'bg-blue-500' : 'hover:bg-slate-700'}`} title="Align Right"><FaAlignRight /></button>
                     <div className="w-px h-5 bg-slate-600 mx-1"></div>
                 </>
             )}
@@ -340,6 +373,41 @@ const QuickAccessToolbar = ({ component, position, updateComponentProps, deleteC
             <button onClick={() => duplicateComponent(component.id)} className="p-2 rounded-md hover:bg-slate-700" title="Duplicate"><FaClone /></button>
             <button onClick={() => deleteComponent(component.id)} className="p-2 rounded-md hover:bg-red-500" title="Delete"><FaTrash /></button>
         </div>
+    );
+};
+
+// --- Editable Content Component ---
+// A component to handle contentEditable elements without cursor jumping issues in React.
+const EditableContent = ({ tagName, html, isPreview, onUpdate, ...props }) => {
+    const elementRef = useRef(null);
+
+    // This effect updates the DOM's innerHTML only when the `html` prop
+    // differs from the current DOM content. This is the key to preventing
+    // the cursor from jumping out of position during user input.
+    useEffect(() => {
+        if (elementRef.current && html !== elementRef.current.innerHTML) {
+            elementRef.current.innerHTML = html;
+        }
+    }, [html]);
+
+    const handleInput = (event) => {
+        if (onUpdate) {
+            onUpdate(event.currentTarget.innerHTML);
+        }
+    };
+
+    const Tag = tagName || 'div';
+
+    // We render the component without children and let the effect manage the innerHTML.
+    // This avoids using `dangerouslySetInnerHTML` in the render return, which can cause re-renders to reset the element.
+    return (
+        <Tag
+            {...props}
+            ref={elementRef}
+            contentEditable={!isPreview}
+            suppressContentEditableWarning={true}
+            onInput={handleInput}
+        />
     );
 };
 
@@ -582,7 +650,7 @@ const App = () => {
         e.stopPropagation();
     };
 
-    // BUGFIX: This handler cleans up the drag indicator if a drag operation is cancelled
+    // This handler cleans up the drag indicator if a drag operation is cancelled
     const handleDragEnd = () => {
         setDragIndicator(null);
     };
@@ -610,7 +678,7 @@ const App = () => {
         const parsedData = componentData ? JSON.parse(componentData) : {};
         const newComponent = createNewComponent(componentType, parsedData);
 
-        // BUGFIX: Logic to insert a NEW component at a specific position
+        // Logic to insert a NEW component at a specific position
         const insertNewComponent = (content) => {
             // If there's no drag indicator, just add to the end of the current level
             if (!dragIndicator) {
@@ -721,7 +789,7 @@ const App = () => {
                     draggable={!isPreview}
                     onDragStart={(e) => handleCanvasDragStart(e, item.id)}
                     onDragOver={(e) => handleCanvasDragOver(e, item.id)}
-                    onDragEnd={handleDragEnd} // BUGFIX: Added drag end handler
+                    onDragEnd={handleDragEnd} 
                     style={wrapperStyle}
                 >
                     {renderComponent(item, isPreview)}
@@ -744,14 +812,33 @@ const App = () => {
         delete style.alignment;
         const Tag = item.type === 'Heading' ? (item.props.tag || 'h1') : 'div';
 
+        // Use onInput to update state immediately on any change
+        const handleContentUpdate = (newHtml) => {
+            updateComponentProps(item.id, { text: newHtml });
+        };
+
         switch (item.type) {
             case "Button":
                 return <button style={style} className="font-bold py-2 px-4 rounded shadow-md hover:brightness-90 transition-all inline-block">{style.text}</button>;
             case "Text":
-                return <div style={style} className="text-gray-700" dangerouslySetInnerHTML={{ __html: style.text }}></div>;
+                return <EditableContent 
+                    tagName="div"
+                    style={style} 
+                    className="text-gray-700" 
+                    html={item.props.text}
+                    isPreview={isPreview}
+                    onUpdate={handleContentUpdate}
+                />;
             case "Heading":
                 delete style.tag;
-                return <Tag style={style} className="font-bold text-gray-800">{style.text}</Tag>;
+                return <EditableContent
+                    tagName={Tag}
+                    style={style} 
+                    className="font-bold text-gray-800"
+                    html={item.props.text}
+                    isPreview={isPreview}
+                    onUpdate={handleContentUpdate}
+                />;
             case "Divider":
                 return <hr className="border-t-2 border-gray-300 my-4" />;
             case "Image":
@@ -990,7 +1077,7 @@ const App = () => {
             {/* --- Right Sidebar: Settings Panel --- */}
             {selectedComponent && !isPreviewMode && (
                 <SettingsPanel 
-                    key={selectedComponent.id} // BUGFIX: Moved key here to force re-mount on component change
+                    key={selectedComponent.id} 
                     component={selectedComponent} 
                     updateComponentProps={updateComponentProps}
                     unselectComponent={() => setSelectedComponentId(null)}
