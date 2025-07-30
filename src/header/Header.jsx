@@ -158,7 +158,7 @@ const handleLogout=()=>{
                 flex cursor-pointer flex-col items-center justify-center rounded-lg p-2 transition-all duration-200 
                 ${isEnabled 
                     ? "hover:bg-gray-100 dark:hover:bg-slate-700" 
-                    : "cursor-not-allowed bg-red-50 hover:animate-shake text-gray-400 dark:bg-slate-700/50"
+                    : "cursor-not-allowed bg-red-50  text-gray-400 dark:bg-slate-700/50"
                 }
             `}
             title={isEnabled ? "" : "Access Denied"}
