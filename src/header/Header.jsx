@@ -18,6 +18,8 @@ export const Header = ({ collapsed, setCollapsed, setActiveModule }) => {
     const moduleRef = useRef(null);
     const profileRef = useRef(null);
     const {name,profile,email}=useSelector(state=>state?.user)
+    const moduleState=useSelector(state=>state?.module)
+    console.log(moduleState)
     const modules = [
         {
             name: "CRM",
@@ -139,21 +141,34 @@ const handleLogout=()=>{
                     </button>
                     {showModules && (
                         <div className="absolute right-0 top-14 z-50 grid w-64 grid-cols-3 gap-4 rounded-lg bg-white p-4 shadow-lg dark:bg-slate-800">
-                            {modules.map((module, index) => (
-                                <div
-                                    key={index}
-                                    onClick={() => {
-                                        localStorage.setItem("active_module",module.name)
-                                        setActiveModule(module.name);
-                                        setShowModules(false);
-                                        if (module.path) navigate(module.path);
-                                    }}
-                                    className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-2 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-slate-700"
-                                >
-                                    {module.icon}
-                                    <p className="mt-1 text-xs font-medium text-gray-700 dark:text-gray-300">{module.name}</p>
-                                </div>
-                            ))}
+                           {modules.map((module, index) => {
+    const isEnabled = moduleState[module.name];
+    return (
+        <button
+            key={index}
+            onClick={() => {
+                if (!isEnabled) return; // block access
+                localStorage.setItem("active_module", module.name);
+                setActiveModule(module.name);
+                setShowModules(false);
+                if (module.path) navigate(module.path);
+            }}
+            disabled={!isEnabled}
+            className={`
+                flex cursor-pointer flex-col items-center justify-center rounded-lg p-2 transition-all duration-200 
+                ${isEnabled 
+                    ? "hover:bg-gray-100 dark:hover:bg-slate-700" 
+                    : "cursor-not-allowed bg-red-50  text-gray-400 dark:bg-slate-700/50"
+                }
+            `}
+            title={isEnabled ? "" : "Access Denied"}
+        >
+            {module.icon}
+            <p className="mt-1 text-xs font-medium">{module.name}</p>
+        </button>
+    );
+})}
+
                         </div>
                     )}
                 </div>
@@ -187,7 +202,10 @@ const handleLogout=()=>{
                             </div>
                             <button
                                 className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                                onClick={() => navigate("/profile")}
+                                onClick={() =>{
+                                    navigate("user/profile")
+                                    setShowProfile(false)
+                                }}
                             >
                                 Go to Profile
                             </button>
