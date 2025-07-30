@@ -299,12 +299,12 @@ const SettingsPanel = ({ component, updateComponentProps, unselectComponent }) =
                     </>
                 );
             default:
-                return <p className="text-gray-500">No editable properties for this component.</p>;
+                return unselectComponent()
         }
     };
 
     return (
-        <div className="absolute right-0 h-full w-[23rem] bg-white border-l border-gray-300 shadow-lg z-30">
+        <div className="absolute left-0 h-full w-[23rem] bg-white border-l border-gray-300 shadow-lg z-30">
             <div className="flex justify-between items-center p-4 border-b border-gray-200">
                 <h2 className="text-lg font-bold text-gray-800">{component.type} Settings</h2>
                 <button onClick={unselectComponent} className="p-1 text-gray-500 hover:text-gray-800">
@@ -1003,7 +1003,7 @@ const App = () => {
                 <div className="flex z-10 h-full flex-shrink-0">
                     <div className=" w-20 border-r border-gray-300 bg-white shadow-sm">
                         {types.map((el) => (
-                            <div key={el.name} className={`relative flex cursor-pointer flex-col items-center justify-center gap-1.5 py-4 transition-colors ${selectedType === el.name ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-100'}`} onClick={() => setSelectedType(el.name)}>
+                            <div key={el.name} className={`relative flex cursor-pointer flex-col items-center justify-center gap-1.5 py-4 transition-colors ${selectedType === el.name ? 'text-primary bg-blue-50' : 'text-gray-600 hover:bg-gray-100'}`} onClick={() => setSelectedType(el.name)}>
                                 {el.icon}
                                 <p className="text-xs font-medium">{el.name}</p>
                                 {selectedType === el.name && <div className="absolute -right-[1px] top-1/2 -translate-y-1/2 h-8 w-[2px] bg-blue-600 rounded-full" />}
@@ -1017,7 +1017,7 @@ const App = () => {
                                 <div className="grid grid-cols-2 gap-3">
                                     {typeOptions[selectedType].map((el) => (
                                         <div key={el.name} draggable onDragStart={(e) => handleDragStart(e, el.type)} className="flex cursor-grab flex-col items-center justify-center gap-2 rounded-lg border border-gray-200 p-3 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
-                                            <div className="text-blue-600">{el.icon}</div>
+                                            <div className="text-primary">{el.icon}</div>
                                             <p className="text-sm font-semibold text-gray-700">{el.name}</p>
                                         </div>
                                     ))}
@@ -1041,12 +1041,12 @@ const App = () => {
 
             {/* --- Main Canvas Area --- */}
             <div className="flex-1 flex flex-col overflow-hidden" onClick={() => setSelectedComponentId(null)}>
-                <div className="flex-shrink-0 flex justify-end items-center gap-4 p-4 bg-gray-100 border-b border-gray-200">
-                    <button onClick={() => setIsPreviewMode(!isPreviewMode)} className="flex items-center gap-2 bg-gray-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-600 transition-colors">
+                <div className="flex-shrink-0 flex justify-end items-center gap-4 p-4 bg-white border-b border-gray-200">
+                    <button onClick={() => setIsPreviewMode(!isPreviewMode)} className="flex items-center gap-2 bg-gray-500 text-white font-bold py-1 px-4 rounded-lg shadow-md hover:bg-gray-600 transition-colors">
                         {isPreviewMode ? <FaEyeSlash/> : <FaEye />}
                         {isPreviewMode ? 'Exit Preview' : 'Preview'}
                     </button>
-                    <button onClick={generateHtml} className="flex items-center gap-2 bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+                    <button onClick={generateHtml} className="flex items-center gap-2 bg-primary text-white font-bold py-1 px-2 rounded-lg shadow-md hover:bg-opacity-90 transition-colors">
                         <FaSave />
                         Save & Export HTML
                     </button>
