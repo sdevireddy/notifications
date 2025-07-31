@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { 
     FaLayerGroup, 
     FaThLarge, 
-    FaSmileWink, 
     FaMousePointer, 
     FaMinus, 
     FaParagraph, 
@@ -18,7 +17,13 @@ import {
     FaAlignLeft,
     FaAlignCenter,
     FaAlignRight,
-    FaUpload
+    FaUpload,
+    FaEye,
+    FaEyeSlash,
+    FaClone,
+    FaBold,
+    FaItalic,
+    FaUnderline
 } from "react-icons/fa";
 
 // --- Quill Editor Component ---
@@ -27,10 +32,12 @@ const QuillEditor = ({ value, onChange }) => {
     const editorRef = useRef(null);
     const quillRef = useRef(null);
 
-    // Effect to initialize Quill and handle script loading safely
+    // Effect to initialize Quill, handle script loading, and clean up the instance
     useEffect(() => {
         const initialize = () => {
+            // Only initialize if the editor div exists, there's no active Quill instance, and the Quill library is loaded
             if (editorRef.current && !quillRef.current && window.Quill) {
+                // Create a new Quill instance
                 quillRef.current = new window.Quill(editorRef.current, {
                     theme: 'snow',
                     modules: {
@@ -44,21 +51,21 @@ const QuillEditor = ({ value, onChange }) => {
                     },
                 });
 
-                // Set initial value
+                // Set initial value from props
                 if (value) {
                     quillRef.current.root.innerHTML = value;
                 }
 
-                // Setup listener for changes
+                // Setup listener for text changes
                 quillRef.current.on('text-change', (delta, oldDelta, source) => {
-                    if (source === 'user') {
+                    if (source === 'user' && quillRef.current) {
                         onChange(quillRef.current.root.innerHTML);
                     }
                 });
             }
         };
 
-        // Check if Quill script is already on the page
+        // Load the Quill script if it's not already on the page
         if (!document.querySelector('#quill-script')) {
             const quillScript = document.createElement('script');
             quillScript.id = 'quill-script';
@@ -76,9 +83,21 @@ const QuillEditor = ({ value, onChange }) => {
         } else {
             initialize();
         }
-    }, []);
+
+        // --- Cleanup function ---
+        // This function runs when the component unmounts
+        return () => {
+            // Nullify the ref to allow for re-initialization if the component remounts.
+            quillRef.current = null;
+            // Defensively clear the container's HTML. React's unmounting should handle this,
+            // but this ensures no residual Quill DOM elements are left behind.
+            if (editorRef.current) {
+                editorRef.current.innerHTML = '';
+            }
+        };
+    }, []); // Empty dependency array ensures this effect runs only on mount and unmount.
     
-    // Effect to sync editor with external state changes
+    // Effect to sync editor with external state changes (e.g., prop updates)
     useEffect(() => {
         if (quillRef.current && quillRef.current.root.innerHTML !== value) {
             const selection = quillRef.current.getSelection();
@@ -89,10 +108,8 @@ const QuillEditor = ({ value, onChange }) => {
         }
     }, [value]);
 
-
     return <div ref={editorRef} style={{ height: '200px', backgroundColor: 'white' }}></div>;
 };
-
 
 // --- Settings Panel Component ---
 // This component renders the editable properties for the selected component.
@@ -198,8 +215,14 @@ const SettingsPanel = ({ component, updateComponentProps, unselectComponent }) =
                 return (
                     <>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-600 mb-1">Heading Text</label>
-                            <input type="text" name="text" value={component.props.text} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md"/>
+                            <label className="block text-sm font-medium text-gray-600 mb-1">
+                                Heading Text
+                                <span className="text-xs text-gray-400 ml-2">(Edit directly on canvas)</span>
+                            </label>
+                             <div 
+                                className="w-full p-2 border border-gray-200 rounded-md bg-gray-50 min-h-[40px]"
+                                dangerouslySetInnerHTML={{ __html: component.props.text }}
+                             />
                         </div>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-600 mb-1">Heading Level</label>
@@ -276,12 +299,12 @@ const SettingsPanel = ({ component, updateComponentProps, unselectComponent }) =
                     </>
                 );
             default:
-                return <p className="text-gray-500">No editable properties for this component.</p>;
+                return unselectComponent()
         }
     };
 
     return (
-        <div className="absolute left-0 h-full w-[23rem] bg-white border-l border-gray-300 shadow-lg z-20">
+        <div className="absolute left-0 h-full w-[23rem] bg-white border-l border-gray-300 shadow-lg z-30">
             <div className="flex justify-between items-center p-4 border-b border-gray-200">
                 <h2 className="text-lg font-bold text-gray-800">{component.type} Settings</h2>
                 <button onClick={unselectComponent} className="p-1 text-gray-500 hover:text-gray-800">
@@ -295,6 +318,99 @@ const SettingsPanel = ({ component, updateComponentProps, unselectComponent }) =
     );
 };
 
+// --- Quick Access Toolbar ---
+const QuickAccessToolbar = ({ component, position, updateComponentProps, deleteComponent, duplicateComponent }) => {
+    if (!component || !position) return null;
+
+    const handleAlignmentChange = (alignment) => {
+        updateComponentProps(component.id, { alignment });
+    };
+    
+    // Function to apply text formatting using document.execCommand
+    const handleTextFormat = (command) => {
+        document.execCommand(command, false, null);
+        // Manually trigger an input event on the focused element to update state
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            const element = range.commonAncestorContainer.parentElement;
+            if (element && element.isContentEditable) {
+                 element.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+    };
+
+    const supportsAlignment = ['Button', 'Heading', 'Text', 'Image'].includes(component.type);
+    const supportsTextFormatting = ['Heading', 'Text'].includes(component.type);
+
+    return (
+        <div
+            className="absolute bg-slate-800 text-white rounded-lg shadow-xl p-1 flex items-center gap-1 z-20"
+            style={{ top: position.top, left: position.left, transform: 'translateY(-110%)' }}
+            onClick={(e) => e.stopPropagation()}
+        >
+            <span className="text-xs font-bold px-2">{component.type}</span>
+            <div className="w-px h-5 bg-slate-600 mx-1"></div>
+
+            {supportsTextFormatting && (
+                 <>
+                     <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleTextFormat('bold')} className="p-2 rounded-md hover:bg-slate-700" title="Bold"><FaBold /></button>
+                     <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleTextFormat('italic')} className="p-2 rounded-md hover:bg-slate-700" title="Italic"><FaItalic /></button>
+                     <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleTextFormat('underline')} className="p-2 rounded-md hover:bg-slate-700" title="Underline"><FaUnderline /></button>
+                     <div className="w-px h-5 bg-slate-600 mx-1"></div>
+                 </>
+            )}
+            
+            {supportsAlignment && (
+                <>
+                    <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleAlignmentChange('left')} className={`p-2 rounded-md ${component.props.alignment === 'left' ? 'bg-blue-500' : 'hover:bg-slate-700'}`} title="Align Left"><FaAlignLeft /></button>
+                    <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleAlignmentChange('center')} className={`p-2 rounded-md ${component.props.alignment === 'center' ? 'bg-blue-500' : 'hover:bg-slate-700'}`} title="Align Center"><FaAlignCenter /></button>
+                    <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleAlignmentChange('right')} className={`p-2 rounded-md ${component.props.alignment === 'right' ? 'bg-blue-500' : 'hover:bg-slate-700'}`} title="Align Right"><FaAlignRight /></button>
+                    <div className="w-px h-5 bg-slate-600 mx-1"></div>
+                </>
+            )}
+
+            <button onClick={() => duplicateComponent(component.id)} className="p-2 rounded-md hover:bg-slate-700" title="Duplicate"><FaClone /></button>
+            <button onClick={() => deleteComponent(component.id)} className="p-2 rounded-md hover:bg-red-500" title="Delete"><FaTrash /></button>
+        </div>
+    );
+};
+
+// --- Editable Content Component ---
+// A component to handle contentEditable elements without cursor jumping issues in React.
+const EditableContent = ({ tagName, html, isPreview, onUpdate, ...props }) => {
+    const elementRef = useRef(null);
+
+    // This effect updates the DOM's innerHTML only when the `html` prop
+    // differs from the current DOM content. This is the key to preventing
+    // the cursor from jumping out of position during user input.
+    useEffect(() => {
+        if (elementRef.current && html !== elementRef.current.innerHTML) {
+            elementRef.current.innerHTML = html;
+        }
+    }, [html]);
+
+    const handleInput = (event) => {
+        if (onUpdate) {
+            onUpdate(event.currentTarget.innerHTML);
+        }
+    };
+
+    const Tag = tagName || 'div';
+
+    // We render the component without children and let the effect manage the innerHTML.
+    // This avoids using `dangerouslySetInnerHTML` in the render return, which can cause re-renders to reset the element.
+    return (
+        <Tag
+            {...props}
+            ref={elementRef}
+            contentEditable={!isPreview}
+            suppressContentEditableWarning={true}
+            onInput={handleInput}
+        />
+    );
+};
+
 
 // Main component for the entire application
 const App = () => {
@@ -302,7 +418,6 @@ const App = () => {
     const types = [
         { name: "Content", icon: <FaLayerGroup size={24} /> },
         { name: "Blocks", icon: <FaThLarge size={24} /> },
-        // { name: "Body", icon: <FaSmileWink size={24} /> },
     ];
 
     // Component data: Options available for each type
@@ -324,7 +439,6 @@ const App = () => {
             { blocks: 2, per: ["33%", "67%"] },
             { blocks: 2, per: ["67%", "33%"] },
         ],
-        Body: [],
     };
 
     // State to manage the content on the canvas
@@ -339,6 +453,14 @@ const App = () => {
     const [showExportModal, setShowExportModal] = useState(false);
     const [exportedHtml, setExportedHtml] = useState('');
     const [copySuccess, setCopySuccess] = useState(false);
+    // State for the new preview mode
+    const [isPreviewMode, setIsPreviewMode] = useState(false);
+    // State for the quick access toolbar position
+    const [toolbarPosition, setToolbarPosition] = useState(null);
+    // Refs for component DOM elements
+    const componentRefs = useRef({});
+    const canvasScrollRef = useRef(null);
+
 
     // --- Helper Functions ---
 
@@ -430,6 +552,48 @@ const App = () => {
         setCanvasContent(prevContent => filterRecursive(prevContent));
     };
     
+    // Duplicates a component
+    const duplicateComponent = (componentId) => {
+        // Helper to recursively find the component and its parent array
+        const findComponentAndParent = (items, id) => {
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                if (item.id === id) {
+                    return { component: item, parent: items, index: i };
+                }
+                if (item.type === "Block") {
+                    for (const childArray of item.children) {
+                        const found = findComponentAndParent(childArray, id);
+                        if (found) return found;
+                    }
+                }
+            }
+            return null;
+        };
+
+        // Deep clone and create new IDs for the component and any children
+        const deepCloneWithNewIds = (item) => {
+            const newItem = { ...item, props: { ...item.props }, id: `comp-${Date.now()}-${Math.random()}` };
+            if (item.type === "Block" && item.children) {
+                newItem.children = item.children.map(childArray => childArray.map(deepCloneWithNewIds));
+            }
+            return newItem;
+        };
+
+        setCanvasContent(prev => {
+            const newContent = JSON.parse(JSON.stringify(prev));
+            const found = findComponentAndParent(newContent, componentId);
+
+            if (found) {
+                const componentToDuplicate = found.component;
+                const newComponent = deepCloneWithNewIds(componentToDuplicate);
+                found.parent.splice(found.index + 1, 0, newComponent);
+            }
+            
+            return newContent;
+        });
+    };
+    
     // Reorders components within the canvas
     const reorderComponents = (sourceId, targetId, position) => {
         let sourceComponent = null;
@@ -486,34 +650,70 @@ const App = () => {
         e.stopPropagation();
     };
 
+    // This handler cleans up the drag indicator if a drag operation is cancelled
+    const handleDragEnd = () => {
+        setDragIndicator(null);
+    };
+
     const handleDrop = (e, targetBlockId = null, targetCellIndex = null) => {
         e.preventDefault();
         e.stopPropagation();
-        setDragIndicator(null);
-
+        
         const sourceComponentId = e.dataTransfer.getData("sourceComponentId");
         
+        // Handle reordering of existing components
         if (sourceComponentId && dragIndicator) {
              reorderComponents(sourceComponentId, dragIndicator.targetId, dragIndicator.position);
+             setDragIndicator(null);
              return;
         }
 
         const componentType = e.dataTransfer.getData("componentType");
-        if (!componentType) return;
+        if (!componentType) {
+            setDragIndicator(null);
+            return;
+        }
         
         const componentData = e.dataTransfer.getData("componentData");
         const parsedData = componentData ? JSON.parse(componentData) : {};
         const newComponent = createNewComponent(componentType, parsedData);
 
+        // Logic to insert a NEW component at a specific position
+        const insertNewComponent = (content) => {
+            // If there's no drag indicator, just add to the end of the current level
+            if (!dragIndicator) {
+                return [...content, newComponent];
+            }
+
+            const newContent = [];
+            let inserted = false;
+            for (const item of content) {
+                if (item.id === dragIndicator.targetId) {
+                    if (dragIndicator.position === 'top') {
+                        newContent.push(newComponent, item);
+                    } else {
+                        newContent.push(item, newComponent);
+                    }
+                    inserted = true;
+                } else {
+                    newContent.push(item);
+                }
+            }
+            // If target wasn't found (shouldn't happen), add to end
+            if (!inserted) {
+                newContent.push(newComponent);
+            }
+            return newContent;
+        };
+
+        // Drop into a specific cell of a "Block" component
         if (targetBlockId !== null && targetCellIndex !== null) {
             setCanvasContent(prev => {
                 const newContent = JSON.parse(JSON.stringify(prev));
-                
                 const findBlock = (items) => {
                     for(const item of items) {
                         if(item.id === targetBlockId) return item;
                         if(item.type === "Block") {
-                            // Recursively check within children of nested blocks
                             for (const childArray of item.children) {
                                 const found = findBlock(childArray);
                                 if (found) return found;
@@ -522,22 +722,25 @@ const App = () => {
                     }
                     return null;
                 }
-                
                 const block = findBlock(newContent);
                 if(block) {
-                    // Ensure the target children array exists
                     if (!block.children[targetCellIndex]) {
                         block.children[targetCellIndex] = [];
                     }
-                    block.children[targetCellIndex].push(newComponent);
+                    // Use the insertion logic for dropping within a block cell
+                    block.children[targetCellIndex] = insertNewComponent(block.children[targetCellIndex]);
                 }
-
                 return newContent;
             });
+        // Drop onto the main canvas
         } else {
-            setCanvasContent(prev => [...prev, newComponent]);
+            setCanvasContent(prev => insertNewComponent(prev));
         }
-        e.currentTarget.classList.remove("border-blue-500", "bg-blue-50");
+
+        setDragIndicator(null);
+        if(e.currentTarget.classList.contains("border-blue-500")) {
+            e.currentTarget.classList.remove("border-blue-500", "bg-blue-50");
+        }
     };
 
     const handleDragOver = (e) => {
@@ -561,8 +764,9 @@ const App = () => {
 
     // --- Rendering Functions ---
 
-    const renderCanvasContent = (content) => {
+    const renderCanvasContent = (content, isPreview) => {
         return content.map((item) => {
+            componentRefs.current[item.id] = componentRefs.current[item.id] || React.createRef();
             const isSelected = selectedComponentId === item.id;
             const indicatorClass = dragIndicator?.targetId === item.id 
                 ? (dragIndicator.position === 'top' ? 'border-t-4 border-blue-500' : 'border-b-4 border-blue-500') 
@@ -574,42 +778,67 @@ const App = () => {
 
             return (
                 <div 
-                    key={item.id} 
-                    className={`relative group p-1 transition-all ${isSelected ? 'outline outline-2 outline-blue-600' : ''} ${indicatorClass}`}
-                    onClick={(e) => { e.stopPropagation(); setSelectedComponentId(item.id); }}
-                    draggable
+                    key={item.id}
+                    ref={componentRefs.current[item.id]}
+                    className={`relative group transition-all ${!isPreview ? 'p-1' : ''} ${isSelected && !isPreview ? 'outline outline-2 outline-blue-600' : ''} ${indicatorClass}`}
+                    onClick={(e) => { 
+                        if (isPreview) return;
+                        e.stopPropagation(); 
+                        setSelectedComponentId(item.id); 
+                    }}
+                    draggable={!isPreview}
                     onDragStart={(e) => handleCanvasDragStart(e, item.id)}
                     onDragOver={(e) => handleCanvasDragOver(e, item.id)}
+                    onDragEnd={handleDragEnd} 
                     style={wrapperStyle}
                 >
-                    {renderComponent(item)}
-                    <button 
-                        onClick={(e) => { e.stopPropagation(); deleteComponent(item.id); }}
-                        className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                        aria-label="Delete component"
-                    >
-                        <FaTrash size={12}/>
-                    </button>
+                    {renderComponent(item, isPreview)}
+                    {isSelected && !isPreview && (
+                         <div
+                            onClick={(e) => { e.stopPropagation(); deleteComponent(item.id); }}
+                            className="absolute top-0 right-0 -mt-3 -mr-3 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 cursor-pointer"
+                            aria-label="Delete component"
+                        >
+                            <FaTrash size={12}/>
+                        </div>
+                    )}
                 </div>
             );
         });
     };
 
-    const renderComponent = (item) => {
+    const renderComponent = (item, isPreview) => {
         const style = { ...item.props };
-        // We handle alignment on the wrapper, so remove it from the component's direct style
         delete style.alignment;
         const Tag = item.type === 'Heading' ? (item.props.tag || 'h1') : 'div';
 
+        // Use onInput to update state immediately on any change
+        const handleContentUpdate = (newHtml) => {
+            updateComponentProps(item.id, { text: newHtml });
+        };
 
         switch (item.type) {
             case "Button":
                 return <button style={style} className="font-bold py-2 px-4 rounded shadow-md hover:brightness-90 transition-all inline-block">{style.text}</button>;
             case "Text":
-                return <div style={style} className="text-gray-700" dangerouslySetInnerHTML={{ __html: style.text }}></div>;
+                return <EditableContent 
+                    tagName="div"
+                    style={style} 
+                    className="text-gray-700" 
+                    html={item.props.text}
+                    isPreview={isPreview}
+                    onUpdate={handleContentUpdate}
+                />;
             case "Heading":
                 delete style.tag;
-                return <Tag style={style} className="font-bold text-gray-800">{style.text}</Tag>;
+                return <EditableContent
+                    tagName={Tag}
+                    style={style} 
+                    className="font-bold text-gray-800"
+                    html={item.props.text}
+                    isPreview={isPreview}
+                    onUpdate={handleContentUpdate}
+                />;
             case "Divider":
                 return <hr className="border-t-2 border-gray-300 my-4" />;
             case "Image":
@@ -625,14 +854,14 @@ const App = () => {
                             <div
                                 key={i}
                                 style={{ width: width }}
-                                className="min-h-[100px] border-2 border-dashed border-gray-300 rounded-lg p-2 transition-colors duration-300 flex flex-col gap-2"
+                                className={`min-h-[100px] rounded-lg p-2 flex flex-col gap-2 ${!isPreview ? 'border-2 border-dashed border-gray-300 transition-colors duration-300' : ''}`}
                                 onDrop={(e) => handleDrop(e, item.id, i)}
                                 onDragOver={handleDragOver}
                                 onDragLeave={handleDragLeave}
                             >
                                 {item.children[i] && item.children[i].length > 0 
-                                    ? renderCanvasContent(item.children[i])
-                                    : <div className="flex items-center justify-center h-full text-gray-400 pointer-events-none">Drop here</div>
+                                    ? renderCanvasContent(item.children[i], isPreview)
+                                    : !isPreview && <div className="flex items-center justify-center h-full text-gray-400 pointer-events-none">Drop here</div>
                                 }
                             </div>
                         ))}
@@ -648,7 +877,6 @@ const App = () => {
         const generateStyleString = (props) => {
             let style = '';
             for (const key in props) {
-                // Exclude properties that are handled separately or are not CSS properties
                 if (key !== 'text' && key !== 'src' && key !== 'html' && key !== 'alignment' && key !== 'tag') {
                     const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
                     style += `${cssKey}: ${props[key]}; `;
@@ -676,7 +904,6 @@ const App = () => {
                         elementHtml = `<${Tag} style="${style}">${item.props.text}</${Tag}>`;
                         break;
                     case 'Image':
-                        // For base64 images, the src is already the full data URL
                         elementHtml = `<img src="${item.props.src}" style="${style}" alt="image" />`;
                         break;
                     case 'Divider':
@@ -692,7 +919,6 @@ const App = () => {
                         return '';
                 }
 
-                // Wrap elements that support alignment in a div with the text-align style
                 if (['Button', 'Heading', 'Text', 'Image', 'HTML'].includes(item.type)) {
                     return `<div style="${alignmentStyle}">${elementHtml}</div>`;
                 }
@@ -724,7 +950,6 @@ const App = () => {
     const copyToClipboard = () => {
         const textArea = document.createElement('textarea');
         textArea.value = exportedHtml;
-        // Avoid scrolling to bottom
         textArea.style.top = "0";
         textArea.style.left = "0";
         textArea.style.position = "fixed";
@@ -743,64 +968,104 @@ const App = () => {
 
     const selectedComponent = findComponentById(canvasContent, selectedComponentId);
 
+    // Effect to update toolbar position when selection changes or canvas scrolls
+    useEffect(() => {
+        const updatePosition = () => {
+            if (selectedComponentId && componentRefs.current[selectedComponentId]?.current) {
+                const componentRect = componentRefs.current[selectedComponentId].current.getBoundingClientRect();
+                const canvasRect = canvasScrollRef.current.getBoundingClientRect();
+                setToolbarPosition({
+                    top: componentRect.top - canvasRect.top + canvasScrollRef.current.scrollTop,
+                    left: componentRect.left - canvasRect.left,
+                });
+            } else {
+                setToolbarPosition(null);
+            }
+        };
+
+        updatePosition();
+        
+        const canvasElement = canvasScrollRef.current;
+        if (canvasElement) {
+            canvasElement.addEventListener('scroll', updatePosition);
+            return () => {
+                canvasElement.removeEventListener('scroll', updatePosition);
+            };
+        }
+
+    }, [selectedComponentId, canvasContent]);
+
+
     return (
         <main className="flex h-screen bg-gray-100 font-sans relative overflow-hidden">
             {/* --- Left Sidebar: Component Types & Options --- */}
-            <div className="flex z-10 h-full">
-                <div className=" w-20 border-r border-gray-300 bg-white shadow-sm">
-                    {types.map((el) => (
-                        <div key={el.name} className={`relative flex cursor-pointer flex-col items-center justify-center gap-1.5 py-4 transition-colors ${selectedType === el.name ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-100'}`} onClick={() => setSelectedType(el.name)}>
-                            {el.icon}
-                            <p className="text-xs font-medium">{el.name}</p>
-                            {selectedType === el.name && <div className="absolute -right-[1px] top-1/2 -translate-y-1/2 h-8 w-[2px] bg-blue-600 rounded-full" />}
-                        </div>
-                    ))}
-                </div>
-                <div className="h-full w-72 bg-white border-r border-gray-300 flex flex-col">
-                    <h2 className="text-lg font-bold text-gray-800 p-4 border-b border-gray-200 flex-shrink-0">{selectedType}</h2>
-                    <div className="overflow-y-auto p-4">
-                        {selectedType === "Content" && (
-                            <div className="grid grid-cols-2 gap-3">
-                                {typeOptions[selectedType].map((el) => (
-                                    <div key={el.name} draggable onDragStart={(e) => handleDragStart(e, el.type)} className="flex cursor-grab flex-col items-center justify-center gap-2 rounded-lg border border-gray-200 p-3 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
-                                        <div className="text-blue-600">{el.icon}</div>
-                                        <p className="text-sm font-semibold text-gray-700">{el.name}</p>
-                                    </div>
-                                ))}
+            {!isPreviewMode && (
+                <div className="flex z-10 h-full flex-shrink-0">
+                    <div className=" w-20 border-r border-gray-300 bg-white shadow-sm">
+                        {types.map((el) => (
+                            <div key={el.name} className={`relative flex cursor-pointer flex-col items-center justify-center gap-1.5 py-4 transition-colors ${selectedType === el.name ? 'text-primary bg-blue-50' : 'text-gray-600 hover:bg-gray-100'}`} onClick={() => setSelectedType(el.name)}>
+                                {el.icon}
+                                <p className="text-xs font-medium">{el.name}</p>
+                                {selectedType === el.name && <div className="absolute -right-[1px] top-1/2 -translate-y-1/2 h-8 w-[2px] bg-blue-600 rounded-full" />}
                             </div>
-                        )}
-                        {selectedType === "Blocks" && (
-                            <div className="flex flex-col gap-3">
-                                {typeOptions[selectedType].map((el, ind) => (
-                                    <div key={ind} draggable onDragStart={(e) => handleDragStart(e, "Block", { per: el.per })} className="w-full p-2 rounded-md border border-gray-200 hover:border-blue-400 hover:shadow-md cursor-grab transition-all">
-                                        <div className="flex w-full gap-1">
-                                            {el.per.map((p, pInd) => <div key={pInd} style={{ width: p }} className="h-10 bg-gray-100 rounded-sm flex items-center justify-center"><p className="text-gray-500 text-xs select-none">{p}</p></div>)}
+                        ))}
+                    </div>
+                    <div className="h-full w-72 bg-white border-r border-gray-300 flex flex-col">
+                        <h2 className="text-lg font-bold text-gray-800 p-4 border-b border-gray-200 flex-shrink-0">{selectedType}</h2>
+                        <div className="overflow-y-auto p-4">
+                            {selectedType === "Content" && (
+                                <div className="grid grid-cols-2 gap-3">
+                                    {typeOptions[selectedType].map((el) => (
+                                        <div key={el.name} draggable onDragStart={(e) => handleDragStart(e, el.type)} className="flex cursor-grab flex-col items-center justify-center gap-2 rounded-lg border border-gray-200 p-3 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+                                            <div className="text-primary">{el.icon}</div>
+                                            <p className="text-sm font-semibold text-gray-700">{el.name}</p>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                         {selectedType === "Body" && <div className="p-4 text-center text-gray-500">Body settings will appear here.</div>}
+                                    ))}
+                                </div>
+                            )}
+                            {selectedType === "Blocks" && (
+                                <div className="flex flex-col gap-3">
+                                    {typeOptions[selectedType].map((el, ind) => (
+                                        <div key={ind} draggable onDragStart={(e) => handleDragStart(e, "Block", { per: el.per })} className="w-full p-2 rounded-md border border-gray-200 hover:border-blue-400 hover:shadow-md cursor-grab transition-all">
+                                            <div className="flex w-full gap-1">
+                                                {el.per.map((p, pInd) => <div key={pInd} style={{ width: p }} className="h-10 bg-gray-100 rounded-sm flex items-center justify-center"><p className="text-gray-500 text-xs select-none">{p}</p></div>)}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* --- Main Canvas Area --- */}
             <div className="flex-1 flex flex-col overflow-hidden" onClick={() => setSelectedComponentId(null)}>
-                <div className="flex-shrink-0 flex justify-end p-4 bg-gray-100 border-b border-gray-200">
-                    <button onClick={generateHtml} className="flex items-center gap-2 bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+                <div className="flex-shrink-0 flex justify-end items-center gap-4 p-4 bg-white border-b border-gray-200">
+                    <button onClick={() => setIsPreviewMode(!isPreviewMode)} className="flex items-center gap-2 bg-gray-500 text-white font-bold py-1 px-4 rounded-lg shadow-md hover:bg-gray-600 transition-colors">
+                        {isPreviewMode ? <FaEyeSlash/> : <FaEye />}
+                        {isPreviewMode ? 'Exit Preview' : 'Preview'}
+                    </button>
+                    <button onClick={generateHtml} className="flex items-center gap-2 bg-primary text-white font-bold py-1 px-2 rounded-lg shadow-md hover:bg-opacity-90 transition-colors">
                         <FaSave />
                         Save & Export HTML
                     </button>
                 </div>
-                <div className="flex-1 overflow-y-auto p-4" onDragLeave={() => setDragIndicator(null)}>
+                <div ref={canvasScrollRef} className="flex-1 overflow-y-auto p-4">
                     <div 
-                        className="bg-white w-full max-w-4xl mx-auto rounded-lg shadow-inner border border-gray-200 p-4 min-h-full" 
+                        className="bg-white w-full max-w-4xl mx-auto rounded-lg shadow-inner border border-gray-200 p-4 min-h-full relative" 
                         onDrop={(e) => handleDrop(e)} 
                         onDragOver={handleDragOver} 
                         onDragLeave={handleDragLeave}
                     >
-                        {canvasContent.length > 0 ? renderCanvasContent(canvasContent) : (
+                        {!isPreviewMode && <QuickAccessToolbar 
+                            component={selectedComponent} 
+                            position={toolbarPosition}
+                            updateComponentProps={updateComponentProps}
+                            deleteComponent={deleteComponent}
+                            duplicateComponent={duplicateComponent}
+                        />}
+                        {canvasContent.length > 0 ? renderCanvasContent(canvasContent, isPreviewMode) : (
                             <div className="flex items-center justify-center h-full text-center text-gray-400 text-lg pointer-events-none">
                                 <p>Drag and drop components here to start building your template.</p>
                             </div>
@@ -810,8 +1075,9 @@ const App = () => {
             </div>
 
             {/* --- Right Sidebar: Settings Panel --- */}
-            {selectedComponent && (
+            {selectedComponent && !isPreviewMode && (
                 <SettingsPanel 
+                    key={selectedComponent.id} 
                     component={selectedComponent} 
                     updateComponentProps={updateComponentProps}
                     unselectComponent={() => setSelectedComponentId(null)}

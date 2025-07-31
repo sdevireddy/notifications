@@ -51,6 +51,7 @@ import OrganizationProfile from "./routes/OrgProfile.jsx/OrgProfile";
 import UserProfile from "./routes/user/UserProfile";
 import AddEmployeePage from "./components/add-employee-modal";
 import AddPerformancePage from "./components/add-performance";
+import EmployeeDetailsPage from "./routes/HR/employee/Employee-details";
 import MarkAttendancePage from "./components/mark-attendance";
 import RoleEditPage from "./routes/roles/EditRole";
 import MarketingSettings from "./routes/Marketing/MarketingSettings";
@@ -102,6 +103,7 @@ const router = createBrowserRouter([
               { path: "", element: <HrDashboard /> },
               { path: "employees", element: <Employee /> },
               { path: "add-employee", element: <AddEmployeePage />},
+              { path: "employee-details/:id", element: <EmployeeDetailsPage />},
               { path: "attendance", element: <Attendance /> },
               { path: "mark-attendance", element: <MarkAttendancePage />},
               { path: "payroll", element: <Payroll /> },

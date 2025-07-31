@@ -28,7 +28,7 @@ const Settings = () => {
 
   return (
     <div className="px-6 bg-white h-full">
-      <div className="flex items-center justify-between border-b py-4">
+      <div className="flex items-center justify-between  py-4">
                 <div className="flex items-center gap-4">
                     <h1 className="text-xl font-semibold text-gray-900">Settings</h1>
                     <BreadCrumb />
@@ -53,7 +53,7 @@ const Settings = () => {
               key={index}
               className="flex items-center gap-4 p-2 bg-white rounded-xl shadow hover:shadow-md hover:bg-blue-50 transition-all border"
             >
-              <div className="text-blue-600 text-xl">{option.icon}</div>
+              <div className="text-primary text-xl">{option.icon}</div>
               <div className=" font-medium text-gray-800">{option.label}</div>
             </Link>
           ))

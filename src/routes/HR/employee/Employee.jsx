@@ -33,7 +33,6 @@ import {
 import Tooltip from "./../../../components/ToolTip"
 import Table from "./../../../components/Table"
 import BreadCrumb from "./../../../components/BreadCrumb"
-import { EmployeeProfileModal } from "./../../../components/employee-profile-modal"
 
 export default function EmployeePage() {
   const navigate = useNavigate()
@@ -274,23 +273,11 @@ export default function EmployeePage() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() => {
-                    setSelectedEmployee(row.original)
-                    setIsProfileModalOpen(true)
-                    setIsEditMode(false)
-                  }}
-                >
+                <DropdownMenuItem onClick={() => navigate(`/hr/employee-details/${row.original.id}`)}>
                   <User className="mr-2 h-4 w-4" />
-                  View Profile
+                  View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setSelectedEmployee(row.original)
-                    setIsProfileModalOpen(true)
-                    setIsEditMode(true)
-                  }}
-                >
+                <DropdownMenuItem onClick={() => navigate(`/hr/employee-details/${row.original.id}?edit=true`)}>
                   <Edit className="mr-2 h-4 w-4" />
                   Edit Employee
                 </DropdownMenuItem>
@@ -304,7 +291,7 @@ export default function EmployeePage() {
         ),
       },
     ],
-    [employees],
+    [employees, navigate],
   )
 
   const handleDeleteEmployee = async (employee) => {
@@ -340,9 +327,9 @@ export default function EmployeePage() {
 
   return (
     <div className="min-h-screen flex-1 bg-white">
-      <div className="flex items-center justify-between border-b px-6 py-2">
+      <div className="flex items-center justify-between border-b px-6 py-4">
         <div className="flex items-center gap-4">
-          <h1 className="text-xl font-semibold text-gray-900">Employees</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">Employees</h1>
           <BreadCrumb />
         </div>
         <div className="flex items-center gap-3">
@@ -353,7 +340,7 @@ export default function EmployeePage() {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="primary">
+              <Button variant="outline">
                 Actions <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -390,7 +377,7 @@ export default function EmployeePage() {
         </div>
       </div>
 
-      <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-2">
+      <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-4">
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
@@ -448,19 +435,6 @@ export default function EmployeePage() {
           </Button>
         </div>
       </div>
-
-      {/* Employee Profile Modal */}
-      <EmployeeProfileModal
-        employee={selectedEmployee}
-        isOpen={isProfileModalOpen}
-        onClose={() => {
-          setIsProfileModalOpen(false)
-          setSelectedEmployee(null)
-          setIsEditMode(false)
-        }}
-        onEdit={handleEditEmployee}
-        onDelete={handleDeleteEmployee}
-      />
     </div>
   )
 }

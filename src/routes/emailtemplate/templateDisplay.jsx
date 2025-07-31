@@ -33,15 +33,15 @@ const TemplateDisplay = () => {
   );
 
   return (
-    <div className="px-4 py-6 bg-white min-h-screen">
-      <div className="flex items-center justify-between border-b mb-5 pb-4">
+    <div className="px-4 py-5 bg-white min-h-screen">
+      <div className="flex items-center justify-between  mb-5 ">
         <div className="flex items-center gap-4">
           <h1 className="text-xl font-semibold text-gray-900">Templates</h1>
           <BreadCrumb />
         </div>
         <Link
           to="/templates/create"
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm"
+          className="bg-primary text-white px-4 py-2 rounded-md text-sm"
         >
           + Create Template
         </Link>
