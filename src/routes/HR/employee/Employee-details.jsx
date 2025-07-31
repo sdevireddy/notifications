@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -34,6 +34,7 @@ import BreadCrumb from "./../../../components/BreadCrumb"
 export default function EmployeeDetailsPage() {
   const navigate = useNavigate()
   const { id } = useParams()
+  const [searchParams] = useSearchParams()
   const [employee, setEmployee] = useState(null)
   const [isEditMode, setIsEditMode] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -64,7 +65,136 @@ export default function EmployeeDetailsPage() {
     aadharNumber: "",
   })
 
-  // Mock data - replace with API call
+  // Mock employee database - this should match your employee list data
+  const mockEmployeeDatabase = [
+    {
+      id: 1,
+      employeeId: "EMP001",
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@company.com",
+      mobile: "+91-9876543210",
+      dateOfBirth: "1990-05-15",
+      address: "123 Main Street, City, State 12345",
+      emergencyContactName: "Jane Doe",
+      emergencyContactRelation: "Spouse",
+      emergencyContactPhone: "+91-9876543211",
+      department: "Engineering",
+      designation: "Software Engineer",
+      joiningDate: "2023-01-15",
+      status: "Active",
+      manager: "Jane Smith",
+      workLocation: "Bangalore Office",
+      employmentType: "Full-time",
+      salary: "₹8,00,000",
+      bankAccount: "1234567890",
+      panNumber: "ABCDE1234F",
+      aadharNumber: "1234 5678 9012",
+      profileImage: null,
+    },
+    {
+      id: 2,
+      employeeId: "EMP002",
+      firstName: "Sarah",
+      lastName: "Johnson",
+      email: "sarah.johnson@company.com",
+      mobile: "+91-9876543211",
+      dateOfBirth: "1988-08-22",
+      address: "456 Oak Avenue, City, State 54321",
+      emergencyContactName: "Mike Johnson",
+      emergencyContactRelation: "Husband",
+      emergencyContactPhone: "+91-9876543212",
+      department: "Marketing",
+      designation: "Marketing Manager",
+      joiningDate: "2022-08-20",
+      status: "Active",
+      manager: "Mike Wilson",
+      workLocation: "Mumbai Office",
+      employmentType: "Full-time",
+      salary: "₹12,00,000",
+      bankAccount: "2345678901",
+      panNumber: "BCDEF2345G",
+      aadharNumber: "2345 6789 0123",
+      profileImage: null,
+    },
+    {
+      id: 3,
+      employeeId: "EMP003",
+      firstName: "Mike",
+      lastName: "Davis",
+      email: "mike.davis@company.com",
+      mobile: "+91-9876543212",
+      dateOfBirth: "1992-03-10",
+      address: "789 Pine Street, City, State 67890",
+      emergencyContactName: "Lisa Davis",
+      emergencyContactRelation: "Wife",
+      emergencyContactPhone: "+91-9876543213",
+      department: "Sales",
+      designation: "Sales Executive",
+      joiningDate: "2023-03-10",
+      status: "Active",
+      manager: "Lisa Brown",
+      workLocation: "Delhi Office",
+      employmentType: "Full-time",
+      salary: "₹6,00,000",
+      bankAccount: "3456789012",
+      panNumber: "CDEFG3456H",
+      aadharNumber: "3456 7890 1234",
+      profileImage: null,
+    },
+    {
+      id: 4,
+      employeeId: "EMP004",
+      firstName: "Emily",
+      lastName: "Chen",
+      email: "emily.chen@company.com",
+      mobile: "+91-9876543213",
+      dateOfBirth: "1991-11-05",
+      address: "321 Elm Drive, City, State 13579",
+      emergencyContactName: "David Chen",
+      emergencyContactRelation: "Brother",
+      emergencyContactPhone: "+91-9876543214",
+      department: "HR",
+      designation: "HR Specialist",
+      joiningDate: "2022-11-05",
+      status: "Active",
+      manager: "Robert Kim",
+      workLocation: "Bangalore Office",
+      employmentType: "Full-time",
+      salary: "₹7,50,000",
+      bankAccount: "4567890123",
+      panNumber: "DEFGH4567I",
+      aadharNumber: "4567 8901 2345",
+      profileImage: null,
+    },
+    {
+      id: 5,
+      employeeId: "EMP005",
+      firstName: "David",
+      lastName: "Wilson",
+      email: "david.wilson@company.com",
+      mobile: "+91-9876543214",
+      dateOfBirth: "1989-02-28",
+      address: "654 Maple Lane, City, State 24680",
+      emergencyContactName: "Anna Wilson",
+      emergencyContactRelation: "Sister",
+      emergencyContactPhone: "+91-9876543215",
+      department: "Finance",
+      designation: "Financial Analyst",
+      joiningDate: "2023-02-28",
+      status: "Inactive",
+      manager: "Anna Lee",
+      workLocation: "Chennai Office",
+      employmentType: "Full-time",
+      salary: "₹9,00,000",
+      bankAccount: "5678901234",
+      panNumber: "EFGHI5678J",
+      aadharNumber: "5678 9012 3456",
+      profileImage: null,
+    },
+  ]
+
+  // Fetch employee data based on ID
   const fetchEmployee = async () => {
     setLoading(true)
     try {
@@ -72,37 +202,20 @@ export default function EmployeeDetailsPage() {
       // const response = await fetch(`/api/employees/${id}`)
       // const data = await response.json()
 
-      // Mock data for now
-      const employeeData = {
-        id: Number.parseInt(id),
-        employeeId: "EMP001",
-        firstName: "John",
-        lastName: "Doe",
-        email: "john.doe@company.com",
-        mobile: "+91-9876543210",
-        dateOfBirth: "1990-05-15",
-        address: "123 Main Street, City, State 12345",
-        emergencyContactName: "Jane Doe",
-        emergencyContactRelation: "Spouse",
-        emergencyContactPhone: "+91-9876543211",
-        department: "Engineering",
-        designation: "Software Engineer",
-        joiningDate: "2023-01-15",
-        status: "Active",
-        manager: "Jane Smith",
-        workLocation: "Bangalore Office",
-        employmentType: "Full-time",
-        salary: "₹8,00,000",
-        bankAccount: "1234567890",
-        panNumber: "ABCDE1234F",
-        aadharNumber: "1234 5678 9012",
-        profileImage: null,
+      // Find employee by ID from mock database
+      const employeeData = mockEmployeeDatabase.find((emp) => emp.id === Number.parseInt(id))
+
+      if (!employeeData) {
+        setEmployee(null)
+        setLoading(false)
+        return
       }
 
       setEmployee(employeeData)
       setFormData(employeeData)
     } catch (error) {
       console.error("Error fetching employee:", error)
+      setEmployee(null)
     } finally {
       setLoading(false)
     }
@@ -113,6 +226,14 @@ export default function EmployeeDetailsPage() {
       fetchEmployee()
     }
   }, [id])
+
+  // Check for edit mode from URL parameters
+  useEffect(() => {
+    const editParam = searchParams.get("edit")
+    if (editParam === "true") {
+      setIsEditMode(true)
+    }
+  }, [searchParams])
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -134,6 +255,9 @@ export default function EmployeeDetailsPage() {
       console.log("Employee updated:", formData)
       setEmployee(formData)
       setIsEditMode(false)
+
+      // Remove edit parameter from URL
+      navigate(`/hr/employee-details/${id}`, { replace: true })
     } catch (error) {
       console.error("Error updating employee:", error)
     } finally {
@@ -161,7 +285,18 @@ export default function EmployeeDetailsPage() {
     const now = new Date()
     const years = now.getFullYear() - joining.getFullYear()
     const months = now.getMonth() - joining.getMonth()
-    return `${years} years, ${months} months`
+
+    // Adjust for negative months
+    const adjustedMonths = months < 0 ? months + 12 : months
+    const adjustedYears = months < 0 ? years - 1 : years
+
+    if (adjustedYears === 0) {
+      return `${adjustedMonths} months`
+    } else if (adjustedMonths === 0) {
+      return `${adjustedYears} years`
+    } else {
+      return `${adjustedYears} years, ${adjustedMonths} months`
+    }
   }
 
   if (loading) {
@@ -180,6 +315,7 @@ export default function EmployeeDetailsPage() {
       <div className="min-h-screen flex-1 bg-white flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold mb-2">Employee Not Found</h2>
+          <p className="text-gray-600 mb-4">The employee with ID {id} could not be found.</p>
           <Button onClick={() => navigate("/hr/employees")}>Back to Employees</Button>
         </div>
       </div>

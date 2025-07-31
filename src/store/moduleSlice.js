@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialValue={
    CRM:true,
-   HR:false,
+   HR:true,
    Books:false,
    Marketing:false,
    Campaigns:false,
