@@ -57,6 +57,7 @@ import CredentialForm from "./routes/Marketing/CredentialsForm";
 import CreateSocialMediaCampaign from "./routes/Marketing/socialmediamarketing/CreateSocialMediaCampaign"
 import CreateSMSCampaign from "./routes/Marketing/smsmarketing/CreateSMSCampaign"
 import TemplateBuilder from "./routes/emailtemplate/Test";
+import Tasks from "./routes/tasks/Tasks";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -94,6 +95,7 @@ const router = createBrowserRouter([
            { path: "roles/create", element: <CreateRole /> },
              { path: "roles/edit", element: <RoleEditPage /> },
            { path:"org/profile",element:<OrganizationProfile/>},
+           { path:"tasks",element:<Tasks/>},
           {
             path: "hr",
             children: [
