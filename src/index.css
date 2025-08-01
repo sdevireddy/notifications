@@ -7,7 +7,9 @@
   --color-primary: #3b82f6;
 }
 
-
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
 body {
   font-family: 'Poppins', sans-serif;
 }
