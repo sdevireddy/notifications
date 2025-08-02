@@ -45,8 +45,8 @@ import SmsMarketing from "./routes/Marketing/smsmarketing/SmsMarketing";
 import SocialMediaMarketing from "./routes/Marketing/socialmediamarketing/SocialMediaMarketing";
 import CreateEmailCampaign from "./routes/Marketing/emailmarketing/CreateEmailCampaign";
 import TemplateCreation from "./routes/Marketing/emailmarketing/TemplateCreation";
-import UsersPage from "./routes/Marketing/Users/Users"
-import CreateListPage from "./routes/Marketing/Users/CreateList"
+import UsersPage from "./routes/Marketing/Users/Users";
+import CreateListPage from "./routes/Marketing/Users/CreateList";
 import OrganizationProfile from "./routes/OrgProfile.jsx/OrgProfile";
 import UserProfile from "./routes/user/UserProfile";
 import AddEmployeePage from "./components/add-employee-modal";
@@ -54,102 +54,110 @@ import MarkAttendancePage from "./components/mark-attendance";
 import RoleEditPage from "./routes/roles/EditRole";
 import MarketingSettings from "./routes/Marketing/MarketingSettings";
 import CredentialForm from "./routes/Marketing/CredentialsForm";
-import CreateSocialMediaCampaign from "./routes/Marketing/socialmediamarketing/CreateSocialMediaCampaign"
-import CreateSMSCampaign from "./routes/Marketing/smsmarketing/CreateSMSCampaign"
+import CreateSocialMediaCampaign from "./routes/Marketing/socialmediamarketing/CreateSocialMediaCampaign";
+import CreateSMSCampaign from "./routes/Marketing/smsmarketing/CreateSMSCampaign";
 import TemplateBuilder from "./routes/emailtemplate/Test";
 import Tasks from "./routes/tasks/Tasks";
 import TaskCreationForm from "./routes/tasks/CreateTask";
+import Invoices from "./routes/invoices/Invoices";
+import Meeting from "./routes/meetings/Meeting";
+import SalesOrder from "./routes/salesOrder/SalesOrder";
+import Calls from "./routes/calls/Calls";
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <ProtectedRoute />,
-    children: [
-      {
-        element: <Layout />,
+    {
+        path: "/",
+        element: <ProtectedRoute />,
         children: [
-          { index: true, element: <DashboardPage /> },
-          { path: "leads", element: <LeadPage /> },
-          { path: "leads/create", element: <LeadCreationForm /> },
-          { path: "leads/profile/:id", element: <ViewLeadPage /> },
-          { path: "leads/edit/:id", element: <EditLead /> },
-          { path: "users", element: <Users /> },
-          { path: "Contacts", element: <Contacts1 /> },
-          { path: "Contacts/create", element: <ContactCreationForm /> },
-          { path: "Deals", element: <DealsPage /> },
-          { path: "Deals/create", element: <DealCreationForm /> },
-          { path: "workflow", element: <WorkflowPage /> },
-          { path: "workflow/create", element: <WorkflowBuilder /> },
-          { path: "Accounts", element: <Accounts /> },
-          { path: "Accounts/create", element: <AccountCreationForm /> },
-          { path: "import/:source", element: <CRMSelectionImport /> },
-          { path: "import/:source/migration", element: <DataMigrationUpload /> },
-          { path: "verified-customers", element: <h1>Verified Customers</h1> },
-          { path: "products", element: <h1>Products</h1> },
-          { path: "new-product", element: <h1>New Product</h1> },
-          { path: "inventory", element: <h1>Inventory</h1> },
-          { path: "settings", element: <Settings /> },
-          { path: "templates", element: <TemplateDisplay /> },
-          { path: "templates/:id", element: <ViewFullTemplate /> },
-          { path: "templates/create", element: <TemplateBuilder /> },
-          { path: "roles", element: <Roles /> },
-           { path: "user/profile", element: <UserProfile/> },
-           { path: "roles/create", element: <CreateRole /> },
-             { path: "roles/edit", element: <RoleEditPage /> },
-           { path:"org/profile",element:<OrganizationProfile/>},
-           { path:"tasks",element:<Tasks/>},
-            { path:"tasks/create",element:<TaskCreationForm/>},
-          {
-            path: "hr",
-            children: [
-              { path: "", element: <HrDashboard /> },
-              { path: "employees", element: <Employee /> },
-              { path: "add-employee", element: <AddEmployeePage />},
-              { path: "attendance", element: <Attendance /> },
-              { path: "mark-attendance", element: <MarkAttendancePage />},
-              { path: "payroll", element: <Payroll /> },
-              { path: "recruitment", element: <Recruitment /> },
-              { path: "leave", element: <Leave /> },
-              { path: "apply-leave", element: <ApplyLeavePage />},
-              { path: "performance", element: <Performance /> },
-            ],
-          },
-          {
-            path: "marketing",
-            children: [
-              { path: "", element: <MarketingDashboard /> },
-              { path: "users", element: <UsersPage /> },
-              { path: "templates", element: <TemplateDisplay /> },
-              { path: "users/create", element: <CreateListPage /> },
-              { path: "emailmarketing", element: <EmailMarketing /> },
-              { path: "email-campaigns/create", element: <CreateEmailCampaign /> },
-              { path: "SocialMediaMarketing", element: <SocialMediaMarketing /> },
-              { path: "social-campaigns/create", element: <CreateSocialMediaCampaign /> },
-              { path: "SmsMarketing", element: <SmsMarketing /> },
-              {path : "sms-campaigns/create", element:<CreateSMSCampaign/>},
-              { path: "settings/social/facebook", element:<CredentialForm platform="facebook" /> },
-              { path: "settings/social/twitter", element:<CredentialForm platform="twitter" /> },
-              { path: "settings/social/instagram", element:<CredentialForm platform="instagram" /> },
-              { path: "settings/social/linkedin", element:<CredentialForm platform="linkedin" /> },
+            {
+                element: <Layout />,
+                children: [
+                    { index: true, element: <DashboardPage /> },
+                    { path: "leads", element: <LeadPage /> },
+                    { path: "leads/create", element: <LeadCreationForm /> },
+                    { path: "leads/profile/:id", element: <ViewLeadPage /> },
+                    { path: "leads/edit/:id", element: <EditLead /> },
+                    { path: "users", element: <Users /> },
+                    { path: "Contacts", element: <Contacts1 /> },
+                    { path: "Contacts/create", element: <ContactCreationForm /> },
+                    { path: "Deals", element: <DealsPage /> },
+                    { path: "Deals/create", element: <DealCreationForm /> },
+                    { path: "workflow", element: <WorkflowPage /> },
+                    { path: "workflow/create", element: <WorkflowBuilder /> },
+                    { path: "Accounts", element: <Accounts /> },
+                    { path: "Accounts/create", element: <AccountCreationForm /> },
+                    { path: "import/:source", element: <CRMSelectionImport /> },
+                    { path: "import/:source/migration", element: <DataMigrationUpload /> },
+                    { path: "verified-customers", element: <h1>Verified Customers</h1> },
+                    { path: "products", element: <h1>Products</h1> },
+                    { path: "new-product", element: <h1>New Product</h1> },
+                    { path: "inventory", element: <h1>Inventory</h1> },
+                    { path: "settings", element: <Settings /> },
+                    { path: "templates", element: <TemplateDisplay /> },
+                    { path: "templates/:id", element: <ViewFullTemplate /> },
+                    { path: "templates/create", element: <TemplateBuilder /> },
+                    { path: "roles", element: <Roles /> },
+                    { path: "user/profile", element: <UserProfile /> },
+                    { path: "roles/create", element: <CreateRole /> },
+                    { path: "roles/edit", element: <RoleEditPage /> },
+                    { path: "org/profile", element: <OrganizationProfile /> },
+                    { path: "tasks", element: <Tasks /> },
+                    { path: "tasks/create", element: <TaskCreationForm /> },
+                    { path: "invoices", element: <Invoices /> },
+                    { path: "meetings", element: <Meeting /> },
+                    { path: "salesorders", element: <SalesOrder /> },
+                      { path: "calls", element: <Calls /> },
 
+                    {
+                        path: "hr",
+                        children: [
+                            { path: "", element: <HrDashboard /> },
+                            { path: "employees", element: <Employee /> },
+                            { path: "add-employee", element: <AddEmployeePage /> },
+                            { path: "attendance", element: <Attendance /> },
+                            { path: "mark-attendance", element: <MarkAttendancePage /> },
+                            { path: "payroll", element: <Payroll /> },
+                            { path: "recruitment", element: <Recruitment /> },
+                            { path: "leave", element: <Leave /> },
+                            { path: "apply-leave", element: <ApplyLeavePage /> },
+                            { path: "performance", element: <Performance /> },
+                        ],
+                    },
+                    {
+                        path: "marketing",
+                        children: [
+                            { path: "", element: <MarketingDashboard /> },
+                            { path: "users", element: <UsersPage /> },
+                            { path: "templates", element: <TemplateDisplay /> },
+                            { path: "users/create", element: <CreateListPage /> },
+                            { path: "emailmarketing", element: <EmailMarketing /> },
+                            { path: "email-campaigns/create", element: <CreateEmailCampaign /> },
+                            { path: "SocialMediaMarketing", element: <SocialMediaMarketing /> },
+                            { path: "social-campaigns/create", element: <CreateSocialMediaCampaign /> },
+                            { path: "SmsMarketing", element: <SmsMarketing /> },
+                            { path: "sms-campaigns/create", element: <CreateSMSCampaign /> },
+                            { path: "settings/social/facebook", element: <CredentialForm platform="facebook" /> },
+                            { path: "settings/social/twitter", element: <CredentialForm platform="twitter" /> },
+                            { path: "settings/social/instagram", element: <CredentialForm platform="instagram" /> },
+                            { path: "settings/social/linkedin", element: <CredentialForm platform="linkedin" /> },
 
-              { path: "Settings", element: <MarketingSettings /> },
-            ],
-          },
+                            { path: "Settings", element: <MarketingSettings /> },
+                        ],
+                    },
+                ],
+            },
         ],
-      },
-    ],
-  },
-  { path: "/login", element: <Login /> },
-  { path: "/register", element: <Register /> },
+    },
+    { path: "/login", element: <Login /> },
+    { path: "/register", element: <Register /> },
 ]);
 
 function App() {
-  return (
-    <div>
-        <RouterProvider router={router} />
-        <Toaster />
-    </div>
-  );
+    return (
+        <div>
+            <RouterProvider router={router} />
+            <Toaster />
+        </div>
+    );
 }
 
 export default App;
