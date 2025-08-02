@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialValue={
    CRM:true,
-   HR:false,
+   HR:true,
    Books:false,
-   Marketing:false,
+   Marketing:true,
    Campaigns:false,
    TiketDesk:false
 }

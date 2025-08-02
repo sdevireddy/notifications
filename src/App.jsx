@@ -58,6 +58,7 @@ import CreateSocialMediaCampaign from "./routes/Marketing/socialmediamarketing/C
 import CreateSMSCampaign from "./routes/Marketing/smsmarketing/CreateSMSCampaign"
 import TemplateBuilder from "./routes/emailtemplate/Test";
 import Tasks from "./routes/tasks/Tasks";
+import TaskCreationForm from "./routes/tasks/CreateTask";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -96,6 +97,7 @@ const router = createBrowserRouter([
              { path: "roles/edit", element: <RoleEditPage /> },
            { path:"org/profile",element:<OrganizationProfile/>},
            { path:"tasks",element:<Tasks/>},
+            { path:"tasks/create",element:<TaskCreationForm/>},
           {
             path: "hr",
             children: [
