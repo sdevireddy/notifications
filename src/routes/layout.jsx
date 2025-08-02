@@ -64,7 +64,7 @@ const Layout = () => {
       setCollapsed={setCollapsed}
       setActiveModule={setActiveModule}
     />
-    <div className="flex-1">
+    <div className="flex-1 w-full">
        
       <Outlet />
       <ToastContainer
