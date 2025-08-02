@@ -34,7 +34,6 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import Table from "@/components/table";
 import { toast } from "react-hot-toast";
 import useFetchData from "../../hooks/useFetchData";
 import { axiosPrivate } from "../../utils/axios";
@@ -42,6 +41,7 @@ import { apiSummary } from "../../common/apiSummary";
 import BreadCrumb from "../../components/BreadCrumb";
 import { LuFilter } from "react-icons/lu";
 import Tooltip from "../../components/ToolTip";
+import Table from "../../components/Table";
 
 const availableColumns = {
   title: true,
