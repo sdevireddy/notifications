@@ -129,7 +129,7 @@ const Tasks = () => {
                         <Plus className="mr-2 h-4 w-4" /> Create Task
                     </Button>
             </div>
-        <main className="p-4 flex-1 min-w-0 overflow-hidden">
+        <main className="p-4 flex-1 w-[100%]">
              <div className="flex w-inherted overflow-x-auto gap-4 pb-4">
               <DragDropContext onDragEnd={handleDragEnd}>
                 {STATUSES.map((status) => (
@@ -138,7 +138,7 @@ const Tasks = () => {
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={`min-w-[300px] w-[20%] flex-shrink-0 rounded-lg shadow-sm border ${statusColors[status]} transition-colors duration-200 ${snapshot.isDraggingOver ? 'bg-opacity-80' : 'bg-opacity-50'}`}
+                        className={`min-w-[25%] w-[10%] rounded-lg shadow-sm border ${statusColors[status]} transition-colors duration-200 ${snapshot.isDraggingOver ? 'bg-opacity-80' : 'bg-opacity-50'}`}
                       >
                         <div className="p-3 border-b border-inherit">
                            <h2 className="text-lg font-semibold text-gray-700">
