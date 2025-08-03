@@ -42,6 +42,7 @@ import BreadCrumb from "../../components/BreadCrumb";
 import { LuFilter } from "react-icons/lu";
 import Tooltip from "../../components/ToolTip";
 import Table from "../../components/Table";
+import CreateMeetingModal from "./CreateMeetingModel";
 
 const availableColumns = {
   title: true,
@@ -90,6 +91,7 @@ export default function Meeting() {
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
   const [showColumnSelector, setShowColumnSelector] = useState(false);
   const [actionOpen, setActionOpen] = useState(false);
+  const [createMeetingModelOpen,setCreateMeetingModelOpen]=useState(false)
   const navigate = useNavigate();
 
   const [meetingsData, refetchData, loading] = useFetchData(
@@ -304,7 +306,7 @@ export default function Meeting() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <Button
-                        onClick={() => navigate("/meeting/create")}
+                        onClick={() => setCreateMeetingModelOpen(true)}
                         className="bg-primary text-white "
                     >
                         <Plus className="mr-2 h-4 w-4" /> Schedule Meeting
@@ -367,6 +369,9 @@ export default function Meeting() {
           </Button>
         </div>
       </div>
+      {
+        createMeetingModelOpen && <CreateMeetingModal onClose={()=>setCreateMeetingModelOpen(false)}/>
+      }
     </div>
   );
 }
