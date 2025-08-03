@@ -7,11 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
     Filter,
     ChevronDown,
@@ -67,6 +62,7 @@ const avaliableColumns = {
     followUp: false,
     comments: false,
 };
+const type=["All Leads","Locked Leads","Converted Leads","Junk Leads"]
 const columnsConfig = {
     firstName: {
         label: "Name",
@@ -146,7 +142,7 @@ export default function LeadPage() {
     const [leadsData, refetchData, loading] = useFetchData(apiSummary.crm.getLeads, currentPage, recordsPerPage);
     const [visibleColumns, setVisibleColumns] = useState(avaliableColumns);
     const [showColumnSelector, setShowColumnSelector] = useState(false);
-
+    const [typeLeads,setTypeLeads]=useState("All Leads")
     useEffect(() => {
         setLeads(leadsData?.data?.data || []);
         setFilteredLeads(leadsData?.data?.data || []);
@@ -435,6 +431,8 @@ export default function LeadPage() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
+                <div className="flex gap-3">
+
                 <div className="flex items-center gap-2">
                     <Label
                         htmlFor="records-per-page"
@@ -456,6 +454,25 @@ export default function LeadPage() {
                                     value={String(num)}
                                 >
                                     {num}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+               <Select
+                        value={typeLeads}
+                        onValueChange={setTypeLeads}
+                    >
+                        <SelectTrigger className="w-28">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {type.map((val) => (
+                                <SelectItem
+                                    key={val}
+                                    value={val}
+                                >
+                                    {val}
                                 </SelectItem>
                             ))}
                         </SelectContent>
