@@ -87,7 +87,7 @@ export default function WorkflowPage() {
           <div className="mb-4 flex items-center justify-between gap-4 px-6 py-3">
              <div className="border-b w-full">
               
-                    <div className="relative max-w-md ">
+                    <div className="relative max-w-[20rem] ">
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                         <Input
                             placeholder="Search Rules..."

@@ -52,75 +52,75 @@ import { axiosPrivate } from "../../utils/axios";
 import toast from "react-hot-toast";
 
 const availableContactColumns = {
-  firstName: true,
-  email: true,
-  mobile: true,
-  vendorName: true,
-  contactOwner: true,
-  leadSource: true,
-  department: false,
-  assistant: false,
-  secondaryEmail: false,
+    firstName: true,
+    email: true,
+    mobile: true,
+    vendorName: true,
+    contactOwner: true,
+    leadSource: true,
+    department: false,
+    assistant: false,
+    secondaryEmail: false,
 };
 const contactColumnsConfig = {
-  firstName: {
-    label: "Name",
-    render: ({ row }) => {
-      const contact = row.original;
-      return (
-        <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
-            <User className="h-4 w-4 text-gray-500" />
-          </div>
-          <div>{contact.firstName + " " + contact.lastName}</div>
-        </div>
-      );
+    firstName: {
+        label: "Name",
+        render: ({ row }) => {
+            const contact = row.original;
+            return (
+                <div className="flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
+                        <User className="h-4 w-4 text-gray-500" />
+                    </div>
+                    <div>{contact.firstName + " " + contact.lastName}</div>
+                </div>
+            );
+        },
     },
-  },
-  email: {
-    label: "Email",
-    render: ({ row }) => row.original.email,
-  },
-  mobile: {
-    label: "Phone",
-    render: ({ row }) => row.original.mobile,
-  },
-  company: {
-    label: "Company",
-    render: ({ row }) => (
-      <div>
-        <div>{row.original.vendorName}</div>
-        <div className="text-xs text-gray-500">{row.original.title}</div>
-      </div>
-    ),
-  },
-  contactOwner: {
-    label: "Owner",
-    render: ({ row }) => row.original.contactOwner,
-  },
-  leadSource: {
-    label: "Source",
-    render: ({ row }) => row.original.leadSource,
-  },
-  twitterHandle: {
-    label: "Twitter",
-    render: ({ row }) => row.original.twitterHandle || "-",
-  },
-  department: {
-    label: "Department",
-    render: ({ row }) => row.original.department || "-",
-  },
-  skypeId: {
-    label: "Skype",
-    render: ({ row }) => row.original.skypeId || "-",
-  },
-  assistant: {
-    label: "Assistant",
-    render: ({ row }) => row.original.assistant || "-",
-  },
+    email: {
+        label: "Email",
+        render: ({ row }) => row.original.email,
+    },
+    mobile: {
+        label: "Phone",
+        render: ({ row }) => row.original.mobile,
+    },
+    company: {
+        label: "Company",
+        render: ({ row }) => (
+            <div>
+                <div>{row.original.vendorName}</div>
+                <div className="text-xs text-gray-500">{row.original.title}</div>
+            </div>
+        ),
+    },
+    contactOwner: {
+        label: "Owner",
+        render: ({ row }) => row.original.contactOwner,
+    },
+    leadSource: {
+        label: "Source",
+        render: ({ row }) => row.original.leadSource,
+    },
+    twitterHandle: {
+        label: "Twitter",
+        render: ({ row }) => row.original.twitterHandle || "-",
+    },
+    department: {
+        label: "Department",
+        render: ({ row }) => row.original.department || "-",
+    },
+    skypeId: {
+        label: "Skype",
+        render: ({ row }) => row.original.skypeId || "-",
+    },
+    assistant: {
+        label: "Assistant",
+        render: ({ row }) => row.original.assistant || "-",
+    },
 };
 
-
+const type = ["All Contacts", "Locked Contacts", "Converted Contacts", "Junk Contacts"];
 export default function ContactPage() {
     const [contacts, setContacts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -136,13 +136,13 @@ export default function ContactPage() {
     const [filterModelOpen, setFilterModelOpen] = useState(false);
     const navigate = useNavigate();
     const [visibleColumns, setVisibleColumns] = useState(availableContactColumns);
-     const [showColumnSelector, setShowColumnSelector] = useState(false);
-
-    const [constactData, refetchContacts, loading] = useFetchData(apiSummary.crm.getContacts,currentPage,recordsPerPage);
+    const [showColumnSelector, setShowColumnSelector] = useState(false);
+    const [typeContacts, settypeContacts] = useState("All Contacts");
+    const [constactData, refetchContacts, loading] = useFetchData(apiSummary.crm.getContacts, currentPage, recordsPerPage);
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [contactToDelete, setContactToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
-     const [actionOpen, setActionOpen] = useState(false);
+    const [actionOpen, setActionOpen] = useState(false);
     useEffect(() => {
         setContacts(constactData?.data || []);
         setFilteredContacts(constactData?.data || []);
@@ -182,80 +182,83 @@ export default function ContactPage() {
     const handleSort = (key) => {
         setSortConfig((prev) => (prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }));
     };
- const columns = useMemo(() => {
-  const dynamicCols = Object.keys(visibleColumns)
-    .filter((key) => visibleColumns[key] && contactColumnsConfig[key])
-    .map((key) => ({
-      accessorKey: key,
-      header: contactColumnsConfig[key].label,
-      cell: contactColumnsConfig[key].render,
-    }));
+    const columns = useMemo(() => {
+        const dynamicCols = Object.keys(visibleColumns)
+            .filter((key) => visibleColumns[key] && contactColumnsConfig[key])
+            .map((key) => ({
+                accessorKey: key,
+                header: contactColumnsConfig[key].label,
+                cell: contactColumnsConfig[key].render,
+            }));
 
-  return [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllRowsSelected()}
-          onCheckedChange={(val) => {
-            table.toggleAllRowsSelected(!!val);
-            handleSelectAll();
-          }}
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(val) => {
-            row.toggleSelected(!!val);
-            handleContactSelect(row.original);
-          }}
-        />
-      ),
-    },
-    ...dynamicCols,
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => {
-        const contact = row.original;
-        return (
-          <div className="flex items-center gap-2">
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => {
-                setSelectSingleContact([contact]);
-                setEmailModel(true);
-              }}
-            >
-              <Mail className="h-4 w-4" />
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="icon" variant="ghost">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>View Profile</DropdownMenuItem>
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setContactToDelete(contact);
-                    setShowConfirmDelete(true);
-                  }}
-                >
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        );
-      },
-    },
-  ];
-}, [visibleColumns]);
+        return [
+            {
+                id: "select",
+                header: ({ table }) => (
+                    <Checkbox
+                        checked={table.getIsAllRowsSelected()}
+                        onCheckedChange={(val) => {
+                            table.toggleAllRowsSelected(!!val);
+                            handleSelectAll();
+                        }}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <Checkbox
+                        checked={row.getIsSelected()}
+                        onCheckedChange={(val) => {
+                            row.toggleSelected(!!val);
+                            handleContactSelect(row.original);
+                        }}
+                    />
+                ),
+            },
+            ...dynamicCols,
+            {
+                id: "actions",
+                header: "Actions",
+                cell: ({ row }) => {
+                    const contact = row.original;
+                    return (
+                        <div className="flex items-center gap-2">
+                            <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={() => {
+                                    setSelectSingleContact([contact]);
+                                    setEmailModel(true);
+                                }}
+                            >
+                                <Mail className="h-4 w-4" />
+                            </Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        size="icon"
+                                        variant="ghost"
+                                    >
+                                        <MoreVertical className="h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem>View Profile</DropdownMenuItem>
+                                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => {
+                                            setContactToDelete(contact);
+                                            setShowConfirmDelete(true);
+                                        }}
+                                    >
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    );
+                },
+            },
+        ];
+    }, [visibleColumns]);
 
     const handleDelete = async (id) => {
         try {
@@ -267,14 +270,13 @@ export default function ContactPage() {
             setCurrentPage(1);
         } catch (error) {
             toast.error("Contact Delation Failed");
-        }
-        finally{
+        } finally {
             setIsDeleting(false);
         }
     };
     return (
         <div className="flex-1 bg-white">
-            <div className="flex items-center justify-between  px-6 py-2">
+            <div className="flex items-center justify-between px-6 py-2">
                 <div className="flex items-center gap-4">
                     <h1 className="text-xl font-semibold text-gray-900">Contacts</h1>
                     <BreadCrumb />
@@ -288,43 +290,55 @@ export default function ContactPage() {
                             <LuFilter />
                         </Tooltip>
                     </div>
-                  
 
-<DropdownMenu open={showColumnSelector} onOpenChange={setShowColumnSelector}>
-  <DropdownMenuTrigger asChild>
-    <Button variant="primary"  className={` ${showColumnSelector ? "bg-primary text-white" : ""}`}>
-      Columns <ChevronDown className="ml-2 h-4 w-4" />
-    </Button>
-  </DropdownMenuTrigger>
-  <DropdownMenuContent align="end" className="h-80 w-56 overflow-auto">
-    {Object.keys(visibleColumns).map((key) => (
-      <DropdownMenuItem
-        key={key}
-        onSelect={(e) => e.preventDefault()}
-        className="flex items-center justify-between gap-2"
-      >
-        <span className="text-sm text-gray-700">
-          {contactColumnsConfig[key]?.label || key.replace(/([A-Z])/g, " $1")}
-        </span>
-        <Checkbox
-          checked={visibleColumns[key]}
-          onCheckedChange={() =>
-            setVisibleColumns((prev) => ({
-              ...prev,
-              [key]: !prev[key],
-            }))
-          }
-        />
-      </DropdownMenuItem>
-    ))}
-  </DropdownMenuContent>
-</DropdownMenu>
-
-
-                    <DropdownMenu  open={actionOpen}
-                        onOpenChange={setActionOpen}>
+                    <DropdownMenu
+                        open={showColumnSelector}
+                        onOpenChange={setShowColumnSelector}
+                    >
                         <DropdownMenuTrigger asChild>
-                            <Button variant="primary"  className={` ${actionOpen ? "bg-primary text-white" : ""}`}>
+                            <Button
+                                variant="primary"
+                                className={` ${showColumnSelector ? "bg-primary text-white" : ""}`}
+                            >
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            align="end"
+                            className="h-80 w-56 overflow-auto"
+                        >
+                            {Object.keys(visibleColumns).map((key) => (
+                                <DropdownMenuItem
+                                    key={key}
+                                    onSelect={(e) => e.preventDefault()}
+                                    className="flex items-center justify-between gap-2"
+                                >
+                                    <span className="text-sm text-gray-700">
+                                        {contactColumnsConfig[key]?.label || key.replace(/([A-Z])/g, " $1")}
+                                    </span>
+                                    <Checkbox
+                                        checked={visibleColumns[key]}
+                                        onCheckedChange={() =>
+                                            setVisibleColumns((prev) => ({
+                                                ...prev,
+                                                [key]: !prev[key],
+                                            }))
+                                        }
+                                    />
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <DropdownMenu
+                        open={actionOpen}
+                        onOpenChange={setActionOpen}
+                    >
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="primary"
+                                className={` ${actionOpen ? "bg-primary text-white" : ""}`}
+                            >
                                 Actions <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -350,7 +364,10 @@ export default function ContactPage() {
                                 <Tag className="mr-2 h-4 w-4" />
                                 Tag Contacts
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900" onClick={()=>navigate('/import/contacts')}>
+                            <DropdownMenuItem
+                                className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900"
+                                onClick={() => navigate("/import/contacts")}
+                            >
                                 <Import className="mr-2 h-4 w-4" />
                                 Import Contacts
                             </DropdownMenuItem>
@@ -367,7 +384,7 @@ export default function ContactPage() {
             </div>
 
             <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-2">
-                <div className="relative w-full max-w-md">
+                <div className="relative w-full max-w-[20rem]">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <Input
                         placeholder="Search contacts..."
@@ -376,27 +393,47 @@ export default function ContactPage() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="flex items-center gap-2">
-                    <Label
-                        htmlFor="records-per-page"
-                        className="text-sm"
-                    >
-                        Show
-                    </Label>
+                <div className="flex gap-3">
+                    <div className="flex items-center gap-2">
+                        <Label
+                            htmlFor="records-per-page"
+                            className="text-sm"
+                        >
+                            Show
+                        </Label>
+                        <Select
+                            value={recordsPerPage}
+                            onValueChange={setRecordsPerPage}
+                        >
+                            <SelectTrigger className="w-20">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {[10, 25, 50, 100].map((num) => (
+                                    <SelectItem
+                                        key={num}
+                                        value={String(num)}
+                                    >
+                                        {num}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                     <Select
-                        value={recordsPerPage}
-                        onValueChange={setRecordsPerPage}
+                        value={typeContacts}
+                        onValueChange={settypeContacts}
                     >
-                        <SelectTrigger className="w-20">
+                        <SelectTrigger className="w-28">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            {[10, 25, 50, 100].map((num) => (
+                            {type.map((val) => (
                                 <SelectItem
-                                    key={num}
-                                    value={String(num)}
+                                    key={val}
+                                    value={val}
                                 >
-                                    {num}
+                                    {val}
                                 </SelectItem>
                             ))}
                         </SelectContent>
