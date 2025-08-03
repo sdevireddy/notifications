@@ -22,7 +22,7 @@ export const Input = ({ label, name, type = "text", value, onChange, required = 
             value={value}
             onChange={onChange}
             required={required}
-            className="w-full rounded border-blue-400 p-2 border-[1px]"
+            className="w-full rounded  p-2 border-[1px]"
         />
     </div>
 );
@@ -41,7 +41,7 @@ export const Select = ({ label, name, value, onChange, options = [], required = 
             value={value}
             onChange={onChange}
             required={required}
-            className="w-full rounded border-[1px] border-blue-400 p-2"
+            className="w-full rounded border-[1px]  p-2"
         >
             <option value="">Select {label}</option>
             {options.map((opt) => (
