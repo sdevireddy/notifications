@@ -313,7 +313,7 @@ export default function Meeting() {
             </div>
 
       <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-2">
-        <div className="relative w-full sm:max-w-md">
+        <div className="relative w-full sm:max-w-[20rem]">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Search meetings..."
