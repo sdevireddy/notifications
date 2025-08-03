@@ -141,7 +141,7 @@ const Tasks = () => {
                         className={`min-w-[25%] w-[10%] rounded-lg shadow-sm border ${statusColors[status]} transition-colors duration-200 ${snapshot.isDraggingOver ? 'bg-opacity-80' : 'bg-opacity-50'}`}
                       >
                         <div className="p-3 border-b border-inherit">
-                           <h2 className="text-lg font-semibold text-gray-700">
+                           <h2 className="text-md font-semibold text-gray-700">
                              {status} ({columns[status]?.length || 0})
                            </h2>
                         </div>
@@ -160,7 +160,7 @@ const Tasks = () => {
                                     ref={provided.innerRef}
                                     className={`rounded-md bg-white p-4 text-sm shadow-md border hover:shadow-lg transition-shadow duration-200 ${snapshot.isDragging ? 'ring-2 ring-blue-500' : 'border-gray-200'}`}
                                   >
-                                    <h3 className="font-semibold text-gray-800 mb-1">
+                                    <h3 className=" text-gray-800 mb-1">
                                       {task.title}
                                     </h3>
                                     <p className="text-xs text-gray-500 mb-2">
@@ -174,7 +174,7 @@ const Tasks = () => {
                                         }`}>
                                             {task.priority}
                                         </span>
-                                        <span className="font-semibold text-gray-600">{task.assignee}</span>
+                                        <span className=" text-gray-600">{task.assignee}</span>
                                     </div>
                                     <p className="text-xs text-gray-400 mt-2">
                                       {task.organization}
