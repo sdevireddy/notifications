@@ -31,7 +31,7 @@ const CreateCallModal = ({ onClose, type = "Schedule" }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/60">
             <form
-                className="h-[98%] w-full max-w-xl space-y-4 overflow-y-auto rounded-md bg-white px-6 shadow-md"
+                className="h-[90%] w-full max-w-2xl space-y-4 overflow-y-auto rounded-md bg-white px-6 shadow-md"
                 onSubmit={handleSubmit}
             >
                 {/* Sticky Heading */}
