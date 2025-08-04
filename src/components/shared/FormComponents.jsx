@@ -3,7 +3,7 @@ export const Section = ({ title, icon, children }) => (
         <h3 className="mb-4 flex items-center gap-2 border-b pb-1 text-lg font-semibold">
             {icon} {title}
         </h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">{children}</div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">{children}</div>
     </div>
 );
 
@@ -22,7 +22,7 @@ export const Input = ({ label, name, type = "text", value, onChange, required = 
             value={value}
             onChange={onChange}
             required={required}
-            className="w-full rounded  p-2 border-[1px]"
+            className="w-full rounded  p-1 border-[1px]"
         />
     </div>
 );
