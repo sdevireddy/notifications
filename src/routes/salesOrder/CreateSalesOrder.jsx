@@ -418,6 +418,7 @@ const SalesOrderCreationForm = () => {
                 </Section>
                 <div
                 >
+                    <h2 className="font-bold text-xl px-3">Order Items</h2>
                     <div className="overflow-x-auto w-full p-3">
                         <table className="min-w-full border">
                             <thead className="bg-blue-100">
@@ -445,10 +446,11 @@ const SalesOrderCreationForm = () => {
                                                 className="w-full"
                                                 value={item.productName}
                                                 onChange={(e) => handleItemChange(item.id, "productName", e.target.value)}
-                                                placeholder="Product"
+                                                placeholder="Product Name"
                                             />
                                             <textarea
-                                                className="mt-1 w-full  resize-none"
+                                                className="mt-1 w-full border border-gray-500 resize-none"
+
                                                 value={item.description}
                                                 onChange={(e) => handleItemChange(item.id, "description", e.target.value)}
                                                 placeholder="Description"
@@ -456,7 +458,7 @@ const SalesOrderCreationForm = () => {
                                         </td>
                                         <td>
                                             <Input
-                                                className="w-20 border p-1"
+                                                className="w-20  p-1"
                                                 value={item.quantity}
                                                 onChange={(e) => handleItemChange(item.id, "quantity", e.target.value)}
                                             />
@@ -464,7 +466,7 @@ const SalesOrderCreationForm = () => {
                                         <td>
                                             <Input
                                                
-                                                className="w-24 border p-1"
+                                                className="w-24  p-1"
                                                 value={item.listPrice}
                                                 onChange={(e) => handleItemChange(item.id, "listPrice", e.target.value)}
                                             />
@@ -473,7 +475,7 @@ const SalesOrderCreationForm = () => {
                                         <td>
                                             <Input
                                                 
-                                                className="w-20 border p-1"
+                                                className="w-20  p-1"
                                                 value={item.discount}
                                                 onChange={(e) => handleItemChange(item.id, "discount", e.target.value)}
                                             />
@@ -481,7 +483,7 @@ const SalesOrderCreationForm = () => {
                                         <td>
                                             <Input
                                                 disable
-                                                className="w-20 border p-1"
+                                                className="w-20  p-1"
                                                 value={item.tax}
                                                 onChange={(e) => handleItemChange(item.id, "tax", e.target.value)}
                                             />
