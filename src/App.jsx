@@ -63,6 +63,7 @@ import Invoices from "./routes/invoices/Invoices";
 import Meeting from "./routes/meetings/Meeting";
 import SalesOrder from "./routes/salesOrder/SalesOrder";
 import Calls from "./routes/calls/Calls";
+import SalesOrderCreationForm from "./routes/salesOrder/CreateSalesOrder";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -105,6 +106,7 @@ const router = createBrowserRouter([
                     { path: "invoices", element: <Invoices /> },
                     { path: "meetings", element: <Meeting /> },
                     { path: "salesorders", element: <SalesOrder /> },
+                     { path: "salesorders/create", element: <SalesOrderCreationForm /> },
                       { path: "calls", element: <Calls /> },
 
                     {
