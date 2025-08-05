@@ -1,36 +1,79 @@
 "use client"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { Camera, ArrowLeft, User, Building, MapPin, Phone } from "lucide-react"
+import { Camera, ArrowLeft, User, Building, MapPin, Phone, FileText, CreditCard, Heart, Globe } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 
 const initialFormState = {
-  employeeId: "",
-  firstName: "",
-  lastName: "",
-  email: "",
-  mobile: "",
-  secondaryEmail: "",
-  department: "",
-  designation: "",
-  employmentType: "",
-  workLocation: "",
-  joiningDate: "",
-  salary: "",
-  manager: "",
-  emergencyContactName: "",
-  emergencyContactPhone: "",
-  emergencyContactRelation: "",
-  addressLine1: "",
-  addressLine2: "",
+  // Basic Information
+  employee_code: "",
+  first_name: "",
+  last_name: "",
+  date_of_birth: "",
+  gender: "",
+  nationality: "",
+  marital_status: "",
+  blood_group: "",
+
+  // Contact Information
+  personal_email: "",
+  official_email: "",
+  personal_phone: "",
+  official_phone: "",
+
+  // Address Information
+  current_address: "",
+  permanent_address: "",
   city: "",
   state: "",
-  zip: "",
   country: "",
-  notes: "",
+  pincode: "",
+
+  // Employment Information
+  department: "",
+  designation: "",
+  reporting_manager: "",
+  work_location: "",
+  date_of_joining: "",
+  date_of_confirmation: "",
+  date_of_resignation: "",
+  employment_status: "",
+  employment_type: "",
+
+  // Document Information
+  pan_number: "",
+  aadhar_number: "",
+  passport_number: "",
+  driving_license_number: "",
+  tax_identification_number: "",
+  social_security_number: "",
+
+  // Bank Information
+  bank_name: "",
+  bank_account_number: "",
+  ifsc_code: "",
+  uan_number: "",
+  esic_number: "",
+  salary_structure_id: "",
+
+  // Emergency Contact
+  emergency_contact_name: "",
+  emergency_contact_relationship: "",
+  emergency_contact_phone: "",
+  emergency_contact_address: "",
+
+  // Additional Information
+  skills: "",
+  certifications: "",
+  hobbies: "",
+  languages_known: "",
+  total_experience_years: "",
+  previous_employers: "",
+
+  // Image
   image: null,
 }
 
@@ -76,30 +119,9 @@ export default function AddEmployeePage() {
   const handleSubmit = async (e, action) => {
     e.preventDefault()
     setLoading(true)
-
     try {
       // TODO: Replace with actual API call when backend is ready
-      // const formDataToSend = new FormData()
-      // Object.entries(formData).forEach(([key, value]) => {
-      //   if (value !== null && value !== '') {
-      //     formDataToSend.append(key, value)
-      //   }
-      // })
-
-      // const response = await fetch('/api/employees', {
-      //   method: 'POST',
-      //   body: formDataToSend
-      // })
-
-      // if (!response.ok) {
-      //   throw new Error('Failed to create employee')
-      // }
-
-      // const result = await response.json()
-
-      // Mock API call - remove when backend is ready
       console.log("Employee data to be saved:", formData)
-
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
@@ -117,10 +139,10 @@ export default function AddEmployeePage() {
   }
 
   return (
-    <div className="w-[calc(100%-10px)] text-sm">
+    <div className="w-full text-sm bg-gray-50 min-h-screen">
       <form className="rounded-lg bg-white shadow-md">
         {/* Header */}
-        <div className="flex items-center justify-between border-b p-3 sticky top-0 bg-white">
+        <div className="flex items-center justify-between border-b p-3 sticky top-0 bg-white z-10">
           <div className="flex items-center gap-3">
             <button onClick={() => navigate(-1)} type="button" className="rounded p-2 hover:bg-gray-200">
               <ArrowLeft size={20} />
@@ -162,7 +184,7 @@ export default function AddEmployeePage() {
             </button>
             <button
               type="submit"
-              className="rounded bg-buttonprimary px-4 py-2 text-white hover:bg-buttonprimary-hover shadow-sm"
+              className="rounded bg-primary px-4 py-2 text-white shadow-sm flex items-center justify-center gap-2"
               onClick={(e) => handleSubmit(e, "save")}
               disabled={loading}
             >
@@ -170,38 +192,133 @@ export default function AddEmployeePage() {
             </button>
           </div>
         </div>
+
         <input type="file" id="employee-image-input" accept="image/*" className="hidden" onChange={handleImageChange} />
 
         {/* Basic Information Section */}
         <Section title="Basic Information" icon={<User />} iconBg="bg-blue-100" iconColor="text-blue-600">
           <InputField
-            label="Employee ID"
-            name="employeeId"
-            value={formData.employeeId}
+            label="Employee Code"
+            name="employee_code"
+            value={formData.employee_code}
             onChange={handleChange}
             required
           />
-          <InputField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} required />
-          <InputField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} required />
-          <InputField label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required />
-          <InputField label="Mobile" name="mobile" value={formData.mobile} onChange={handleChange} required />
           <InputField
-            label="Secondary Email"
-            name="secondaryEmail"
+            label="First Name"
+            name="first_name"
+            value={formData.first_name}
+            onChange={handleChange}
+            required
+          />
+          <InputField label="Last Name" name="last_name" value={formData.last_name} onChange={handleChange} required />
+          <InputField
+            label="Date of Birth"
+            name="date_of_birth"
+            type="date"
+            value={formData.date_of_birth}
+            onChange={handleChange}
+          />
+          <SelectField
+            label="Gender"
+            name="gender"
+            value={formData.gender}
+            onChange={handleSelectChange}
+            options={["Male", "Female", "Other", "Prefer not to say"]}
+          />
+          <InputField label="Nationality" name="nationality" value={formData.nationality} onChange={handleChange} />
+          <SelectField
+            label="Marital Status"
+            name="marital_status"
+            value={formData.marital_status}
+            onChange={handleSelectChange}
+            options={["Single", "Married", "Divorced", "Widowed", "Separated"]}
+          />
+          <SelectField
+            label="Blood Group"
+            name="blood_group"
+            value={formData.blood_group}
+            onChange={handleSelectChange}
+            options={["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]}
+          />
+        </Section>
+
+        {/* Contact Information Section */}
+        <Section title="Contact Information" icon={<Phone />} iconBg="bg-green-100" iconColor="text-green-600">
+          <InputField
+            label="Personal Email"
+            name="personal_email"
             type="email"
-            value={formData.secondaryEmail}
+            value={formData.personal_email}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            label="Official Email"
+            name="official_email"
+            type="email"
+            value={formData.official_email}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Personal Phone"
+            name="personal_phone"
+            value={formData.personal_phone}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            label="Official Phone"
+            name="official_phone"
+            value={formData.official_phone}
             onChange={handleChange}
           />
         </Section>
 
+        {/* Address Information Section */}
+        <Section title="Address Information" icon={<MapPin />} iconBg="bg-purple-100" iconColor="text-purple-600">
+          <div className="col-span-full">
+            <Label htmlFor="current_address" className="block text-gray-700 mb-1">
+              Current Address
+            </Label>
+            <Textarea
+              id="current_address"
+              name="current_address"
+              rows={3}
+              value={formData.current_address}
+              onChange={handleChange}
+              className="w-full rounded border border-gray-300 p-2 focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+              placeholder="Enter current address..."
+            />
+          </div>
+          <div className="col-span-full">
+            <Label htmlFor="permanent_address" className="block text-gray-700 mb-1">
+              Permanent Address
+            </Label>
+            <Textarea
+              id="permanent_address"
+              name="permanent_address"
+              rows={3}
+              value={formData.permanent_address}
+              onChange={handleChange}
+              className="w-full rounded border border-gray-300 p-2 focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+              placeholder="Enter permanent address..."
+            />
+          </div>
+          <InputField label="City" name="city" value={formData.city} onChange={handleChange} />
+          <InputField label="State" name="state" value={formData.state} onChange={handleChange} />
+          <InputField label="Country" name="country" value={formData.country} onChange={handleChange} />
+          <InputField label="Pincode" name="pincode" value={formData.pincode} onChange={handleChange} />
+        </Section>
+
         {/* Employment Information Section */}
-        <Section title="Employment Information" icon={<Building />} iconBg="bg-green-100" iconColor="text-green-600">
+        <Section title="Employment Information" icon={<Building />} iconBg="bg-orange-100" iconColor="text-orange-600">
           <SelectField
             label="Department"
             name="department"
             value={formData.department}
             onChange={handleSelectChange}
-            options={["Engineering", "Marketing", "Sales", "HR", "Finance", "Operations"]}
+            options={["Engineering", "Marketing", "Sales", "HR", "Finance", "Operations", "IT", "Legal", "Admin"]}
             required
           />
           <InputField
@@ -212,85 +329,240 @@ export default function AddEmployeePage() {
             required
           />
           <SelectField
-            label="Employment Type"
-            name="employmentType"
-            value={formData.employmentType}
+            label="Reporting Manager"
+            name="reporting_manager"
+            value={formData.reporting_manager}
             onChange={handleSelectChange}
-            options={["Full-time", "Part-time", "Contract", "Intern"]}
-            required
+            options={[
+              "Jane Smith",
+              "Mike Wilson",
+              "Lisa Brown",
+              "Robert Kim",
+              "Anna Lee",
+              "David Johnson",
+              "Sarah Davis",
+            ]}
           />
-          <InputField label="Work Location" name="workLocation" value={formData.workLocation} onChange={handleChange} />
           <InputField
-            label="Joining Date"
-            name="joiningDate"
+            label="Work Location"
+            name="work_location"
+            value={formData.work_location}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Date of Joining"
+            name="date_of_joining"
             type="date"
-            value={formData.joiningDate}
+            value={formData.date_of_joining}
             onChange={handleChange}
             required
           />
-          <InputField label="Salary" name="salary" type="number" value={formData.salary} onChange={handleChange} />
+          <InputField
+            label="Date of Confirmation"
+            name="date_of_confirmation"
+            type="date"
+            value={formData.date_of_confirmation}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Date of Resignation"
+            name="date_of_resignation"
+            type="date"
+            value={formData.date_of_resignation}
+            onChange={handleChange}
+          />
           <SelectField
-            label="Manager"
-            name="manager"
-            value={formData.manager}
+            label="Employment Status"
+            name="employment_status"
+            value={formData.employment_status}
             onChange={handleSelectChange}
-            options={["Jane Smith", "Mike Wilson", "Lisa Brown", "Robert Kim", "Anna Lee"]}
+            options={["Active", "Inactive", "On Leave", "Terminated", "Resigned", "Probation"]}
+            required
+          />
+          <SelectField
+            label="Employment Type"
+            name="employment_type"
+            value={formData.employment_type}
+            onChange={handleSelectChange}
+            options={["Full-time", "Part-time", "Contract", "Intern", "Consultant", "Temporary"]}
+            required
           />
         </Section>
 
-        {/* Address Information Section */}
-        <Section title="Address Information" icon={<MapPin />} iconBg="bg-purple-100" iconColor="text-purple-600">
+        {/* Document Information Section */}
+        <Section title="Document Information" icon={<FileText />} iconBg="bg-indigo-100" iconColor="text-indigo-600">
+          <InputField label="PAN Number" name="pan_number" value={formData.pan_number} onChange={handleChange} />
           <InputField
-            label="Address Line 1"
-            name="addressLine1"
-            value={formData.addressLine1}
+            label="Aadhar Number"
+            name="aadhar_number"
+            value={formData.aadhar_number}
             onChange={handleChange}
           />
           <InputField
-            label="Address Line 2"
-            name="addressLine2"
-            value={formData.addressLine2}
+            label="Passport Number"
+            name="passport_number"
+            value={formData.passport_number}
             onChange={handleChange}
           />
-          <InputField label="City" name="city" value={formData.city} onChange={handleChange} />
-          <InputField label="State" name="state" value={formData.state} onChange={handleChange} />
-          <InputField label="ZIP" name="zip" value={formData.zip} onChange={handleChange} />
-          <InputField label="Country" name="country" value={formData.country} onChange={handleChange} />
+          <InputField
+            label="Driving License Number"
+            name="driving_license_number"
+            value={formData.driving_license_number}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Tax Identification Number"
+            name="tax_identification_number"
+            value={formData.tax_identification_number}
+            onChange={handleChange}
+          />
+          <InputField
+            label="Social Security Number"
+            name="social_security_number"
+            value={formData.social_security_number}
+            onChange={handleChange}
+          />
+        </Section>
+
+        {/* Bank & Statutory Information Section */}
+        <Section
+          title="Bank & Statutory Information"
+          icon={<CreditCard />}
+          iconBg="bg-teal-100"
+          iconColor="text-teal-600"
+        >
+          <InputField label="Bank Name" name="bank_name" value={formData.bank_name} onChange={handleChange} />
+          <InputField
+            label="Bank Account Number"
+            name="bank_account_number"
+            value={formData.bank_account_number}
+            onChange={handleChange}
+          />
+          <InputField label="IFSC Code" name="ifsc_code" value={formData.ifsc_code} onChange={handleChange} />
+          <InputField label="UAN Number" name="uan_number" value={formData.uan_number} onChange={handleChange} />
+          <InputField label="ESIC Number" name="esic_number" value={formData.esic_number} onChange={handleChange} />
+          <InputField
+            label="Salary Structure ID"
+            name="salary_structure_id"
+            value={formData.salary_structure_id}
+            onChange={handleChange}
+          />
         </Section>
 
         {/* Emergency Contact Section */}
-        <Section title="Emergency Contact" icon={<Phone />} iconBg="bg-orange-100" iconColor="text-orange-600">
+        <Section title="Emergency Contact" icon={<Heart />} iconBg="bg-red-100" iconColor="text-red-600">
           <InputField
-            label="Contact Name"
-            name="emergencyContactName"
-            value={formData.emergencyContactName}
-            onChange={handleChange}
-          />
-          <InputField
-            label="Contact Phone"
-            name="emergencyContactPhone"
-            value={formData.emergencyContactPhone}
+            label="Emergency Contact Name"
+            name="emergency_contact_name"
+            value={formData.emergency_contact_name}
             onChange={handleChange}
           />
           <SelectField
-            label="Relation"
-            name="emergencyContactRelation"
-            value={formData.emergencyContactRelation}
+            label="Relationship"
+            name="emergency_contact_relationship"
+            value={formData.emergency_contact_relationship}
             onChange={handleSelectChange}
-            options={["Spouse", "Parent", "Sibling", "Friend", "Other"]}
+            options={["Spouse", "Parent", "Sibling", "Child", "Friend", "Relative", "Other"]}
+          />
+          <InputField
+            label="Emergency Contact Phone"
+            name="emergency_contact_phone"
+            value={formData.emergency_contact_phone}
+            onChange={handleChange}
           />
           <div className="col-span-full">
-            <Label htmlFor="notes" className="block text-gray-700">
-              Notes
+            <Label htmlFor="emergency_contact_address" className="block text-gray-700 mb-1">
+              Emergency Contact Address
             </Label>
             <Textarea
-              id="notes"
-              name="notes"
-              rows={4}
-              value={formData.notes}
+              id="emergency_contact_address"
+              name="emergency_contact_address"
+              rows={3}
+              value={formData.emergency_contact_address}
               onChange={handleChange}
-              className="w-full rounded border border-gray-300 p-2"
-              placeholder="Additional notes about the employee..."
+              className="w-full rounded border border-gray-300 p-2 focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+              placeholder="Enter emergency contact address..."
+            />
+          </div>
+        </Section>
+
+        {/* Additional Information Section */}
+        <Section title="Additional Information" icon={<Globe />} iconBg="bg-pink-100" iconColor="text-pink-600">
+          <InputField
+            label="Total Experience (Years)"
+            name="total_experience_years"
+            type="number"
+            value={formData.total_experience_years}
+            onChange={handleChange}
+          />
+          <div className="col-span-full">
+            <Label htmlFor="skills" className="block text-gray-700 mb-1">
+              Skills
+            </Label>
+            <Textarea
+              id="skills"
+              name="skills"
+              rows={3}
+              value={formData.skills}
+              onChange={handleChange}
+              className="w-full rounded border border-gray-300 p-2 focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+              placeholder="List technical and soft skills..."
+            />
+          </div>
+          <div className="col-span-full">
+            <Label htmlFor="certifications" className="block text-gray-700 mb-1">
+              Certifications
+            </Label>
+            <Textarea
+              id="certifications"
+              name="certifications"
+              rows={3}
+              value={formData.certifications}
+              onChange={handleChange}
+              className="w-full rounded border border-gray-300 p-2 focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+              placeholder="List professional certifications..."
+            />
+          </div>
+          <div className="col-span-full">
+            <Label htmlFor="hobbies" className="block text-gray-700 mb-1">
+              Hobbies
+            </Label>
+            <Textarea
+              id="hobbies"
+              name="hobbies"
+              rows={2}
+              value={formData.hobbies}
+              onChange={handleChange}
+              className="w-full rounded border border-gray-300 p-2 focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+              placeholder="List hobbies and interests..."
+            />
+          </div>
+          <div className="col-span-full">
+            <Label htmlFor="languages_known" className="block text-gray-700 mb-1">
+              Languages Known
+            </Label>
+            <Textarea
+              id="languages_known"
+              name="languages_known"
+              rows={2}
+              value={formData.languages_known}
+              onChange={handleChange}
+              className="w-full rounded border border-gray-300 p-2 focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+              placeholder="List languages with proficiency level..."
+            />
+          </div>
+          <div className="col-span-full">
+            <Label htmlFor="previous_employers" className="block text-gray-700 mb-1">
+              Previous Employers
+            </Label>
+            <Textarea
+              id="previous_employers"
+              name="previous_employers"
+              rows={4}
+              value={formData.previous_employers}
+              onChange={handleChange}
+              className="w-full rounded border border-gray-300 p-2 focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+              placeholder="List previous employers with designation and duration..."
             />
           </div>
         </Section>
@@ -302,9 +574,9 @@ export default function AddEmployeePage() {
 // Reusable Components
 const Section = ({ title, icon, iconBg, iconColor, children }) => (
   <div className="mb-4 rounded border p-4">
-    <h3 className="mb-4 flex items-center gap-3 border-b pb-3 text-lg font-semibold">
+    <h3 className="mb-4 flex items-center gap-3 border-b pb-2 text-lg font-semibold">
       <div className={`w-8 h-8 rounded-full ${iconBg} flex items-center justify-center`}>
-        <div className={`${iconColor}`}>{icon}</div>
+        <span className={iconColor}>{icon}</span>
       </div>
       {title}
     </h3>
@@ -314,7 +586,7 @@ const Section = ({ title, icon, iconBg, iconColor, children }) => (
 
 const InputField = ({ label, name, type = "text", value, onChange, required = false, className = "" }) => (
   <div className={className}>
-    <Label htmlFor={name} className="block text-gray-700">
+    <Label htmlFor={name} className="block text-gray-700 mb-1">
       {label} {required && <span className="text-red-500">*</span>}
     </Label>
     <Input
@@ -324,18 +596,18 @@ const InputField = ({ label, name, type = "text", value, onChange, required = fa
       value={value}
       onChange={onChange}
       required={required}
-      className="w-full rounded border-gray-300 p-2 border-[1px] focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+      className="w-full rounded border border-gray-300 p-2 focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
     />
   </div>
 )
 
 const SelectField = ({ label, name, value, onChange, options = [], required = false }) => (
   <div>
-    <Label htmlFor={name} className="block text-gray-700">
+    <Label htmlFor={name} className="block text-gray-700 mb-1">
       {label} {required && <span className="text-red-500">*</span>}
     </Label>
     <Select value={value} onValueChange={(val) => onChange(name, val)}>
-      <SelectTrigger className="w-full rounded border-[1px] border-gray-300 p-2 focus:border-gray-400 focus:ring-1 focus:ring-gray-400">
+      <SelectTrigger className="w-full rounded border border-gray-300 p-2 focus:border-gray-400 focus:ring-1 focus:ring-gray-400">
         <SelectValue placeholder={`Select ${label}`} />
       </SelectTrigger>
       <SelectContent>
