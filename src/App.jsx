@@ -45,19 +45,17 @@ import SmsMarketing from "./routes/Marketing/smsmarketing/SmsMarketing";
 import SocialMediaMarketing from "./routes/Marketing/socialmediamarketing/SocialMediaMarketing";
 import CreateEmailCampaign from "./routes/Marketing/emailmarketing/CreateEmailCampaign";
 import TemplateCreation from "./routes/Marketing/emailmarketing/TemplateCreation";
-import UsersPage from "./routes/Marketing/Users/Users"
-import CreateListPage from "./routes/Marketing/Users/CreateList"
+import UsersPage from "./routes/Marketing/Users/Users";
+import CreateListPage from "./routes/Marketing/Users/CreateList";
 import OrganizationProfile from "./routes/OrgProfile.jsx/OrgProfile";
 import UserProfile from "./routes/user/UserProfile";
 import AddEmployeePage from "./components/add-employee-modal";
-import AddPerformancePage from "./components/add-performance";
-import EmployeeDetailsPage from "./routes/HR/employee/Employee-details";
 import MarkAttendancePage from "./components/mark-attendance";
 import RoleEditPage from "./routes/roles/EditRole";
 import MarketingSettings from "./routes/Marketing/MarketingSettings";
 import CredentialForm from "./routes/Marketing/CredentialsForm";
-import CreateSocialMediaCampaign from "./routes/Marketing/socialmediamarketing/CreateSocialMediaCampaign"
-import CreateSMSCampaign from "./routes/Marketing/smsmarketing/CreateSMSCampaign"
+import CreateSocialMediaCampaign from "./routes/Marketing/socialmediamarketing/CreateSocialMediaCampaign";
+import CreateSMSCampaign from "./routes/Marketing/smsmarketing/CreateSMSCampaign";
 import TemplateBuilder from "./routes/emailtemplate/Test";
 import Tasks from "./routes/tasks/Tasks";
 import TaskCreationForm from "./routes/tasks/CreateTask";
@@ -160,12 +158,12 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return (
-    <div>
-        <RouterProvider router={router} />
-        <Toaster />
-    </div>
-  );
+    return (
+        <div>
+            <RouterProvider router={router} />
+            <Toaster />
+        </div>
+    );
 }
 
 export default App;
