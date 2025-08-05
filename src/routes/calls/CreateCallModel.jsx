@@ -114,9 +114,8 @@ const CreateCallModal = ({ onClose, type = "Schedule" }) => {
                                 />
                             </div>
                         </div>
-
-                        {/* Call Owner */}
-                        <div className="relative col-span-2">
+                       
+                        <div className="relative col-span-1">
                             <Input
                                 name="callOwner"
                                 label="Call Owner"
@@ -128,7 +127,7 @@ const CreateCallModal = ({ onClose, type = "Schedule" }) => {
                         </div>
 
                         {/* Subject */}
-                        <div className="col-span-2">
+                        <div className=" relative col-span-1">
                             <Input
                                 name="subject"
                                 label="Subject"
@@ -136,6 +135,8 @@ const CreateCallModal = ({ onClose, type = "Schedule" }) => {
                                 onChange={handleChange}
                             />
                         </div>
+                    
+                        {/* Call Owner */}
 
                         {/* Reminder */}
                         <div className="col-span-2">
