@@ -23,7 +23,9 @@ import {
     FaClone,
     FaBold,
     FaItalic,
-    FaUnderline
+    FaUnderline,
+    FaFont,
+    FaPalette
 } from "react-icons/fa";
 
 // --- Quill Editor Component ---
@@ -206,9 +208,17 @@ const SettingsPanel = ({ component, updateComponentProps, unselectComponent }) =
                             <label className="block text-sm font-medium text-gray-600 mb-1">Content</label>
                             <QuillEditor value={component.props.text} onChange={handleQuillChange} />
                         </div>
-                        <div className="mt-12">
-                           {commonProps}
+                        <div className="mt-12 grid grid-cols-2 gap-4">
+                             <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-600 mb-1">Text Color</label>
+                                <input type="color" name="color" value={component.props.color || '#000000'} onChange={handleChange} className="w-full p-1 h-10 border border-gray-300 rounded-md"/>
+                            </div>
+                             <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-600 mb-1">Font Size (e.g. 16px)</label>
+                                <input type="text" name="fontSize" value={component.props.fontSize || ''} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md"/>
+                            </div>
                         </div>
+                        {commonProps}
                     </>
                 );
             case "Heading":
@@ -234,6 +244,16 @@ const SettingsPanel = ({ component, updateComponentProps, unselectComponent }) =
                                 <option value="h5">H5</option>
                                 <option value="h6">H6</option>
                             </select>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-600 mb-1">Text Color</label>
+                                <input type="color" name="color" value={component.props.color || '#000000'} onChange={handleChange} className="w-full p-1 h-10 border border-gray-300 rounded-md"/>
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-600 mb-1">Font Size (e.g. 32px)</label>
+                                <input type="text" name="fontSize" value={component.props.fontSize || ''} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md"/>
+                            </div>
                         </div>
                         {commonProps}
                     </>
@@ -340,8 +360,15 @@ const QuickAccessToolbar = ({ component, position, updateComponentProps, deleteC
         }
     };
 
+    const handlePropChange = (e) => {
+        updateComponentProps(component.id, { [e.target.name]: e.target.value });
+    };
+
     const supportsAlignment = ['Button', 'Heading', 'Text', 'Image'].includes(component.type);
     const supportsTextFormatting = ['Heading', 'Text'].includes(component.type);
+    const supportsTextColor = ['Heading', 'Text'].includes(component.type);
+    const supportsFontSize = ['Text', 'Heading'].includes(component.type);
+
 
     return (
         <div
@@ -360,6 +387,41 @@ const QuickAccessToolbar = ({ component, position, updateComponentProps, deleteC
                      <div className="w-px h-5 bg-slate-600 mx-1"></div>
                  </>
             )}
+
+            {supportsTextColor && (
+                <>
+                    <div className="relative p-2 rounded-md hover:bg-slate-700" title="Text Color">
+                        <FaPalette />
+                        <input 
+                            type="color" 
+                            name="color"
+                            value={component.props.color || '#000000'}
+                            onMouseDown={(e) => e.preventDefault()}
+                            onChange={handlePropChange}
+                            className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                    </div>
+                </>
+            )}
+
+            {supportsFontSize && (
+                <>
+                    <div className="relative p-2 rounded-md hover:bg-slate-700 flex items-center" title="Font Size">
+                        <FaFont />
+                        <input 
+                            type="text"
+                            name="fontSize"
+                            value={component.props.fontSize || ''}
+                            placeholder="16px"
+                            // onMouseDown={(e) => e.preventDefault()}
+                            onChange={handlePropChange}
+                            className="w-14 ml-1 bg-slate-700 text-white text-xs rounded p-0.5 placeholder-gray-400"
+                        />
+                    </div>
+                </>
+            )}
+
+             {(supportsTextColor || supportsFontSize) && <div className="w-px h-5 bg-slate-600 mx-1"></div>}
             
             {supportsAlignment && (
                 <>
@@ -493,10 +555,10 @@ const App = () => {
                 newComponent.props = { text: 'Button', color: '#ffffff', backgroundColor: '#3b82f6', padding: '10px 20px', width: 'auto', height: 'auto', alignment: 'left' };
                 break;
             case 'Heading':
-                newComponent.props = { text: 'Heading Text', padding: '10px', alignment: 'left', tag: 'h1' };
+                newComponent.props = { text: 'Heading Text', padding: '10px', alignment: 'left', tag: 'h1', color: '#000000', fontSize: '32px' };
                 break;
             case 'Text':
-                newComponent.props = { text: '<p>This is a sample text block. Start editing!</p>', padding: '10px', alignment: 'left' };
+                newComponent.props = { text: '<p>This is a sample text block. Start editing!</p>', padding: '10px', alignment: 'left', color: '#000000', fontSize: '16px' };
                 break;
             case 'Image':
                 newComponent.props = { src: 'https://placehold.co/300x200/e2e8f0/cbd5e0?text=Placeholder', padding: '0px', width: '100%', height: 'auto', alignment: 'left' };
@@ -824,7 +886,7 @@ const App = () => {
                 return <EditableContent 
                     tagName="div"
                     style={style} 
-                    className="text-gray-700" 
+                    className="text-base" 
                     html={item.props.text}
                     isPreview={isPreview}
                     onUpdate={handleContentUpdate}
@@ -834,7 +896,7 @@ const App = () => {
                 return <EditableContent
                     tagName={Tag}
                     style={style} 
-                    className="font-bold text-gray-800"
+                    className="font-bold"
                     html={item.props.text}
                     isPreview={isPreview}
                     onUpdate={handleContentUpdate}
@@ -1003,7 +1065,7 @@ const App = () => {
                 <div className="flex z-10 h-full flex-shrink-0">
                     <div className=" w-20 border-r border-gray-300 bg-white shadow-sm">
                         {types.map((el) => (
-                            <div key={el.name} className={`relative flex cursor-pointer flex-col items-center justify-center gap-1.5 py-4 transition-colors ${selectedType === el.name ? 'text-primary bg-blue-50' : 'text-gray-600 hover:bg-gray-100'}`} onClick={() => setSelectedType(el.name)}>
+                            <div key={el.name} className={`relative flex cursor-pointer flex-col items-center justify-center gap-1.5 py-4 transition-colors ${selectedType === el.name ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-100'}`} onClick={() => setSelectedType(el.name)}>
                                 {el.icon}
                                 <p className="text-xs font-medium">{el.name}</p>
                                 {selectedType === el.name && <div className="absolute -right-[1px] top-1/2 -translate-y-1/2 h-8 w-[2px] bg-blue-600 rounded-full" />}
@@ -1017,7 +1079,7 @@ const App = () => {
                                 <div className="grid grid-cols-2 gap-3">
                                     {typeOptions[selectedType].map((el) => (
                                         <div key={el.name} draggable onDragStart={(e) => handleDragStart(e, el.type)} className="flex cursor-grab flex-col items-center justify-center gap-2 rounded-lg border border-gray-200 p-3 shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
-                                            <div className="text-primary">{el.icon}</div>
+                                            <div className="text-blue-600">{el.icon}</div>
                                             <p className="text-sm font-semibold text-gray-700">{el.name}</p>
                                         </div>
                                     ))}
@@ -1042,16 +1104,16 @@ const App = () => {
             {/* --- Main Canvas Area --- */}
             <div className="flex-1 flex flex-col overflow-hidden" onClick={() => setSelectedComponentId(null)}>
                 <div className="flex-shrink-0 flex justify-end items-center gap-4 p-4 bg-white border-b border-gray-200">
-                    <button onClick={() => setIsPreviewMode(!isPreviewMode)} className="flex items-center gap-2 bg-gray-500 text-white font-bold py-1 px-4 rounded-lg shadow-md hover:bg-gray-600 transition-colors">
+                    <button onClick={() => setIsPreviewMode(!isPreviewMode)} className="flex items-center gap-2 bg-gray-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-600 transition-colors">
                         {isPreviewMode ? <FaEyeSlash/> : <FaEye />}
                         {isPreviewMode ? 'Exit Preview' : 'Preview'}
                     </button>
-                    <button onClick={generateHtml} className="flex items-center gap-2 bg-primary text-white font-bold py-1 px-2 rounded-lg shadow-md hover:bg-opacity-90 transition-colors">
+                    <button onClick={generateHtml} className="flex items-center gap-2 bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors">
                         <FaSave />
                         Save & Export HTML
                     </button>
                 </div>
-                <div ref={canvasScrollRef} className="flex-1 overflow-y-auto p-4">
+                <div ref={canvasScrollRef} className="flex-1 overflow-y-auto p-4 bg-gray-200">
                     <div 
                         className="bg-white w-full max-w-4xl mx-auto rounded-lg shadow-inner border border-gray-200 p-4 min-h-full relative" 
                         onDrop={(e) => handleDrop(e)} 
@@ -1066,7 +1128,7 @@ const App = () => {
                             duplicateComponent={duplicateComponent}
                         />}
                         {canvasContent.length > 0 ? renderCanvasContent(canvasContent, isPreviewMode) : (
-                            <div className="flex items-center justify-center h-full text-center text-gray-400 text-lg pointer-events-none">
+                            <div className="flex items-center justify-center h-full text-center text-gray-400 text-lg pointer-events-none min-h-[60vh]">
                                 <p>Drag and drop components here to start building your template.</p>
                             </div>
                         )}

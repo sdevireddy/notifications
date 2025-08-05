@@ -21,6 +21,7 @@ import {
     Mail,
     GalleryHorizontalEnd,
     PanelLeftOpen,
+    Phone,
 } from "lucide-react";
 import logoLight from "@/assets/logo-light.svg";
 import logoDark from "@/assets/logo-dark.svg";
@@ -31,6 +32,9 @@ import "@/sidebar/sidebar-theme.css";
 import "@/sidebar/sidebar-search.css";
 import "@/sidebar/sidebar-nav.css";
 import { useSelector } from "react-redux";
+import { FaTasks } from "react-icons/fa";
+import { SiGotomeeting } from "react-icons/si";
+import { LiaFileInvoiceSolid } from "react-icons/lia";
 // Define links per module
 const moduleLinks = {
     CRM: [
@@ -41,6 +45,11 @@ const moduleLinks = {
         { to: "/workflow", label: "Workflow", icon: <Workflow size={20} /> },
         { to: "/settings", label: "Settings", icon: <Settings size={20} /> },
         { to: "/users", label: "Users", icon: <UserPlus size={20} /> },
+        { to: "/tasks", label: "Tasks", icon: <FaTasks  size={20} /> },
+        { to: "/invoices", label: "Invoices", icon: <LiaFileInvoiceSolid size={24} /> },
+        { to: "/meetings", label: "Mettings", icon: <SiGotomeeting  size={20} /> },
+        { to: "/salesorders", label: "Sales Order", icon: <UserPlus size={20} /> },
+        { to: "/calls", label: "Calls", icon: <Phone size={20} /> },
     ],
     Books: [{ to: "/library", label: "Library", icon: <BookOpen size={20} /> }],
     Marketing: [
@@ -122,6 +131,7 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
 
             <div className="space-y-2 px-3">
                 <p className="ml-2 line-clamp-1 text-xs font-semibold text-gray-50 dark:text-gray-400">{activeModule}</p>
+                <div className="overflow-y-scroll max-h-[72vh] scrollbar-none">
                 {moduleLinks[activeModule]
                     ?.filter((link) => link.label.toLowerCase().includes(search.toLowerCase()))
                     .map((link, index) => (
@@ -133,6 +143,7 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
                             collapsed={collapsed}
                         />
                     ))}
+                    </div>
             </div>
         </div>
     );

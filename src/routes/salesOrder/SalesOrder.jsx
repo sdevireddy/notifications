@@ -50,59 +50,54 @@ import toast from "react-hot-toast";
 import { axiosPrivate } from "../../utils/axios";
 import DeleteConfirmationDialog from "../../components/ConfirmDeleteModel";
 
-const accountsColumnsConfig = {
-    accountName: {
-        label: "Account Name",
-        render: ({ row }) => {
-            const account = row.original;
-            return (
-                <div className="flex items-center gap-2">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200">
-                        <User className="h-4 w-4 text-gray-500" />
-                    </div>
-                    <div>{account.accountName}</div>
-                </div>
-            );
-        },
+const salesOrderColumnsConfig = {
+    subject: {
+        label: "Subject",
+        render: ({ row }) => row.original.subject || "-",
     },
-    phone: {
-        label: "Phone",
-        render: ({ row }) => row.original.phone || "-",
+    status: {
+        label: "status",
+        render: ({ row }) => row.original.status || "-",
     },
-    website: {
-        label: "Website",
-        render: ({ row }) => row.original.website || "-",
+    grandTotal: {
+        label: "GrandTotal",
+        render: ({ row }) => row.original.GrandTotal || "-",
     },
-    industry: {
-        label: "Industry",
+    dealName: {
+        label: "Deal Name",
         render: ({ row }) => row.original.industry || "-",
     },
-    annualRevenue: {
-        label: "Revenue",
+    contactName: {
+        label: "Contact Name",
         render: ({ row }) => row.original.annualRevenue?.toLocaleString() || "-",
     },
     accountOwner: {
         label: "Owner",
         render: ({ row }) => row.original.accountOwner || "-",
     },
+     salesOrderOwner: {
+        label: "SalesOrderOwner",
+        render: ({ row }) => row.original.accountOwner || "-",
+    },
 };
 const availableAccountColumns = {
-    accountName: true,
-    phone: true,
-    website: true,
-    industry: true,
-    annualRevenue: true,
+    subject: true,
+    status:true,
+    grandTotal:true,
+    dealName:true,
+    contactName: true,
     accountOwner: true,
+     salesOrderOwner:false
 };
-export default function AccountsPage() {
-    const [accounts, setAccounts] = useState([]);
+export default function SalesOrderPage() {
+    const [salesOrder, setSalesOrder] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [recordsPerPage, setRecordsPerPage] = useState("25");
     const [currentPage, setCurrentPage] = useState(1);
     const [selectMultipleAccount, setSelectMultipleAccount] = useState([]);
     const [selectSingleAccount, setSelectSingleAccount] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-    const [filteredAccounts, setFilteredAccounts] = useState([]);
+    const [filteredSalesOrder, setFilteredSalesOrder] = useState([]);
     const [totalRecord, setTotalRecords] = useState(0);
     const [emailModel, setEmailModel] = useState(false);
     const [isMassEmail, setIsMassEmail] = useState(false);
@@ -111,26 +106,26 @@ export default function AccountsPage() {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [accountToDelete, setAccountToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [accountsData, refetchData, loading] = useFetchData(apiSummary.crm.getAccounts,currentPage,recordsPerPage);
+    const [salesOrderData, refetchData, loading] = useFetchData(apiSummary.crm.getSalesorder,currentPage,recordsPerPage);
     const [visibleColumns, setVisibleColumns] = useState(availableAccountColumns);
     const [showColumnSelector, setShowColumnSelector] = useState(false);
     const [actionOpen, setActionOpen] = useState(false);
     useEffect(() => {
-        setAccounts(accountsData.data);
-        setFilteredAccounts(accountsData.data);
-        setTotalRecords(accountsData.totalRecords);
+        setSalesOrder(salesOrderData.data);
+        setFilteredSalesOrder(salesOrderData.data);
+        setTotalRecords(salesOrderData.totalRecords);
         setCurrentPage(1);
-    }, [accountsData]);
+    }, [salesOrderData]);
 
     useEffect(() => {
         const term = searchTerm.toLowerCase();
-        setFilteredAccounts(
-            accounts.filter(
-                (account) =>
-                    account.accountName?.toLowerCase().includes(term) ||
-                    account.phone?.toLowerCase().includes(term) ||
-                    account.accountOwner?.toLowerCase().includes(term) ||
-                    account.website?.toLowerCase().includes(term),
+        setFilteredSalesOrder(
+            salesOrderData.filter(
+                (sales) =>
+                    sales.accountName?.toLowerCase().includes(term) ||
+                    sales.phone?.toLowerCase().includes(term) ||
+                    sales.accountOwner?.toLowerCase().includes(term) ||
+                    sales.website?.toLowerCase().includes(term),
             ),
         );
         setCurrentPage(1);
@@ -148,14 +143,14 @@ export default function AccountsPage() {
     };
 
     const handleSelectAll = () => {
-        setSelectMultipleLead(selectMultipleAccount.length === accounts.length ? [] : accounts);
+        selectMultipleAccount(selectMultipleAccount.length === salesOrder.length ? [] : salesOrder);
     };
 
     const handleSort = (key) => {
         setSortConfig((prev) => (prev.key === key ? { key, direction: prev.direction === "asc" ? "desc" : "asc" } : { key, direction: "asc" }));
     };
     const columns = useMemo(() => {
-        const dynamicCols = Object.entries(accountsColumnsConfig)
+        const dynamicCols = Object.entries(salesOrderColumnsConfig)
             .filter(([key]) => visibleColumns[key])
             .map(([key, { label, render }]) => ({
                 accessorKey: key,
@@ -267,7 +262,7 @@ export default function AccountsPage() {
         <div className="flex-1 bg-white">
             <div className="flex items-center justify-between  px-6 py-2">
                 <div className="flex items-center gap-4">
-                    <h1 className="text-xl font-semibold text-gray-900">Accounts</h1>
+                    <h1 className="text-xl font-semibold text-gray-900">Sales Order</h1>
                     <BreadCrumb />
                 </div>
                 <div className="flex items-center gap-3">
@@ -292,13 +287,13 @@ export default function AccountsPage() {
                             align="end"
                             className="h-80 w-56 overflow-auto"
                         >
-                            {Object.keys(accountsColumnsConfig).map((key) => (
+                            {Object.keys(salesOrderColumnsConfig).map((key) => (
                                 <DropdownMenuItem
                                     key={key}
                                     onSelect={(e) => e.preventDefault()}
                                     className="flex items-center justify-between"
                                 >
-                                    <span className="text-sm">{accountsColumnsConfig[key].label}</span>
+                                    <span className="text-sm">{salesOrderColumnsConfig[key].label}</span>
                                     <Checkbox
                                         checked={visibleColumns[key]}
                                         onCheckedChange={() =>
@@ -341,18 +336,18 @@ export default function AccountsPage() {
                                 <Tag className="mr-2 h-4 w-4" />
                                 Tag Contacts
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900" onClick={()=>navigate('/import/accounts')}>
+                            <DropdownMenuItem className="data-[highlighted]:bg-blue-100 data-[highlighted]:text-gray-900" onClick={()=>navigate('/import/salesorder')}>
                                 <Import className="mr-2 h-4 w-4" />
-                                Import Accounts
+                                Import salesOrders
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <Button
-                        onClick={() => navigate("/accounts/create")}
+                        onClick={() => navigate("/salesorder/create")}
                         className="bg-primary text-white hover:bg-opacity-90"
                     >
-                        <Plus className="mr-2 h-4 w-4" /> Create Account
+                        <Plus className="mr-2 h-4 w-4" /> Create SalesOrder
                     </Button>
                 </div>
             </div>
@@ -361,7 +356,7 @@ export default function AccountsPage() {
                 <div className="relative w-full max-w-[20rem]">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <Input
-                        placeholder="Search Accounts..."
+                        placeholder="Search sales order..."
                         className="pl-10"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -397,13 +392,13 @@ export default function AccountsPage() {
 
             <Table
                 columns={columns}
-                data={filteredAccounts}
+                data={filteredSalesOrder}
                 loading={loading}
             />
 
             <div className="flex items-center justify-between border-t bg-gray-50 px-6 py-2">
                 <div className="text-sm text-gray-600">
-                    Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredAccounts.length)} of {totalRecord} results
+                    Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredSalesOrder.length)} of {totalRecord} results
                 </div>
                 <div className="flex items-center gap-2">
                     <Button

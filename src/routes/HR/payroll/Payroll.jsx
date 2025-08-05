@@ -148,9 +148,6 @@ export default function PayrollPage() {
     setSelectMultiplePayroll(selectMultiplePayroll.length === payrollData.data.length ? [] : payrollData.data)
   }
 
-  const handleAddPayroll = () => {
-    navigate("/hr/add-payroll")
-  }
 
   const currentPayroll = filteredPayroll
 
@@ -337,14 +334,17 @@ export default function PayrollPage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button className="bg-primary text-white" onClick={handleAddPayroll}>
+          <Button
+            className="bg-primary text-white"
+            onClick={() => navigate("/hr/add-payroll")}
+          >
             <Plus className="mr-2 h-4 w-4" /> Add Payroll
           </Button>
         </div>
       </div>
 
       <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-4">
-        <div className="relative w-full max-w-md">
+        <div className="relative w-full max-w-[20rem]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
             placeholder="Search payroll..."

@@ -53,82 +53,10 @@ export default function EmployeePage() {
   const fetchEmployees = async () => {
     setLoading(true)
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/employees')
-      // const data = await response.json()
+      const response = await fetch('/api/employees')
+      const data = await response.json()
 
       // Mock data for now
-      const employeesData = {
-        totalRecords: 5,
-        data: [
-          {
-            id: 1,
-            employeeId: "EMP001",
-            firstName: "John",
-            lastName: "Doe",
-            email: "john.doe@company.com",
-            mobile: "+91-9876543210",
-            department: "Engineering",
-            designation: "Software Engineer",
-            joiningDate: "2023-01-15",
-            status: "Active",
-            manager: "Jane Smith",
-          },
-          {
-            id: 2,
-            employeeId: "EMP002",
-            firstName: "Sarah",
-            lastName: "Johnson",
-            email: "sarah.johnson@company.com",
-            mobile: "+91-9876543211",
-            department: "Marketing",
-            designation: "Marketing Manager",
-            joiningDate: "2022-08-20",
-            status: "Active",
-            manager: "Mike Wilson",
-          },
-          {
-            id: 3,
-            employeeId: "EMP003",
-            firstName: "Mike",
-            lastName: "Davis",
-            email: "mike.davis@company.com",
-            mobile: "+91-9876543212",
-            department: "Sales",
-            designation: "Sales Executive",
-            joiningDate: "2023-03-10",
-            status: "Active",
-            manager: "Lisa Brown",
-          },
-          {
-            id: 4,
-            employeeId: "EMP004",
-            firstName: "Emily",
-            lastName: "Chen",
-            email: "emily.chen@company.com",
-            mobile: "+91-9876543213",
-            department: "HR",
-            designation: "HR Specialist",
-            joiningDate: "2022-11-05",
-            status: "Active",
-            manager: "Robert Kim",
-          },
-          {
-            id: 5,
-            employeeId: "EMP005",
-            firstName: "David",
-            lastName: "Wilson",
-            email: "david.wilson@company.com",
-            mobile: "+91-9876543214",
-            department: "Finance",
-            designation: "Financial Analyst",
-            joiningDate: "2023-02-28",
-            status: "Inactive",
-            manager: "Anna Lee",
-          },
-        ],
-      }
-
       setEmployees(employeesData.data)
       setFilteredEmployees(employeesData.data)
       setTotalRecords(employeesData.totalRecords)
@@ -377,8 +305,8 @@ export default function EmployeePage() {
         </div>
       </div>
 
-      <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-4">
-        <div className="relative w-full max-w-md">
+      <div className="flex flex-row-reverse items-center justify-between border-b px-6 py-2">
+        <div className="relative w-full max-w-[20rem]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
             placeholder="Search employees..."

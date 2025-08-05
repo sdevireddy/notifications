@@ -3,7 +3,7 @@ const initialValue={
    CRM:true,
    HR:true,
    Books:false,
-   Marketing:false,
+   Marketing:true,
    Campaigns:false,
    TiketDesk:false
 }
