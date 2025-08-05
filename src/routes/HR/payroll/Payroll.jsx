@@ -1,6 +1,7 @@
 "use client"
 import { LuFilter } from "react-icons/lu"
 import { useState, useEffect, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -26,11 +27,12 @@ import {
   FileText,
   Calculator,
 } from "lucide-react"
-import Tooltip from './../../../components/ToolTip';
-import Table from './../../../components/Table';
-import BreadCrumb from './../../../components/BreadCrumb';
+import Tooltip from "./../../../components/ToolTip"
+import Table from "./../../../components/Table"
+import BreadCrumb from "./../../../components/BreadCrumb"
 
 export default function PayrollPage() {
+  const navigate = useNavigate()
   const [payroll, setPayroll] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [recordsPerPage, setRecordsPerPage] = useState("25")
@@ -145,6 +147,7 @@ export default function PayrollPage() {
   const handleSelectAll = () => {
     setSelectMultiplePayroll(selectMultiplePayroll.length === payrollData.data.length ? [] : payrollData.data)
   }
+
 
   const currentPayroll = filteredPayroll
 
@@ -294,9 +297,9 @@ export default function PayrollPage() {
 
   return (
     <div className="min-h-screen flex-1 bg-white">
-      <div className="flex items-center justify-between border-b px-6 py-2">
+      <div className="flex items-center justify-between border-b px-6 py-4">
         <div className="flex items-center gap-4">
-          <h1 className="text-xl font-semibold text-gray-900">Payroll</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">Payroll</h1>
           <BreadCrumb />
         </div>
         <div className="flex items-center gap-3">
@@ -331,7 +334,10 @@ export default function PayrollPage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button className="bg-primary text-white hover:bg-opacity-90">
+          <Button
+            className="bg-primary text-white"
+            onClick={() => navigate("/hr/add-payroll")}
+          >
             <Plus className="mr-2 h-4 w-4" /> Add Payroll
           </Button>
         </div>

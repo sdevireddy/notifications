@@ -269,7 +269,7 @@ export default function LeaveManagementPage() {
           <h1 className="text-xl font-semibold">Leave Management</h1>
           <BreadCrumb currentPath={["HR", "Leave Management"]} />
         </div>
-        <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={handleApplyLeave}>
+        <Button className="bg-primary text-white" onClick={handleApplyLeave}>
           Apply Leave
         </Button>
       </div>

@@ -297,7 +297,7 @@ export default function AttendancePage() {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+             <Button variant="primary">
                 Actions <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -318,7 +318,7 @@ export default function AttendancePage() {
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
-            className="bg-blue-600 text-white hover:bg-blue-700"
+            className="bg-primary text-white "
             onClick={() => navigate("/hr/mark-attendance")}
           >
             <Plus className="mr-2 h-4 w-4" /> Mark Attendance
