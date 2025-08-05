@@ -1,3 +1,4 @@
+import { Type } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 // Using a variety of icons to enhance the UI
 import { 
@@ -364,10 +365,13 @@ const QuickAccessToolbar = ({ component, position, updateComponentProps, deleteC
         updateComponentProps(component.id, { [e.target.name]: e.target.value });
     };
 
+    // Define which controls are supported by the current component type
     const supportsAlignment = ['Button', 'Heading', 'Text', 'Image'].includes(component.type);
     const supportsTextFormatting = ['Heading', 'Text'].includes(component.type);
-    const supportsTextColor = ['Heading', 'Text'].includes(component.type);
+    const supportsTextColor = ['Heading', 'Text', 'Button'].includes(component.type);
     const supportsFontSize = ['Text', 'Heading'].includes(component.type);
+    const supportsBackgroundColor = ['Button'].includes(component.type);
+    const supportsDimensions = ['Button', 'Image'].includes(component.type);
 
 
     return (
@@ -379,6 +383,7 @@ const QuickAccessToolbar = ({ component, position, updateComponentProps, deleteC
             <span className="text-xs font-bold px-2">{component.type}</span>
             <div className="w-px h-5 bg-slate-600 mx-1"></div>
 
+            {/* Text Formatting */}
             {supportsTextFormatting && (
                  <>
                      <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleTextFormat('bold')} className="p-2 rounded-md hover:bg-slate-700" title="Bold"><FaBold /></button>
@@ -388,41 +393,78 @@ const QuickAccessToolbar = ({ component, position, updateComponentProps, deleteC
                  </>
             )}
 
+            {/* Font Styling */}
             {supportsTextColor && (
-                <>
-                    <div className="relative p-2 rounded-md hover:bg-slate-700" title="Text Color">
-                        <FaPalette />
-                        <input 
-                            type="color" 
-                            name="color"
-                            value={component.props.color || '#000000'}
-                            onMouseDown={(e) => e.preventDefault()}
-                            onChange={handlePropChange}
-                            className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-                    </div>
-                </>
+                <div className="relative p-2 rounded-md hover:bg-slate-700" title="Text Color">
+                   <Type />
+                    <input 
+                        type="color" 
+                        name="color"
+                        value={component.props.color || '#000000'}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onChange={handlePropChange}
+                        className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                </div>
             )}
-
             {supportsFontSize && (
+                <div className="relative p-2 rounded-md hover:bg-slate-700 flex items-center" title="Font Size">
+                    <FaFont />
+                    <input 
+                        type="text"
+                        name="fontSize"
+                        value={component.props.fontSize || ''}
+                        placeholder="16px"
+                        onChange={handlePropChange}
+                        className="w-14 ml-1 bg-slate-700 text-white text-xs rounded p-0.5 placeholder-gray-400"
+                    />
+                </div>
+            )}
+            {(supportsTextColor || supportsFontSize) && <div className="w-px h-5 bg-slate-600 mx-1"></div>}
+
+            {/* Background & Dimensions */}
+            {supportsBackgroundColor && (
+                <div className="relative p-2 rounded-md hover:bg-slate-700" title="Background Color">
+                    <FaPalette /> 
+                    <input 
+                        type="color" 
+                        name="backgroundColor"
+                        value={component.props.backgroundColor || '#ffffff'}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onChange={handlePropChange}
+                        className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                </div>
+            )}
+            {supportsDimensions && (
                 <>
-                    <div className="relative p-2 rounded-md hover:bg-slate-700 flex items-center" title="Font Size">
-                        <FaFont />
-                        <input 
+                    <div className="relative p-2 rounded-md flex items-center" title="Width">
+                         <span className="text-xs font-semibold mr-1">W</span>
+                         <input
                             type="text"
-                            name="fontSize"
-                            value={component.props.fontSize || ''}
-                            placeholder="16px"
-                            // onMouseDown={(e) => e.preventDefault()}
+                            name="width"
+                            value={component.props.width || ''}
+                            placeholder="auto"
                             onChange={handlePropChange}
-                            className="w-14 ml-1 bg-slate-700 text-white text-xs rounded p-0.5 placeholder-gray-400"
+                            className="w-16 bg-slate-700 text-white text-xs rounded p-0.5 placeholder-gray-400 focus:ring-1 focus:ring-blue-400 outline-none"
+                         />
+                    </div>
+                    <div className="relative p-2 rounded-md flex items-center" title="Height">
+                        <span className="text-xs font-semibold mr-1">H</span>
+                        <input
+                            type="text"
+                            name="height"
+                            value={component.props.height || ''}
+                            placeholder="auto"
+                            onChange={handlePropChange}
+                            className="w-16 bg-slate-700 text-white text-xs rounded p-0.5 placeholder-gray-400 focus:ring-1 focus:ring-blue-400 outline-none"
                         />
                     </div>
                 </>
             )}
+            {(supportsBackgroundColor || supportsDimensions) && <div className="w-px h-5 bg-slate-600 mx-1"></div>}
 
-             {(supportsTextColor || supportsFontSize) && <div className="w-px h-5 bg-slate-600 mx-1"></div>}
-            
+            {/* Alignment */}
             {supportsAlignment && (
                 <>
                     <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleAlignmentChange('left')} className={`p-2 rounded-md ${component.props.alignment === 'left' ? 'bg-blue-500' : 'hover:bg-slate-700'}`} title="Align Left"><FaAlignLeft /></button>
@@ -432,11 +474,13 @@ const QuickAccessToolbar = ({ component, position, updateComponentProps, deleteC
                 </>
             )}
 
+            {/* Actions */}
             <button onClick={() => duplicateComponent(component.id)} className="p-2 rounded-md hover:bg-slate-700" title="Duplicate"><FaClone /></button>
             <button onClick={() => deleteComponent(component.id)} className="p-2 rounded-md hover:bg-red-500" title="Delete"><FaTrash /></button>
         </div>
     );
 };
+
 
 // --- Editable Content Component ---
 // A component to handle contentEditable elements without cursor jumping issues in React.
