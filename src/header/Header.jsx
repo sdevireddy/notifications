@@ -117,7 +117,7 @@ const handleLogout=()=>{
                                 alt="Logo"
                                 className="h-10 w-10 rounded-[100%] object-cover"
                             />
-                            <p>{name.toUpperCase()}</p>
+                            <p>{orgName.toUpperCase()}</p>
                         </div>
                     ) }
                 </Link>

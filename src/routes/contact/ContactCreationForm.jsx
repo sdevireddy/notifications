@@ -75,7 +75,7 @@ const ContactCreationForm = () => {
     };
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto text-sm">
       <form className="bg-white rounded-lg shadow-md">
         {/* Header with Left Arrow Button, Contact Image, "Create Contact" text and action buttons */}
         <div className="flex items-center justify-between border-b p-4">

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUser, FaLock, FaBell, FaShieldAlt, FaCreditCard, FaLanguage, FaQuestionCircle, FaCogs, FaChartPie } from 'react-icons/fa';
-import { Mail, Notebook } from 'lucide-react';
+import { Mail, Notebook, Workflow } from 'lucide-react';
 import BreadCrumb from '../../components/BreadCrumb';
 
 const settingOptions = [
   { label: 'Email Templates', path: '/templates', icon: <Mail /> },
+   { path: "/workflow", label: "Workflow", icon: <Workflow /> },
   { label: 'Roles', path: '/roles', icon: <Notebook />},
    { label: 'Org Profile', path: '/org/profile', icon: <FaUser /> },
   { label: 'Profile', path: '/user/profile', icon: <FaUser /> },
