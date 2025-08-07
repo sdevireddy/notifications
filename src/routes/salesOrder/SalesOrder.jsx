@@ -56,7 +56,7 @@ const salesOrderColumnsConfig = {
         render: ({ row }) => row.original.subject || "-",
     },
     status: {
-        label: "status",
+        label: "Status",
         render: ({ row }) => row.original.status || "-",
     },
     grandTotal: {
