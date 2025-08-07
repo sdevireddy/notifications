@@ -416,10 +416,9 @@ const SalesOrderCreationForm = () => {
                         onChange={handleChange}
                     />
                 </Section>
-                <div
-                >
-                    <h2 className="font-bold text-xl px-3">Order Items</h2>
-                    <div className="overflow-x-auto w-full p-3">
+                <div>
+                    <h2 className="px-3 text-xl font-bold">Order Items</h2>
+                    <div className="w-full overflow-x-auto p-3">
                         <table className="min-w-full border">
                             <thead className="bg-blue-100">
                                 <tr>
@@ -435,72 +434,77 @@ const SalesOrderCreationForm = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                               {orderedItems.map((item, index) => (
-  <tr key={item.id} className="py-2">
-    <td className="text-center">{index + 1}</td>
+                                {orderedItems.map((item, index) => (
+                                    <tr
+                                        key={item.id}
+                                        className="py-2"
+                                    >
+                                        <td className="text-center">{index + 1}</td>
 
-    <td className="text-center max-w-56">
-      <div >
-        <Input
-          className="w-full "
-          value={item.productName}
-          onChange={(e) => handleItemChange(item.id, "productName", e.target.value)}
-          placeholder="Product Name"
-        />
-        <textarea
-          className="mt-1 w-full border border-gray-500 resize-none "
-          value={item.description}
-          onChange={(e) => handleItemChange(item.id, "description", e.target.value)}
-          placeholder="Description"
-        />
-      </div>
-    </td>
+                                        <td className="max-w-56 text-center">
+                                            <div>
+                                                <Input
+                                                    className="w-full"
+                                                    value={item.productName}
+                                                    onChange={(e) => handleItemChange(item.id, "productName", e.target.value)}
+                                                    placeholder="Product Name"
+                                                />
+                                                <textarea
+                                                    className="mt-1 w-full resize-none border border-gray-500"
+                                                    value={item.description}
+                                                    onChange={(e) => handleItemChange(item.id, "description", e.target.value)}
+                                                    placeholder="Description"
+                                                />
+                                            </div>
+                                        </td>
 
-    <td className="text-center">
-      <Input
-        className="w-20 p-1 text-center mx-auto"
-        value={item.quantity}
-        onChange={(e) => handleItemChange(item.id, "quantity", e.target.value)}
-      />
-    </td>
+                                        <td className="text-center">
+                                            <Input
+                                                className="mx-auto w-20 p-1 text-center"
+                                                value={item.quantity}
+                                                onChange={(e) => handleItemChange(item.id, "quantity", e.target.value)}
+                                            />
+                                        </td>
 
-    <td className="text-center">
-      <Input
-        className="w-24 p-1 text-center mx-auto"
-        value={item.listPrice}
-        onChange={(e) => handleItemChange(item.id, "listPrice", e.target.value)}
-      />
-    </td>
+                                        <td className="text-center">
+                                            <Input
+                                                className="mx-auto w-24 p-1 text-center"
+                                                value={item.listPrice}
+                                                onChange={(e) => handleItemChange(item.id, "listPrice", e.target.value)}
+                                            />
+                                        </td>
 
-    <td className="text-center">{Number(item.amount).toFixed(2)}</td>
+                                        <td className="text-center">{Number(item.amount).toFixed(2)}</td>
 
-    <td className="text-center">
-      <Input
-        className="w-20 p-1 text-center mx-auto"
-        value={item.discount}
-        onChange={(e) => handleItemChange(item.id, "discount", e.target.value)}
-      />
-    </td>
+                                        <td className="text-center">
+                                            <Input
+                                                className="mx-auto w-20 p-1 text-center"
+                                                value={item.discount}
+                                                onChange={(e) => handleItemChange(item.id, "discount", e.target.value)}
+                                            />
+                                        </td>
 
-    <td className="">
-      <Input
-        disabled
-        className="w-20 p-1 text-center mx-auto"
-        value={item.tax}
-        onChange={(e) => handleItemChange(item.id, "tax", e.target.value)}
-      />
-    </td>
+                                        <td className="">
+                                            <Input
+                                                disabled
+                                                className="mx-auto w-20 p-1 text-center"
+                                                value={item.tax}
+                                                onChange={(e) => handleItemChange(item.id, "tax", e.target.value)}
+                                            />
+                                        </td>
 
-    <td className="text-center">{item.total.toFixed(2)}</td>
+                                        <td className="text-center">{item.total.toFixed(2)}</td>
 
-    <td className="text-center">
-      <button onClick={() => removeRow(item.id)} className="text-red-500">
-        <MdDelete size={20} />
-      </button>
-    </td>
-  </tr>
-))}
-
+                                        <td className="text-center">
+                                            <button
+                                                onClick={() => removeRow(item.id)}
+                                                className="text-red-500"
+                                            >
+                                                <MdDelete size={20} />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
 
@@ -513,25 +517,25 @@ const SalesOrderCreationForm = () => {
                         </button>
 
                         {/* Summary Box */}
-                       <div className="ml-auto mt-6 w-full max-w-md rounded-lg border border-gray-300 bg-blue-100 p-6 shadow-lg">
-  <h2 className="mb-4 text-lg font-semibold text-gray-800">Order Summary</h2>
+                        <div className="ml-auto mt-6 w-full max-w-md rounded-lg border border-gray-300 bg-blue-100 p-6 shadow-lg">
+                            <h2 className="mb-4 text-lg font-semibold text-gray-800">Order Summary</h2>
 
-  <div className="mb-3 flex justify-between text-gray-700">
-    <span className="font-medium">Sub Total ($)</span>
-    <span>{summary.subTotal.toFixed(2)}</span>
-  </div>
+                            <div className="mb-3 flex justify-between text-gray-700">
+                                <span className="font-medium">Sub Total ($)</span>
+                                <span>{summary.subTotal.toFixed(2)}</span>
+                            </div>
 
-  <div className="mb-3 flex justify-between text-gray-700">
-    <span className="font-medium">Discount ($)</span>
-    <span>{summary.discount.toFixed(2)}</span>
-  </div>
+                            <div className="mb-3 flex justify-between text-gray-700">
+                                <span className="font-medium">Discount ($)</span>
+                                <span>{summary.discount.toFixed(2)}</span>
+                            </div>
 
-  <div className="mb-3 flex justify-between text-gray-700">
-    <span className="font-medium">Tax ($)</span>
-    <span>{summary.tax.toFixed(2)}</span>
-  </div>
+                            <div className="mb-3 flex justify-between text-gray-700">
+                                <span className="font-medium">Tax ($)</span>
+                                <span>{summary.tax.toFixed(2)}</span>
+                            </div>
 
-  {/* <div className="mb-4 flex justify-between items-center text-gray-700">
+                            {/* <div className="mb-4 flex justify-between items-center text-gray-700">
     <span className="font-medium">Adjustment ($)</span>
     <input
       type="number"
@@ -541,12 +545,11 @@ const SalesOrderCreationForm = () => {
     />
   </div> */}
 
-  <div className="flex justify-between items-center rounded bg-blue-100 px-3 py-2 font-bold text-blue-800 border-t border-blue-300">
-    <span>Grand Total ($)</span>
-    <span>{summary.grandTotal.toFixed(2)}</span>
-  </div>
-</div>
-
+                            <div className="flex items-center justify-between rounded border-t border-blue-300 bg-blue-100 px-3 py-2 font-bold text-blue-800">
+                                <span>Grand Total ($)</span>
+                                <span>{summary.grandTotal.toFixed(2)}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <Section
