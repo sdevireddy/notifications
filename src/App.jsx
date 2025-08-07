@@ -61,13 +61,13 @@ import CreateSMSCampaign from "./routes/Marketing/smsmarketing/CreateSMSCampaign
 import TemplateBuilder from "./routes/emailtemplate/Test";
 import Tasks from "./routes/tasks/Tasks";
 import TaskCreationForm from "./routes/tasks/CreateTask";
-import Invoices from "./routes/invoices/Invoices";
 import Meeting from "./routes/meetings/Meeting";
 import SalesOrder from "./routes/salesOrder/SalesOrder";
 import Calls from "./routes/calls/Calls";
 import SalesOrderCreationForm from "./routes/salesOrder/CreateSalesOrder";
 import AddPayrollPage from "./components/add-payroll";
 import ViewSalesOrder from "./routes/salesOrder/ViewSalesOrder";
+import InvoicePage from './routes/invoices/Invoices'
 const router = createBrowserRouter([
     {
         path: "/",
@@ -107,7 +107,7 @@ const router = createBrowserRouter([
                     { path: "org/profile", element: <OrganizationProfile /> },
                     { path: "tasks", element: <Tasks /> },
                     { path: "tasks/create", element: <TaskCreationForm /> },
-                    { path: "invoices", element: <Invoices /> },
+                    { path: "invoices", element: <InvoicePage /> },
                     { path: "meetings", element: <Meeting /> },
                     { path: "salesorders", element: <SalesOrder /> },
                     { path: "salesorders/:id", element: <ViewSalesOrder /> },
