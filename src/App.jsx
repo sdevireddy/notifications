@@ -68,6 +68,7 @@ import SalesOrderCreationForm from "./routes/salesOrder/CreateSalesOrder";
 import AddPayrollPage from "./components/add-payroll";
 import ViewSalesOrder from "./routes/salesOrder/ViewSalesOrder";
 import InvoicePage from './routes/invoices/Invoices'
+import InvoiceCreationForm from "./routes/invoices/CreateInvoice";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -108,6 +109,7 @@ const router = createBrowserRouter([
                     { path: "tasks", element: <Tasks /> },
                     { path: "tasks/create", element: <TaskCreationForm /> },
                     { path: "invoices", element: <InvoicePage /> },
+                     { path: "invoices/create", element: <InvoiceCreationForm /> },
                     { path: "meetings", element: <Meeting /> },
                     { path: "salesorders", element: <SalesOrder /> },
                     { path: "salesorders/:id", element: <ViewSalesOrder /> },
