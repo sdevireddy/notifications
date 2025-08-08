@@ -69,6 +69,7 @@ import AddPayrollPage from "./components/add-payroll";
 import ViewSalesOrder from "./routes/salesOrder/ViewSalesOrder";
 import InvoicePage from './routes/invoices/Invoices'
 import InvoiceCreationForm from "./routes/invoices/CreateInvoice";
+import ProductPage from "./routes/product/Product";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -115,6 +116,7 @@ const router = createBrowserRouter([
                     { path: "salesorders/:id", element: <ViewSalesOrder /> },
                     { path: "salesorders/create", element: <SalesOrderCreationForm /> },
                     { path: "calls", element: <Calls /> },
+                    { path: "product", element: <ProductPage /> },
                     {
                         path: "hr",
                         children: [
