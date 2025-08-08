@@ -70,6 +70,7 @@ import ViewSalesOrder from "./routes/salesOrder/ViewSalesOrder";
 import InvoicePage from './routes/invoices/Invoices'
 import InvoiceCreationForm from "./routes/invoices/CreateInvoice";
 import ProductPage from "./routes/product/Product";
+import ProductCreationForm from "./routes/product/CreateProduct";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -95,8 +96,6 @@ const router = createBrowserRouter([
                     { path: "import/:source", element: <CRMSelectionImport /> },
                     { path: "import/:source/migration", element: <DataMigrationUpload /> },
                     { path: "verified-customers", element: <h1>Verified Customers</h1> },
-                    { path: "products", element: <h1>Products</h1> },
-                    { path: "new-product", element: <h1>New Product</h1> },
                     { path: "inventory", element: <h1>Inventory</h1> },
                     { path: "settings", element: <Settings /> },
                     { path: "templates", element: <TemplateDisplay /> },
@@ -116,7 +115,8 @@ const router = createBrowserRouter([
                     { path: "salesorders/:id", element: <ViewSalesOrder /> },
                     { path: "salesorders/create", element: <SalesOrderCreationForm /> },
                     { path: "calls", element: <Calls /> },
-                    { path: "product", element: <ProductPage /> },
+                    { path: "products", element: <ProductPage /> },
+                    { path: "products/create", element: <ProductCreationForm /> },
                     {
                         path: "hr",
                         children: [
