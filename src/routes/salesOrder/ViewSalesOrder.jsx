@@ -11,7 +11,8 @@ import { ChevronDown, Edit, Import, Plus, Send, Tag, Trash2, Users } from "lucid
 import { FaRegClone } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
-
+import { AiOutlineExport } from "react-icons/ai";
+import { FiPrinter } from "react-icons/fi";
 const ViewSalesOrder = () => {
   const [actionOpen, setActionOpen] = useState(false);
   const [notes, setNotes] = useState([]);
@@ -89,13 +90,13 @@ const ViewSalesOrder = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuItem><FaRegClone className="mr-2" /> Clone</DropdownMenuItem>
               <DropdownMenuItem><MdDeleteOutline className="mr-2" /> Delete</DropdownMenuItem>
-              <DropdownMenuItem><MdDeleteOutline className="mr-2" /> Print Preview</DropdownMenuItem>
-              <DropdownMenuItem><MdDeleteOutline className="mr-2" /> Export PDF</DropdownMenuItem>
-              <DropdownMenuItem><Send className="mr-2" /> Send Email</DropdownMenuItem>
+              <DropdownMenuItem><FiPrinter className="mr-2" /> Print Preview</DropdownMenuItem>
+              <DropdownMenuItem><AiOutlineExport className="mr-2" /> Export PDF</DropdownMenuItem>
+              <DropdownMenuItem><Send className="mr-2" size={15}/> Send Email</DropdownMenuItem>
               <DropdownMenuSeparator />
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white px-3">
+          <Button className="bg-primary  text-white px-3">
             <Plus className="h-4 w-4 mr-1" /> Edit
           </Button>
         </div>
@@ -138,7 +139,7 @@ const ViewSalesOrder = () => {
       <h2 className="font-semibold pl-4 text-indigo-700">Ordered Items</h2>
       <div className="border p-4 rounded shadow bg-white overflow-auto">
         <table className="w-full text-left border-collapse">
-          <thead className="bg-slate-100">
+          <thead className="bg-blue-100">
             <tr>
               <th className="border p-2">S.No</th>
               <th className="border p-2">Product</th>
@@ -172,7 +173,7 @@ const ViewSalesOrder = () => {
       </div>
 
       {/* Summary */}
-      <div className="bg-white p-4 border rounded shadow w-full max-w-xs ml-auto">
+      <div className="bg-blue-100 p-4 border rounded shadow w-full max-w-xs ml-auto">
         <div className="flex justify-between mb-2"><span>Sub Total</span><span>${salesOrder.summary.subTotal.toFixed(2)}</span></div>
         <div className="flex justify-between mb-2"><span>Discount</span><span>${salesOrder.summary.discount.toFixed(2)}</span></div>
         <div className="flex justify-between mb-2"><span>Tax</span><span>${salesOrder.summary.tax.toFixed(2)}</span></div>
