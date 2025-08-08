@@ -35,6 +35,7 @@ import { useSelector } from "react-redux";
 import { FaTasks } from "react-icons/fa";
 import { SiGotomeeting } from "react-icons/si";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
+import { TbBrandProducthunt } from "react-icons/tb";
 // Define links per module
 const moduleLinks = {
     CRM: [
@@ -46,6 +47,7 @@ const moduleLinks = {
         { to: "/tasks", label: "Tasks", icon: <FaTasks  size={20} /> },
         { to: "/invoices", label: "Invoices", icon: <LiaFileInvoiceSolid size={24} /> },
         { to: "/salesorders", label: "Sales Order", icon: <UserPlus size={20} /> },
+         { to: "/product", label: "Product", icon: <TbBrandProducthunt  size={20} /> },
         { to: "/meetings", label: "Mettings", icon: <SiGotomeeting  size={20} /> },
         { to: "/calls", label: "Calls", icon: <Phone size={20} /> },
         { to: "/settings", label: "Settings", icon: <Settings size={20} /> },

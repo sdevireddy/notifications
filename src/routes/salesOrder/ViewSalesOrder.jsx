@@ -96,7 +96,7 @@ const ViewSalesOrder = () => {
               <DropdownMenuSeparator />
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white px-3">
+          <Button className="bg-primary  text-white px-3">
             <Plus className="h-4 w-4 mr-1" /> Edit
           </Button>
         </div>
