@@ -74,6 +74,7 @@ import ProductCreationForm from "./routes/product/CreateProduct";
 import QuotePage from "./routes/quote/Quote";
 import QuoteCreationForm from "./routes/quote/CreateQuote";
 import VendorPage from "./routes/vendor/Vendor";
+import VendorCreationForm from "./routes/vendor/CreateVendor";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -123,6 +124,7 @@ const router = createBrowserRouter([
                      { path: "quotes", element: <QuotePage /> },
                       { path: "quotes/create", element: <QuoteCreationForm /> },
                        { path: "vendors", element: <VendorPage /> },
+                           { path: "vendors/create", element: <VendorCreationForm /> },
                     {
                         path: "hr",
                         children: [
