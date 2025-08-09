@@ -37,6 +37,8 @@ import { SiGotomeeting } from "react-icons/si";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
 import { TbBrandProducthunt } from "react-icons/tb";
 import { MdOutlineRequestQuote } from "react-icons/md";
+import { MdOutlineDirectionsTransitFilled } from "react-icons/md";
+
 // Define links per module
 const moduleLinks = {
     CRM: [
@@ -50,6 +52,7 @@ const moduleLinks = {
         { to: "/salesorders", label: "Sales Order", icon: <UserPlus size={20} /> },
          { to: "/products", label: "Products", icon: <TbBrandProducthunt  size={20} /> },
           { to: "/quotes", label: "Quotes", icon: <MdOutlineRequestQuote  size={20} /> },
+         { to: "/vendors", label: "Vendors", icon: <MdOutlineDirectionsTransitFilled  size={20} /> },
         { to: "/meetings", label: "Mettings", icon: <SiGotomeeting  size={20} /> },
         { to: "/calls", label: "Calls", icon: <Phone size={20} /> },
         { to: "/settings", label: "Settings", icon: <Settings size={20} /> },
