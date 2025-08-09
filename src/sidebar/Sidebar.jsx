@@ -47,13 +47,13 @@ const moduleLinks = {
         { to: "/accounts", label: "Accounts", icon: <Building size={20} /> },
         { to: "/deals", label: "Deals", icon: <Briefcase size={20} /> },
         { to: "/users", label: "Users", icon: <UserPlus size={20} /> },
-        { to: "/tasks", label: "Tasks", icon: <FaTasks  size={20} /> },
+        { to: "/tasks", label: "Tasks", icon: <FaTasks size={20} /> },
         { to: "/invoices", label: "Invoices", icon: <LiaFileInvoiceSolid size={24} /> },
         { to: "/salesorders", label: "Sales Order", icon: <UserPlus size={20} /> },
-         { to: "/products", label: "Products", icon: <TbBrandProducthunt  size={20} /> },
-          { to: "/quotes", label: "Quotes", icon: <MdOutlineRequestQuote  size={20} /> },
-         { to: "/vendors", label: "Vendors", icon: <MdOutlineDirectionsTransitFilled  size={20} /> },
-        { to: "/meetings", label: "Mettings", icon: <SiGotomeeting  size={20} /> },
+        { to: "/products", label: "Products", icon: <TbBrandProducthunt size={20} /> },
+        { to: "/quotes", label: "Quotes", icon: <MdOutlineRequestQuote size={20} /> },
+        { to: "/vendors", label: "Vendors", icon: <MdOutlineDirectionsTransitFilled size={20} /> },
+        { to: "/meetings", label: "Mettings", icon: <SiGotomeeting size={20} /> },
         { to: "/calls", label: "Calls", icon: <Phone size={20} /> },
         { to: "/settings", label: "Settings", icon: <Settings size={20} /> },
     ],
@@ -65,7 +65,7 @@ const moduleLinks = {
         { to: "marketing/SMSMarketing", label: "SMS Marketing", icon: <MessageCircle size={20} /> },
         { to: "marketing/SocialMediaMarketing", label: "Social media marketing", icon: <Megaphone size={20} /> },
 
-        { to: "marketing/SocialMediaMarketing", label: "Social media marketing", icon:<Megaphone size={20} /> },
+        { to: "marketing/SocialMediaMarketing", label: "Social media marketing", icon: <Megaphone size={20} /> },
         { to: "marketing/settings", label: "Settings", icon: <Settings size={20} /> },
     ],
     Campaigns: [{ to: "/email-campaigns", label: "Email Campaigns", icon: <Mail size={20} /> }],
@@ -90,7 +90,7 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
     return (
         <div
             ref={sidebarRef}
-            className={`bg-sidebar h-full border-r border-gray-200 transition-all duration-300 dark:border-gray-700 dark:bg-slate-900 ${
+            className={`h-full border-r border-gray-200 bg-sidebar transition-all duration-300 dark:border-gray-700 dark:bg-slate-900 ${
                 collapsed ? "w-[70px]" : "w-56"
             }`}
             onMouseEnter={() => ref?.current?.scrollTo?.({ top: 0 })}
@@ -110,10 +110,45 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
                             <p>{name.toUpperCase()}</p>
                         </div>
                     ) : (
-                        <PanelLeftOpen
-                            size={32}
-                            className="ml-2 text-white"
-                        />
+                        <svg
+                            width="40"
+                            height="40"
+                            viewBox="0 0 48 48"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <rect
+                                x="4"
+                                y="8"
+                                width="28"
+                                height="4"
+                                rx="2"
+                                fill="white"
+                            />
+
+                            <rect
+                                x="4"
+                                y="20"
+                                width="28"
+                                height="4"
+                                rx="2"
+                                fill="white"
+                            />
+
+                            <rect
+                                x="4"
+                                y="32"
+                                width="28"
+                                height="4"
+                                rx="2"
+                                fill="white"
+                            />
+
+                            <path
+                                d="M34 16 L44 24 L34 32 Z"
+                                fill="white"
+                            />
+                        </svg>
                     )}
                 </Link>
             </div>
@@ -137,19 +172,19 @@ export const Sidebar = forwardRef(({ collapsed, activeModule }, ref) => {
 
             <div className="space-y-2 px-3">
                 <p className="ml-2 line-clamp-1 text-xs font-semibold text-gray-50 dark:text-gray-400">{activeModule}</p>
-                <div className="overflow-y-scroll max-h-[72vh] scrollbar-none">
-                {moduleLinks[activeModule]
-                    ?.filter((link) => link.label.toLowerCase().includes(search.toLowerCase()))
-                    .map((link, index) => (
-                        <SidebarLink
-                            key={index}
-                            to={link.to}
-                            icon={link.icon}
-                            label={link.label}
-                            collapsed={collapsed}
-                        />
-                    ))}
-                    </div>
+                <div className="scrollbar-none max-h-[72vh] overflow-y-scroll">
+                    {moduleLinks[activeModule]
+                        ?.filter((link) => link.label.toLowerCase().includes(search.toLowerCase()))
+                        .map((link, index) => (
+                            <SidebarLink
+                                key={index}
+                                to={link.to}
+                                icon={link.icon}
+                                label={link.label}
+                                collapsed={collapsed}
+                            />
+                        ))}
+                </div>
             </div>
         </div>
     );
