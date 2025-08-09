@@ -4,7 +4,7 @@ const initialValue={
    HR:true,
    Books:false,
    Marketing:true,
-   Campaigns:false,
+   Campaigns:true,
    TiketDesk:false
 }
 
